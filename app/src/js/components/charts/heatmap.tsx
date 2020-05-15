@@ -18,7 +18,7 @@ class Heatmap extends React.Component {
     const { series, units } = this.props;
     const key = units == 'ip' ? 'value_ip' : 'value_si';
 
-    const width = 500;
+    const width = 600;
     const height = 500;
 
     const margins = {
