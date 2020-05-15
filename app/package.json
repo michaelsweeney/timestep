@@ -1,0 +1,41 @@
+{
+  "name": "electron-react-boilerplate",
+  "productName": "electron-react-boilerplate",
+  "version": "1.1.0",
+  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "main": "./main.prod.js",
+  "author": {
+    "name": "Electron React Boilerplate Maintainers",
+    "email": "electronreactboilerplate@gmail.com",
+    "url": "https://github.com/electron-react-boilerplate"
+  },
+  "scripts": {
+    "electron-rebuild": "node -r ../internals/scripts/BabelRegister.js ../internals/scripts/ElectronRebuild.js",
+    "postinstall": "yarn electron-rebuild"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@material-ui/core": "^4.9.14",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.53",
+    "d3": "^5.16.0",
+    "react": "^16.12.0",
+    "react-async": "^10.0.1",
+    "react-dom": "^16.12.0",
+    "react-redux": "^7.1.3",
+    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2",
+    "react-select": "^3.1.0",
+    "react-select-virtualized": "^2.5.3",
+    "react-sidebar": "^3.0.2",
+    "react-vega": "^7.3.0",
+    "react-virtualized": "^9.21.2",
+    "react-window": "^1.8.5",
+    "react-windowed-select": "^2.0.2",
+    "redux": "^4.0.5",
+    "sqlite-async": "^1.0.12",
+    "sqlite3": "^4.2.0",
+    "vega": "^5.11.1",
+    "vega-lite": "^4.11.0"
+  }
+}

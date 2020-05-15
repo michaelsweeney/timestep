@@ -1,0 +1,48 @@
+/* load all css files directly to app.html for now. some kind of pre processing issue ?  */
+
+body {
+  display: block;
+  font-family: 'Roboto';
+  width: 100vw;
+  height: 100vh;
+}
+
+.file-button {
+  /* display: inline-block; */
+  /* background-color: rgb(211, 211, 211); */
+  /* border: 1px solid black; */
+  /* border-radius: 4px; */
+  /* margin: 5px; */
+  /* padding: 8px; */
+  /* cursor: pointer; */
+  transition: background-color 50ms, color 50ms;
+  /* transition: color 1000ms; */
+}
+
+.file-button.drag-active {
+  background-color: rgb(148, 148, 148);
+  /* color: rgb(36, 175, 255); */
+  /* border-color: rgb(36, 175, 255); */
+}
+
+
+
+/*
+.drag-area {
+  position: absolute;
+  display: inline-block;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  background-color: rgb(77, 77, 77);
+  vertical-align: middle;
+  text-align: center;
+  transition: opacity 100ms;
+}
+
+.drag-area-active {
+  opacity: 0.25;
+}
+*/
