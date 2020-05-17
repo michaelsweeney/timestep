@@ -262,10 +262,10 @@ async function getSeries(filetag, units) {
 
   let db = new sqlite3.Database(sqlfile);
   let query_year =
-    "SELECT ReportData.Value, ReportData.TimeIndex, Time.Year, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, Time.Interval, Time.DayType FROM 'ReportData' INNER JOIN Time ON ReportData.TimeIndex = Time.TimeIndex WHERE ReportData.ReportDataDictionaryIndex = " +
+    "SELECT ReportData.Value, ReportData.TimeIndex, Time.Year, Time.SimulationDays, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, Time.Interval, Time.DayType FROM 'ReportData' INNER JOIN Time ON ReportData.TimeIndex = Time.TimeIndex WHERE ReportData.ReportDataDictionaryIndex = " +
     idx;
   let query_noyear =
-    "SELECT ReportData.Value, ReportData.TimeIndex, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, Time.Interval, Time.DayType FROM 'ReportData' INNER JOIN Time ON ReportData.TimeIndex = Time.TimeIndex WHERE ReportData.ReportDataDictionaryIndex = " +
+    "SELECT ReportData.Value, ReportData.TimeIndex, Time.Month, Time.Day, Time.SimulationDays, Time.Hour, Time.Minute, Time.Dst, Time.Interval, Time.DayType FROM 'ReportData' INNER JOIN Time ON ReportData.TimeIndex = Time.TimeIndex WHERE ReportData.ReportDataDictionaryIndex = " +
     idx;
   let result;
 
@@ -311,6 +311,13 @@ async function getSeries(filetag, units) {
     data.units_si = series_obj.units_si;
     data.units_ip = series_obj.units_ip;
     data.type = series_obj.Type;
+
+    data.day = row.Day;
+    data.hour = row.Hour;
+    data.minute = row.Minute;
+    data.month = row.Month;
+    data.year = year;
+    data.simulationday = row.SimulationDays;
 
     if (series_obj.units_si == 'C') {
       data.value_ip = row.Value * 1.8 + 32;

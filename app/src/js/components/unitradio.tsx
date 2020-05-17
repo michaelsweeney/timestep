@@ -10,7 +10,7 @@ const UnitRadio = props => {
   const [selectedValue, setSelectedValue] = useState('si');
 
   return (
-    <div>
+    <div className="unit-radio">
       <span>SI</span>
       <Radio
         disableRipple={true}

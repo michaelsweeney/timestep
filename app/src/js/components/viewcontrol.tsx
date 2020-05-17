@@ -8,46 +8,54 @@ import { ScatterControl } from './charts/scattercontrol';
 const ViewControl = props => {
   if (props.activeView == 'Histogram') {
     return (
-      <HistogramControl
-        seriesOptions={props.seriesOptions}
-        units={props.units}
-        files={props.files}
-        timestepType={props.timestepType}
-        seriesLookupObj={props.seriesLookupObj}
-      />
+      <div className="view-container">
+        <HistogramControl
+          seriesOptions={props.seriesOptions}
+          units={props.units}
+          files={props.files}
+          timestepType={props.timestepType}
+          seriesLookupObj={props.seriesLookupObj}
+        />
+      </div>
     );
   }
   if (props.activeView == 'Heatmap') {
     return (
-      <HeatmapControl
-        seriesOptions={props.seriesOptions}
-        units={props.units}
-        files={props.files}
-        timestepType={props.timestepType}
-        seriesLookupObj={props.seriesLookupObj}
-      />
+      <div className="view-container">
+        <HeatmapControl
+          seriesOptions={props.seriesOptions}
+          units={props.units}
+          files={props.files}
+          timestepType={props.timestepType}
+          seriesLookupObj={props.seriesLookupObj}
+        />
+      </div>
     );
   }
   if (props.activeView == 'MultiLine') {
     return (
-      <MultiLineControl
-        seriesOptions={props.seriesOptions}
-        units={props.units}
-        files={props.files}
-        timestepType={props.timestepType}
-        seriesLookupObj={props.seriesLookupObj}
-      />
+      <div className="view-container">
+        <MultiLineControl
+          seriesOptions={props.seriesOptions}
+          units={props.units}
+          files={props.files}
+          timestepType={props.timestepType}
+          seriesLookupObj={props.seriesLookupObj}
+        />
+      </div>
     );
   }
   if (props.activeView == 'Scatter') {
     return (
-      <ScatterControl
-        seriesOptions={props.seriesOptions}
-        units={props.units}
-        files={props.files}
-        timestepType={props.timestepType}
-        seriesLookupObj={props.seriesLookupObj}
-      />
+      <div className="view-container">
+        <ScatterControl
+          seriesOptions={props.seriesOptions}
+          units={props.units}
+          files={props.files}
+          timestepType={props.timestepType}
+          seriesLookupObj={props.seriesLookupObj}
+        />
+      </div>
     );
   }
 };

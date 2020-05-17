@@ -69,18 +69,21 @@ const EpDive = () => {
   // default for dev
   useEffect(() => {
     handleFileChange([
-      '/Users/michaelsweeney/Documents/energyplus files/example/output-5ZoneDetailedIceStorage/5ZoneDetailedIceStorageout.sql'
+      // '/Users/michaelsweeney/Documents/energyplus files/example/output-5ZoneDetailedIceStorage/5ZoneDetailedIceStorageout.sql'
+      '/Users/michaelsweeney/Documents/energyplus files/chop_shade_array.sql'
     ]);
   }, []);
 
   return (
-    <div>
-      <FileHandler fileCallback={handleFileChange} />
-      <FileList files={files} />
+    <div className="main-container">
+      <div className="header">
+        <FileHandler fileCallback={handleFileChange} />
+        <FileList files={files} />
 
-      <UnitRadio unitCallback={handleUnitChange} />
-      <TimeStepSelect timeStepCallback={handleTimeStepSelect} />
-      <ViewSelector activeViewCallback={handleActiveViewChange} />
+        <UnitRadio unitCallback={handleUnitChange} />
+        <TimeStepSelect timeStepCallback={handleTimeStepSelect} />
+        <ViewSelector activeViewCallback={handleActiveViewChange} />
+      </div>
       <ViewControl
         units={units}
         seriesOptions={seriesOptions}

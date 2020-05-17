@@ -60,7 +60,7 @@ const FileHandler = props => {
     }
   };
   return (
-    <div>
+    <div className="file-handler">
       <Button
         disableRipple={true}
         variant="contained"

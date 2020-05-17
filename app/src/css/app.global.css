@@ -25,8 +25,6 @@ body {
   /* border-color: rgb(36, 175, 255); */
 }
 
-
-
 /*
 .drag-area {
   position: absolute;
@@ -46,3 +44,66 @@ body {
   opacity: 0.25;
 }
 */
+
+.main-container {
+  /* padding: 10px; */
+}
+
+.file-handler {
+  display: inline-block;
+  margin-left: 10px;
+  margin-right: 5px;
+}
+
+.file-list {
+  display: inline-block;
+  margin-left: 5px;
+  margin-right: 20px;
+}
+
+.unit-radio {
+  display: inline-block;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.view-selector {
+  display: inline-block;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.view-container {
+  position: absolute;
+  width:  calc(100vw - 150px);
+  left: 150px;
+  height: 100vh;
+  padding: 20px;
+
+}
+.timestep-select {
+  display: inline-block;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+
+.header {
+  position: absolute;
+  height: 100vh;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  width: 150px;
+  /* padding: 10px; */
+  /* margin-bottom: 10px; */
+  /* padding-bottom: 10px; */
+  /* padding-top: 10px; */
+  /* background-color: gray; */
+}
+
+
+
+
+.heatmap-controls-container {
+  padding: 20px;
+}
+

@@ -11,7 +11,7 @@ const TimeStepSelect = props => {
     props.timeStepCallback(e.target.value);
   };
   return (
-    <div>
+    <div className="timestep-select">
       <InputLabel id="label">Timestep</InputLabel>
       <Select onChange={handleChange} id="select" value={value}>
         <MenuItem value="HVAC Timestep">HVAC Timestep</MenuItem>

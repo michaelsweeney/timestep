@@ -26,8 +26,8 @@ const ViewSelector = props => {
     }
   };
   return (
-    <div>
-      <ButtonGroup disableRipple={true} color="primary">
+    <div className="view-selector">
+      <ButtonGroup disableRipple={true} color="primary" orientation="vertical">
         <Button
           value="heatmap"
           variant={activeView == 'Heatmap' ? 'contained' : 'outlined'}
