@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 
 const ViewSelector = props => {
-  const [activeView, setActiveView] = useState('Heatmap');
+  const [activeView, setActiveView] = useState('Scatter');
 
   const handleViewChange = e => {
     switch (e.target.innerHTML) {
@@ -25,30 +25,45 @@ const ViewSelector = props => {
         props.activeViewCallback('MultiLine');
     }
   };
+
+  const buttonlookupobj = {
+    heatmap: activeView == 'Heatmap' ? 'contained' : 'outlined',
+    histogram: activeView == 'Histogram' ? 'contained' : 'outlined',
+    scatter: activeView == 'Scatter' ? 'contained' : 'outlined',
+    multiline: activeView == 'MultiLine' ? 'contained' : 'outlined'
+  };
+
   return (
     <div className="view-selector">
       <ButtonGroup disableRipple={true} color="primary" orientation="vertical">
         <Button
-          value="heatmap"
-          variant={activeView == 'Heatmap' ? 'contained' : 'outlined'}
+          value={'heatmap'}
+          key={'heatmap'}
+          variant={buttonlookupobj['heatmap']}
           onClick={handleViewChange}
         >
           Heatmap
         </Button>
         <Button
-          variant={activeView == 'Histogram' ? 'contained' : 'outlined'}
+          value={'histogram'}
+          key={'histogram'}
+          variant={buttonlookupobj['histogram']}
           onClick={handleViewChange}
         >
           Histogram
         </Button>
         <Button
-          variant={activeView == 'Scatter' ? 'contained' : 'outlined'}
+          value={'scatter'}
+          key={'scatter'}
+          variant={buttonlookupobj['scatter']}
           onClick={handleViewChange}
         >
           Scatter
         </Button>
         <Button
-          variant={activeView == 'MultiLine' ? 'contained' : 'outlined'}
+          value={'multiline'}
+          key={'multiline'}
+          variant={buttonlookupobj['multiline']}
           onClick={handleViewChange}
         >
           MultiLine

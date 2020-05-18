@@ -18,15 +18,7 @@ const Heatmap = props => {
   }, [colorscale, reversecolor, minrange, maxrange]);
 
   const createColorScale = () => {
-    // let mindata = 0;
-    // let maxdata = 0;
-    // series.forEach(d => {
-    //   mindata = Math.min(mindata, d[valkey]);
-    //   maxdata = Math.max(maxdata, d[valkey]);
-    // });
-
     const colorScale = d3.scaleLinear().range([0, 1]);
-
     if (!reversecolor) {
       colorScale.domain([minrange, maxrange]);
     } else {
@@ -73,14 +65,6 @@ const Heatmap = props => {
       .scaleLinear()
       .domain([0, 24])
       .range([0, plotheight]);
-
-    // let mindata = 0;
-    // let maxdata = 0;
-
-    // series.forEach(d => {
-    //   mindata = Math.min(mindata, d[valkey]);
-    //   maxdata = Math.max(maxdata, d[valkey]);
-    // });
 
     const colorScale = createColorScale();
 

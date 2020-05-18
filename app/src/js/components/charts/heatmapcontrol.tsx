@@ -4,7 +4,6 @@ import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { Heatmap } from './heatmap';
 import { ColorScaleSelect } from '../colorscaleselect';
-import { formatInt } from '../numformat';
 import { CheckboxInput } from '../checkboxinput';
 import { RangeSlider } from '../rangeslider';
 
@@ -23,12 +22,8 @@ const HeatmapControl = props => {
 
       const getMaxMin = series => {
         const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
-        let min = 0;
-        let max = 0;
-        series.forEach(d => {
-          min = Math.min(min, d[valkey]);
-          max = Math.max(max, d[valkey]);
-        });
+        let min = Math.min(...series.map(d => d[valkey]));
+        let max = Math.max(...series.map(d => d[valkey]));
         return [min, max];
       };
 

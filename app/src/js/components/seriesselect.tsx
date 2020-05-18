@@ -144,7 +144,11 @@ export default function SeriesSelect(props) {
       options={options}
       // groupBy={option => option[0].toUpperCase()}
       renderInput={params => (
-        <TextField {...params} variant="outlined" label="select series" />
+        <TextField
+          {...params}
+          variant="outlined"
+          label={props.title || 'select series'}
+        />
       )}
       renderOption={option => <Typography noWrap>{option}</Typography>}
     />
