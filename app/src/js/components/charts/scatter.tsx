@@ -135,8 +135,26 @@ const Scatter = props => {
       .attr('r', 3)
       .attr('cx', d => xScale(d.x))
       .attr('cy', d => yScale(d.y))
-      .attr('fill', d => (d.z == '' ? '#3f8cb5' : colorFunc(colorScale(d.z))));
+      .attr('fill', d => (d.z === '' ? '#3f8cb5' : colorFunc(colorScale(d.z))));
     // .attr('stroke', 'blue');
+
+    const xAxis = d3.axisBottom(xScale);
+    const xaxisg = svg
+      .selectAll('.xaxisg')
+      .data([0])
+      .join('g')
+      .attr('class', 'xaxisg')
+      .attr('transform', `translate(${margins.l},${plotheight + margins.t})`)
+      .call(xAxis);
+
+    const yAxis = d3.axisLeft(yScale);
+    const yaxisg = svg
+      .selectAll('.yaxisg')
+      .data([0])
+      .join('g')
+      .attr('class', 'yaxisg')
+      .attr('transform', `translate(${margins.l},${margins.t})`)
+      .call(yAxis);
   };
 
   return <div className="scatter-container" ref={container}></div>;

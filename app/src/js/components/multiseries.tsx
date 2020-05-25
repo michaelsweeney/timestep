@@ -123,7 +123,7 @@ const renderGroup = params => [
   params.children
 ];
 
-export default function SeriesSelect(props) {
+export default function MultiSeries(props) {
   const classes = useStyles();
   const options = props.series;
 
@@ -134,6 +134,8 @@ export default function SeriesSelect(props) {
   // console.log(OPTIONS);
   return (
     <Autocomplete
+      limitTags={0}
+      multiple
       onChange={props.seriesCallback}
       id="virtualize-demo"
       style={{ width: 800 }}
@@ -142,6 +144,7 @@ export default function SeriesSelect(props) {
       ListboxComponent={ListboxComponent}
       renderGroup={renderGroup}
       options={options}
+      // groupBy={option => option[0].toUpperCase()}
       renderInput={params => (
         <TextField
           {...params}

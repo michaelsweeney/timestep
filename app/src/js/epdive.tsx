@@ -14,7 +14,7 @@ import '../css/app.global.css';
 const EpDive = () => {
   const [files, setFiles] = useState([]);
   const [units, setUnits] = useState('si');
-  const [activeView, setActiveView] = useState('Scatter');
+  const [activeView, setActiveView] = useState('MultiLine');
   const [seriesOptions, setSeriesOptions] = useState([]);
   const [timestepType, setTimestepType] = useState('Hourly');
   const [seriesLookupObj, setSeriesLookupObj] = useState({});

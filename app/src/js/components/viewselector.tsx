@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 
 const ViewSelector = props => {
-  const [activeView, setActiveView] = useState('Scatter');
+  const [activeView, setActiveView] = useState('MultiLine');
 
   const handleViewChange = e => {
     switch (e.target.innerHTML) {

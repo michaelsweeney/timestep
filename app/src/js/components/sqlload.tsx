@@ -318,6 +318,7 @@ async function getSeries(filetag, units) {
     data.month = row.Month;
     data.year = year;
     data.simulationday = row.SimulationDays;
+    data.key = filetag;
 
     if (series_obj.units_si == 'C') {
       data.value_ip = row.Value * 1.8 + 32;

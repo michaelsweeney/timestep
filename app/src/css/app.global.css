@@ -107,3 +107,84 @@ body {
   padding: 20px;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.multiline-handle-container {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.multiline-handle-container .legend-row {
+  display: block;
+}
+.legend-row div {
+  display: inline-block;
+}
+
+
+.multiline-handle-container .legend-row:hover {
+  /* opacity: 0.8 !important; */
+  /* border: gray 1px solid; */
+  cursor: default;
+}
+
+.multiline-handle-container div {
+  display: inline-block;
+}
+
+
+.multiline-handle-container .legend-rect {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  transition: opacity 200ms;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.multiline-handle-container .legend-rect:hover {
+  opacity: 0.8 !important;
+  /* border: gray 1px solid; */
+  cursor: pointer;
+}
+
+.multiline-handle-container .legend-name:hover {
+  /* opacity: 0.8 !important; */
+  /* border: gray 1px solid; */
+  /* cursor: pointer; */
+}
+
+.multiline-handle-container .legend-axis-switch {
+  font-weight: 600;
+  margin-left: 10px;
+  margin-right: 10px;
+  transition: opacity 200ms;
+  /* border: 1px solid gray; */
+  /* border-radius: 2px; */
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.multiline-handle-container .legend-axis-switch:hover {
+  opacity: 1.0 !important;
+  /* border: gray 1px solid; */
+  cursor: pointer;
+}
+
+
+
