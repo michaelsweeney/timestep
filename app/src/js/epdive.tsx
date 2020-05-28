@@ -6,15 +6,15 @@ import { FileList } from './components/filelist';
 import { FileHandler } from './components/filehandler';
 import { UnitRadio } from './components/unitradio';
 import { TimeStepSelect } from './components/timestepselect';
-import SeriesSelect from './components/seriesselect'; // can't destructure for some reason
 import { ViewSelector } from './components/viewselector';
 import { ViewControl } from './components/viewcontrol';
+import { defaultView } from './components/defaultview';
 import '../css/app.global.css';
 
 const EpDive = () => {
   const [files, setFiles] = useState([]);
   const [units, setUnits] = useState('si');
-  const [activeView, setActiveView] = useState('MultiLine');
+  const [activeView, setActiveView] = useState(defaultView);
   const [seriesOptions, setSeriesOptions] = useState([]);
   const [timestepType, setTimestepType] = useState('Hourly');
   const [seriesLookupObj, setSeriesLookupObj] = useState({});
@@ -76,7 +76,7 @@ const EpDive = () => {
 
   return (
     <div className="main-container">
-      <div className="header">
+      <div className="sidebar">
         <FileHandler fileCallback={handleFileChange} />
         <FileList files={files} />
 

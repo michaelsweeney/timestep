@@ -5,6 +5,8 @@ import { HistogramControl } from './charts/histogramcontrol';
 import { MultiLineControl } from './charts/multilinecontrol';
 import { ScatterControl } from './charts/scattercontrol';
 
+
+
 const ViewControl = props => {
   if (props.activeView == 'Histogram') {
     return (

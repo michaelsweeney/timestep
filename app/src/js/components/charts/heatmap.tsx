@@ -1,17 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import * as d3 from 'd3';
+import { formatInt } from '../numformat';
 
 const Heatmap = props => {
   const container = useRef(null);
 
   const { series, colorscale, units, minrange, maxrange, reversecolor } = props;
 
+  const { width, height } = props.plotdims;
+
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
+  const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
 
   useEffect(() => {
     createChart();
-  }, [props.series, units]);
+  }, [series, units, width, height]);
 
   useEffect(() => {
     updateColor();
@@ -41,13 +45,13 @@ const Heatmap = props => {
   };
 
   const createChart = () => {
-    const width = 1200;
-    const height = 500;
+    /* DIMENSIONS */
+
     const margins = {
       l: 100,
       t: 100,
       b: 50,
-      r: 50
+      r: 100
     };
 
     const plotwidth = width - margins.l - margins.r;
@@ -76,13 +80,16 @@ const Heatmap = props => {
 
     svg.attr('width', width).attr('height', height);
 
+    /* RECTS */
     let plotg = svg
       .selectAll('.plotg')
       .data([0])
       .join('g');
+
     plotg
       .attr('class', 'plotg')
-      .attr('transform', `translate(${margins.l}, ${margins.t})`);
+      .attr('transform', `translate(${margins.l}, ${margins.t})`)
+      .on('mouseout', handleMouseout);
 
     let rects = plotg
       .selectAll('.hour_rect')
@@ -97,12 +104,16 @@ const Heatmap = props => {
       .attr('height', rectheight)
       .style('fill', d => {
         return d3[colorscale](colorScale(d[valkey]));
+      })
+      .on('mouseover', d => {
+        handleMouseover(d);
       });
+
     rects.exit().remove();
 
+    /* AXES */
     const xAxis = d3.axisBottom(xScale).ticks(12);
     const yAxis = d3.axisLeft(yScale).ticks(24);
-
     const xaxisg = svg
       .selectAll('.x-axis-g')
       .data([0])
@@ -118,9 +129,39 @@ const Heatmap = props => {
       .attr('class', 'y-axis-g')
       .attr('transform', `translate(${margins.l}, ${margins.t})`)
       .call(yAxis);
+
+    /* TOOLTIP */
+    let tooltipdiv = d3
+      .select(container.current)
+      .selectAll('.tooltip')
+      .data([0])
+      .join('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0);
+
+    function handleMouseover(d) {
+      tooltipdiv
+        .style('opacity', 1)
+        .style('left', event.pageX - 200 + 'px')
+        .style('top', event.pageY - 100 + 'px')
+        .style('transition', 'left 100ms, top 100ms')
+        .html(() => {
+          return `
+            <div>Date: ${d.time}</div>
+            <div>Value: ${formatInt(d[valkey])} (${d[unitkey]})</div>
+
+          `;
+        });
+    }
+
+    function handleMouseout() {
+      tooltipdiv.style('opacity', 0);
+    }
   };
 
-  return <div className="heatmap-container" ref={container}></div>;
+  return (
+    <div className="heatmap-container chart-container" ref={container}></div>
+  );
 };
 
 export { Heatmap };

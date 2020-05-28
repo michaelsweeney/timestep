@@ -5,6 +5,7 @@ import * as d3 from 'd3';
 const MultiLine = props => {
   const container = useRef(null);
   let { seriesArray, seriesConfig, units } = props;
+  const { width, height } = props.plotdims;
 
   let isY1 = true;
   let isY2 = false;
@@ -21,9 +22,8 @@ const MultiLine = props => {
   };
 
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
+  const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
 
-  const width = 1200;
-  const height = 500;
   const margins = {
     l: 100,
     t: 100,
@@ -37,7 +37,7 @@ const MultiLine = props => {
   useEffect(() => {
     handleDomains();
     createChart();
-  }, [seriesArray, seriesConfig]);
+  }, [seriesArray, seriesConfig, width, height]);
 
   const handleDomains = () => {
     isY2 =
@@ -174,7 +174,9 @@ const MultiLine = props => {
     }
   };
 
-  return <div className="multiline-container" ref={container}></div>;
+  return (
+    <div className="multiline-container chart-container" ref={container}></div>
+  );
 };
 
 export { MultiLine };

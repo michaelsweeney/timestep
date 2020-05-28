@@ -13,13 +13,30 @@ const TimeStepSelect = props => {
   return (
     <div className="timestep-select">
       <InputLabel id="label">Timestep</InputLabel>
-      <Select onChange={handleChange} id="select" value={value}>
-        <MenuItem value="HVAC Timestep">HVAC Timestep</MenuItem>
-        <MenuItem value="Zone Timestep">Zone Timestep</MenuItem>
-        <MenuItem value="Hourly">Hourly</MenuItem>
-        <MenuItem value="Daily">Daily</MenuItem>
-        <MenuItem value="Monthly">Monthly</MenuItem>
-        <MenuItem value="Run Period">Run Period</MenuItem>
+      <Select
+        onChange={handleChange}
+        id="select"
+        value={value}
+        // disableRipple={true}
+      >
+        <MenuItem disableRipple={true} value="HVAC Timestep">
+          HVAC Timestep
+        </MenuItem>
+        <MenuItem disableRipple={true} value="Zone Timestep">
+          Zone Timestep
+        </MenuItem>
+        <MenuItem disableRipple={true} value="Hourly">
+          Hourly
+        </MenuItem>
+        <MenuItem disableRipple={true} value="Daily">
+          Daily
+        </MenuItem>
+        <MenuItem disableRipple={true} value="Monthly">
+          Monthly
+        </MenuItem>
+        <MenuItem disableRipple={true} value="Run Period">
+          Run Period
+        </MenuItem>
       </Select>
     </div>
   );

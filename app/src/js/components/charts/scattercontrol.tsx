@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
@@ -6,6 +6,7 @@ import { ColorScaleSelect } from '../colorscaleselect';
 import { CheckboxInput } from '../checkboxinput';
 import { RangeSlider } from '../rangeslider';
 import { Scatter } from './scatter';
+import { getBBSize } from '../plotdimensions';
 
 const ScatterControl = props => {
   // x state
@@ -31,6 +32,8 @@ const ScatterControl = props => {
 
   const [reverseColor, setReverseColor] = useState(false);
   const [colorscale, setColorscale] = useState('interpolateViridis');
+  const [plotdims, setPlotdims] = useState({ width: 50, height: 50 });
+  const plotContainer = useRef(null);
 
   const getMaxMin = series => {
     const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
@@ -38,6 +41,15 @@ const ScatterControl = props => {
     let max = Math.max(...series.map(d => d[valkey]));
     return [min, max];
   };
+
+  useEffect(() => {
+    function handleResize() {
+      setTimeout(() => setPlotdims(getBBSize(plotContainer)), 500);
+    }
+    window.addEventListener('resize', handleResize);
+    setPlotdims(getBBSize(plotContainer));
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleXSeriesSelect = (e, v) => {
     getSeries(props.seriesLookupObj[v], props.units).then(d => {
@@ -90,52 +102,58 @@ const ScatterControl = props => {
   };
 
   return (
-    <div>
-      <Scatter
-        units={props.units}
-        colorscale={colorscale}
-        reversecolor={reverseColor}
-        xseries={xSeries}
-        xminrange={xMinRange}
-        xmaxrange={xMaxRange}
-        yseries={ySeries}
-        yminrange={yMinRange}
-        ymaxrange={yMaxRange}
-        zseries={zSeries}
-        zminrange={zMinRange}
-        zmaxrange={zMaxRange}
-      />
-      <SeriesSelect
-        seriesCallback={handleXSeriesSelect}
-        series={props.seriesOptions}
-        title={'Select X Series'}
-      />
-      <SeriesSelect
-        seriesCallback={handleYSeriesSelect}
-        series={props.seriesOptions}
-        title={'Select Y Series'}
-      />
-      <SeriesSelect
-        seriesCallback={handleZSeriesSelect}
-        series={props.seriesOptions}
-        title={'Select Color Series'}
-      />
-
-      <ColorScaleSelect colorScaleCallback={handleColorScaleChange} />
-
-      <CheckboxInput
-        title="Reverse Colorscale"
-        callback={handleReverseColorScale}
-      ></CheckboxInput>
-
-      <div className="range-container">
-        <RangeSlider
-          title={'Colorscale Range'}
-          defaultValue={[zMinData, zMaxData]}
-          rangeCallback={handleColorRangeChange}
-        ></RangeSlider>
+    <React.Fragment>
+      <div ref={plotContainer}>
+        <Scatter
+          plotdims={plotdims}
+          units={props.units}
+          colorscale={colorscale}
+          reversecolor={reverseColor}
+          xseries={xSeries}
+          xminrange={xMinRange}
+          xmaxrange={xMaxRange}
+          yseries={ySeries}
+          yminrange={yMinRange}
+          ymaxrange={yMaxRange}
+          zseries={zSeries}
+          zminrange={zMinRange}
+          zmaxrange={zMaxRange}
+        />
       </div>
-    </div>
+
+      <div className="scatter-controls-container controls-container">
+        <SeriesSelect
+          seriesCallback={handleXSeriesSelect}
+          series={props.seriesOptions}
+          title={'Select X Series'}
+        />
+        <SeriesSelect
+          seriesCallback={handleYSeriesSelect}
+          series={props.seriesOptions}
+          title={'Select Y Series'}
+        />
+        <SeriesSelect
+          seriesCallback={handleZSeriesSelect}
+          series={props.seriesOptions}
+          title={'Select Color Series'}
+        />
+
+        <ColorScaleSelect colorScaleCallback={handleColorScaleChange} />
+
+        <CheckboxInput
+          title="Reverse Colorscale"
+          callback={handleReverseColorScale}
+        ></CheckboxInput>
+
+        <div className="range-container">
+          <RangeSlider
+            title={'Colorscale Range'}
+            defaultValue={[zMinData, zMaxData]}
+            rangeCallback={handleColorRangeChange}
+          ></RangeSlider>
+        </div>
+      </div>
+    </React.Fragment>
   );
 };
 

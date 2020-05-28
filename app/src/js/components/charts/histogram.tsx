@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-
+import { formatInt } from '../numformat';
 import * as d3 from 'd3';
 
 const Histogram = props => {
@@ -7,28 +7,31 @@ const Histogram = props => {
 
   const { series, units, binmin, binmax, numbins } = props;
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
-
-  const width = 1200;
-  const height = 500;
-  const margins = {
-    l: 100,
-    t: 100,
-    b: 50,
-    r: 50
-  };
-
-  const plotwidth = width - margins.l - margins.r;
-  const plotheight = height - margins.t - margins.b;
+  const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
+  const { width, height } = props.plotdims;
 
   useEffect(() => {
     createChart();
-  }, [series, units]);
+  }, [series, units, width, height]);
 
   useEffect(() => {
     createChart();
   }, [binmin, binmax, numbins]);
 
   const createChart = () => {
+    /* DIMENSIONS */
+
+    const margins = {
+      l: 100,
+      t: 100,
+      b: 50,
+      r: 50
+    };
+
+    const plotwidth = width - margins.l - margins.r;
+    const plotheight = height - margins.t - margins.b;
+
+    /* SVG SETUP */
     const svg = d3
       .select(container.current)
       .selectAll('svg')
@@ -43,8 +46,10 @@ const Histogram = props => {
       .join('g');
     plotg
       .attr('class', 'plotg')
-      .attr('transform', `translate(${margins.l}, ${margins.t})`);
+      .attr('transform', `translate(${margins.l}, ${margins.t})`)
+      .on('mouseout', handleMouseout);
 
+    /* SCALES */
     const xScale = d3
       .scaleLinear()
       .range([0, plotwidth])
@@ -54,9 +59,7 @@ const Histogram = props => {
 
     const histogram = d3
       .histogram()
-      .value(d => {
-        return d[valkey];
-      })
+      .value(d => d[valkey])
       .domain(xScale.domain())
       .thresholds(xScale.ticks(numbins));
 
@@ -66,6 +69,7 @@ const Histogram = props => {
 
     yScale.domain([0, ymax]);
 
+    /* DATA RECTS */
     plotg
       .selectAll('.rect_plot')
       .data(bins)
@@ -76,13 +80,17 @@ const Histogram = props => {
       .attr('transform', d => {
         return `translate(${xScale(d.x0)},${yScale(d.length)})`;
       })
-      .attr('width', d => {
-        return Math.abs(xScale(d.x1) - xScale(d.x0)) * 0.95;
+      .attr('width', d => Math.abs(xScale(d.x1) - xScale(d.x0)) * 0.95)
+      .attr('height', d => plotheight - yScale(d.length))
+      .on('mouseover', (d, i, nodes) => {
+        d3.select(nodes[i]).style('opacity', 0.8);
+        handleMouseover(d);
       })
-      .attr('height', d => {
-        return plotheight - yScale(d.length);
+      .on('mouseout', (d, i, nodes) => {
+        d3.select(nodes[i]).style('opacity', 1.0);
       });
 
+    /* AXES */
     const xAxis = d3.axisBottom(xScale).ticks(numbins);
 
     const xAxis_container = svg
@@ -106,9 +114,39 @@ const Histogram = props => {
     xAxis_container.call(xAxis);
 
     yAxis_container.call(yAxis);
+
+    /* TOOLTIP */
+    let tooltipdiv = d3
+      .select(container.current)
+      .selectAll('.tooltip')
+      .data([0])
+      .join('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0);
+
+    function handleMouseover(d) {
+      tooltipdiv
+        .style('opacity', 1)
+        .style('left', event.pageX - 200 + 'px')
+        .style('top', event.pageY - 100 + 'px')
+        .style('transition', 'left 100ms, top 100ms')
+        .html(() => {
+          return `
+            <div>Range: ${d.x0} - ${d.x1} ${d[0][unitkey]}</div>
+            <div>Count: ${d.length}</div>
+          `;
+        })
+        .style('z-index', 999);
+    }
+
+    function handleMouseout(d) {
+      tooltipdiv.style('opacity', 0).style('z-index', -1);
+    }
   };
 
-  return <div className="histogram-container" ref={container}></div>;
+  return (
+    <div className="histogram-container chart-container" ref={container}></div>
+  );
 };
 
 export { Histogram };

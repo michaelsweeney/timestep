@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
+import { defaultView } from './defaultview';
 
 const ViewSelector = props => {
-  const [activeView, setActiveView] = useState('MultiLine');
+  const [activeView, setActiveView] = useState(defaultView);
 
   const handleViewChange = e => {
     switch (e.target.innerHTML) {

@@ -133,26 +133,28 @@ export default function MultiSeries(props) {
 
   // console.log(OPTIONS);
   return (
-    <Autocomplete
-      limitTags={0}
-      multiple
-      onChange={props.seriesCallback}
-      id="virtualize-demo"
-      style={{ width: 800 }}
-      disableListWrap
-      classes={classes}
-      ListboxComponent={ListboxComponent}
-      renderGroup={renderGroup}
-      options={options}
-      // groupBy={option => option[0].toUpperCase()}
-      renderInput={params => (
-        <TextField
-          {...params}
-          variant="outlined"
-          label={props.title || 'select series'}
-        />
-      )}
-      renderOption={option => <Typography noWrap>{option}</Typography>}
-    />
+    <div className="series-select-container">
+      <Autocomplete
+        limitTags={0}
+        multiple
+        onChange={props.seriesCallback}
+        id="virtualize-demo"
+        style={{ width: 800 }}
+        disableListWrap
+        classes={classes}
+        ListboxComponent={ListboxComponent}
+        renderGroup={renderGroup}
+        options={options}
+        // groupBy={option => option[0].toUpperCase()}
+        renderInput={params => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label={props.title || 'select series'}
+          />
+        )}
+        renderOption={option => <Typography noWrap>{option}</Typography>}
+      />
+    </div>
   );
 }

@@ -133,23 +133,25 @@ export default function SeriesSelect(props) {
 
   // console.log(OPTIONS);
   return (
-    <Autocomplete
-      onChange={props.seriesCallback}
-      id="virtualize-demo"
-      style={{ width: 800 }}
-      disableListWrap
-      classes={classes}
-      ListboxComponent={ListboxComponent}
-      renderGroup={renderGroup}
-      options={options}
-      renderInput={params => (
-        <TextField
-          {...params}
-          variant="outlined"
-          label={props.title || 'select series'}
-        />
-      )}
-      renderOption={option => <Typography noWrap>{option}</Typography>}
-    />
+    <div className="series-select-container">
+      <Autocomplete
+        onChange={props.seriesCallback}
+        id="virtualize-demo"
+        style={{ width: 800 }}
+        disableListWrap
+        classes={classes}
+        ListboxComponent={ListboxComponent}
+        renderGroup={renderGroup}
+        options={options}
+        renderInput={params => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label={props.title || 'select series'}
+          />
+        )}
+        renderOption={option => <Typography noWrap>{option}</Typography>}
+      />
+    </div>
   );
 }

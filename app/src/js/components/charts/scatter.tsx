@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import * as d3 from 'd3';
 import { color } from '@material-ui/system';
-
+import { formatInt } from '../numformat';
 const Scatter = props => {
   const container = useRef(null);
 
@@ -21,7 +21,10 @@ const Scatter = props => {
     zmaxrange
   } = props;
 
+  const { width, height } = props.plotdims;
+
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
+  const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
 
   useEffect(() => {
     createChart();
@@ -37,7 +40,9 @@ const Scatter = props => {
     ymaxrange,
     zseries,
     zminrange,
-    zmaxrange
+    zmaxrange,
+    width,
+    height
   ]);
 
   const createColorScale = () => {
@@ -51,8 +56,8 @@ const Scatter = props => {
   };
 
   const createChart = () => {
-    const width = 1200;
-    const height = 500;
+    /* DIMENSIONS */
+
     const margins = {
       l: 100,
       t: 100,
@@ -79,6 +84,8 @@ const Scatter = props => {
       .attr('class', 'plotg')
       .attr('transform', `translate(${margins.l}, ${margins.t})`);
 
+    /* SCALES */
+
     const xScale = d3
       .scaleLinear()
       .range([0, plotwidth])
@@ -91,6 +98,8 @@ const Scatter = props => {
 
     const colorScale = createColorScale();
     const colorFunc = d3[colorscale];
+
+    /* HANDLE DATA */
 
     // create data object with x, y, z, time
     const dataArr = [];
@@ -125,6 +134,10 @@ const Scatter = props => {
       });
     });
 
+    // get units for each dimension;
+    const xunits = xseries[0] != undefined ? xseries[0][unitkey] : '';
+    const yunits = yseries[0] != undefined ? yseries[0][unitkey] : '';
+    const zunits = zseries[0] != undefined ? zseries[0][unitkey] : '';
     const circles = plotg
       .selectAll('.circle-point')
       .data(dataArr)
@@ -135,9 +148,16 @@ const Scatter = props => {
       .attr('r', 3)
       .attr('cx', d => xScale(d.x))
       .attr('cy', d => yScale(d.y))
-      .attr('fill', d => (d.z === '' ? '#3f8cb5' : colorFunc(colorScale(d.z))));
-    // .attr('stroke', 'blue');
-
+      .attr('fill', d => (d.z === '' ? '#3f8cb5' : colorFunc(colorScale(d.z))))
+      .on('mouseover', (d, i, node) => {
+        // d3.select(node[i]).attr('r', 10);
+        handleMouseover(d);
+      })
+      .on('mouseout', (d, i, node) => {
+        // d3.select(node[i]).attr('r', 3);
+        handleMouseout(d);
+      });
+    /* AXES */
     const xAxis = d3.axisBottom(xScale);
     const xaxisg = svg
       .selectAll('.xaxisg')
@@ -155,9 +175,42 @@ const Scatter = props => {
       .attr('class', 'yaxisg')
       .attr('transform', `translate(${margins.l},${margins.t})`)
       .call(yAxis);
+
+    /* TOOLTIP */
+
+    let tooltipdiv = d3
+      .select(container.current)
+      .selectAll('.tooltip')
+      .data([0])
+      .join('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0);
+
+    function handleMouseover(d) {
+      tooltipdiv
+        .style('opacity', 1)
+        .style('left', event.pageX - 200 + 'px')
+        .style('top', event.pageY - 150 + 'px')
+        .style('transition', 'left 100ms, top 100ms')
+        .html(() => {
+          return `
+          <div>${d.time}</div>
+          <div>x: ${formatInt(d.x)} ${xunits}</div>
+          <div>y: ${formatInt(d.y)} ${yunits}</div>
+          <div>y: ${formatInt(d.z)} ${zunits}</div>
+        `;
+        })
+        .style('z-index', 999);
+    }
+
+    function handleMouseout(d) {
+      tooltipdiv.style('opacity', 0).style('z-index', -1);
+    }
   };
 
-  return <div className="scatter-container" ref={container}></div>;
+  return (
+    <div className="scatter-container chart-container" ref={container}></div>
+  );
 };
 
 export { Scatter };

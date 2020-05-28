@@ -21,7 +21,6 @@ const UnitRadio = props => {
         name="radio-button-demo"
         inputProps={{ 'aria-label': 'SI' }}
       />
-      <span>IP</span>
       <Radio
         disableRipple={true}
         color="primary"
@@ -31,6 +30,7 @@ const UnitRadio = props => {
         name="radio-button-demo"
         inputProps={{ 'aria-label': 'IP' }}
       />
+      <span>IP</span>
     </div>
   );
 };
