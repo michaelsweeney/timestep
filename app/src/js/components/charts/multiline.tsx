@@ -24,6 +24,12 @@ const MultiLine = props => {
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
   const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
 
+  const labelmargins = {
+    y: 40,
+    x: 40,
+    title: 20
+  };
+
   const margins = {
     l: 100,
     t: 100,
@@ -172,6 +178,65 @@ const MultiLine = props => {
         .style('stroke', (d, i) => seriesConfig[i].color)
         .style('fill', 'none');
     }
+
+    /* LABELS AND TITLES */
+    const xlabelg = svg
+      .selectAll('.xlabelg')
+      .data([0])
+      .join('g')
+      .attr('class', 'xlabelg')
+      .attr(
+        'transform',
+        `translate(${margins.l + plotwidth / 2},${margins.t +
+          plotheight +
+          labelmargins.x})`
+      );
+
+    const ylabelg = svg
+      .selectAll('.ylabelg')
+      .data([0])
+      .join('g')
+      .attr('class', 'ylabelg')
+      .attr(
+        'transform',
+        `translate(${margins.l - labelmargins.y},${margins.t +
+          plotheight / 2})rotate(270)`
+      );
+
+    const titleg = svg
+      .selectAll('.titleg')
+      .data([0])
+      .join('g')
+      .attr('class', 'titleg')
+      .attr(
+        'transform',
+        `translate(${margins.l + plotwidth / 2},${margins.t -
+          labelmargins.title})`
+      );
+
+    xlabelg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('text-anchor', 'middle')
+      .attr('class', 'x-axis-text axis-text')
+      .text('Day of Year');
+
+    ylabelg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('class', 'y-axis-text axis-text')
+      .attr('text-anchor', 'middle')
+      .text('units tbd (also need y2)');
+
+    titleg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('class', 'title-text')
+      .attr('text-anchor', 'middle')
+      .text(() => 'Multiline Title tbd');
   };
 
   return (

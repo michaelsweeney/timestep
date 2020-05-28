@@ -13,12 +13,7 @@ const TimeStepSelect = props => {
   return (
     <div className="timestep-select">
       <InputLabel id="label">Timestep</InputLabel>
-      <Select
-        onChange={handleChange}
-        id="select"
-        value={value}
-        // disableRipple={true}
-      >
+      <Select onChange={handleChange} id="select" value={value}>
         <MenuItem disableRipple={true} value="HVAC Timestep">
           HVAC Timestep
         </MenuItem>

@@ -46,12 +46,16 @@ const Heatmap = props => {
 
   const createChart = () => {
     /* DIMENSIONS */
-
+    const labelmargins = {
+      y: 40,
+      x: 40,
+      title: 20
+    };
     const margins = {
       l: 100,
       t: 100,
       b: 50,
-      r: 100
+      r: 200
     };
 
     const plotwidth = width - margins.l - margins.r;
@@ -129,6 +133,65 @@ const Heatmap = props => {
       .attr('class', 'y-axis-g')
       .attr('transform', `translate(${margins.l}, ${margins.t})`)
       .call(yAxis);
+
+    /* LABELS AND TITLES */
+    const xlabelg = svg
+      .selectAll('.xlabelg')
+      .data([0])
+      .join('g')
+      .attr('class', 'xlabelg')
+      .attr(
+        'transform',
+        `translate(${margins.l + plotwidth / 2},${margins.t +
+          plotheight +
+          labelmargins.x})`
+      );
+
+    const ylabelg = svg
+      .selectAll('.ylabelg')
+      .data([0])
+      .join('g')
+      .attr('class', 'ylabelg')
+      .attr(
+        'transform',
+        `translate(${margins.l - labelmargins.y},${margins.t +
+          plotheight / 2})rotate(270)`
+      );
+
+    const titleg = svg
+      .selectAll('.titleg')
+      .data([0])
+      .join('g')
+      .attr('class', 'titleg')
+      .attr(
+        'transform',
+        `translate(${margins.l + plotwidth / 2},${margins.t -
+          labelmargins.title})`
+      );
+
+    xlabelg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('text-anchor', 'middle')
+      .attr('class', 'x-axis-text axis-text')
+      .text('Day of Year');
+
+    ylabelg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('class', 'y-axis-text axis-text')
+      .attr('text-anchor', 'middle')
+      .text('Hour of Day');
+
+    titleg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('class', 'title-text')
+      .attr('text-anchor', 'middle')
+      .text(() => (series[0] ? series[0].name + ' Heatmap' : '-'));
 
     /* TOOLTIP */
     let tooltipdiv = d3
