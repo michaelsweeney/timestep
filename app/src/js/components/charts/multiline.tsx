@@ -32,9 +32,9 @@ const MultiLine = props => {
 
   const margins = {
     l: 100,
-    t: 100,
+    t: 50,
     b: 50,
-    r: 50
+    r: 100
   };
 
   const plotwidth = width - margins.l - margins.r;

@@ -1,2 +1,2 @@
-const defaultView = 'Histogram';
+const defaultView = 'Heatmap';
 export { defaultView };

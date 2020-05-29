@@ -15,7 +15,7 @@ const HeatmapControl = props => {
   const [minData, setMinData] = useState(0);
   const [maxData, setMaxData] = useState(0);
   const [reverseColor, setReverseColor] = useState(false);
-  const [colorscale, setColorscale] = useState('interpolateViridis');
+  const [colorfunc, setColorfunc] = useState('interpolateViridis');
   const [plotdims, setPlotdims] = useState({ width: 50, height: 50 });
   const plotContainer = useRef(null);
 
@@ -56,7 +56,7 @@ const HeatmapControl = props => {
   };
 
   const handleColorScaleChange = e => {
-    setColorscale(e);
+    setColorfunc(e);
   };
 
   const handleReverseColorScale = e => {
@@ -74,7 +74,7 @@ const HeatmapControl = props => {
           plotdims={plotdims}
           series={series}
           units={props.units}
-          colorscale={colorscale}
+          colorfunc={colorfunc}
           minrange={minRange}
           maxrange={maxRange}
           reversecolor={reverseColor}

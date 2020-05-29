@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import * as d3 from 'd3';
-import { color } from '@material-ui/system';
 import { formatInt } from '../numformat';
 const Scatter = props => {
   const container = useRef(null);
 
   const {
     units,
-    colorscale,
+    colorfunc,
     reversecolor,
     xseries,
     xminrange,
@@ -30,7 +29,7 @@ const Scatter = props => {
     createChart();
   }, [
     units,
-    colorscale,
+    colorfunc,
     reversecolor,
     xseries,
     xminrange,
@@ -60,13 +59,14 @@ const Scatter = props => {
     const labelmargins = {
       y: 40,
       x: 40,
-      title: 40
+      title: 30,
+      legend: 50
     };
     const margins = {
       l: 100,
-      t: 100,
+      t: 50,
       b: 50,
-      r: 50
+      r: 200
     };
 
     const plotwidth = width - margins.l - margins.r;
@@ -101,7 +101,7 @@ const Scatter = props => {
       .domain([yminrange, ymaxrange]);
 
     const colorScale = createColorScale();
-    const colorFunc = d3[colorscale];
+    const colorFunc = d3[colorfunc];
 
     /* HANDLE DATA */
 
@@ -154,11 +154,9 @@ const Scatter = props => {
       .attr('cy', d => yScale(d.y))
       .attr('fill', d => (d.z === '' ? '#3f8cb5' : colorFunc(colorScale(d.z))))
       .on('mouseover', (d, i, node) => {
-        // d3.select(node[i]).attr('r', 10);
         handleMouseover(d);
       })
       .on('mouseout', (d, i, node) => {
-        // d3.select(node[i]).attr('r', 3);
         handleMouseout(d);
       });
     /* AXES */
@@ -253,6 +251,91 @@ const Scatter = props => {
           return '';
         }
       });
+
+    /* COLOR LEGEND */
+
+    const defs = svg
+      .selectAll('.defsg')
+      .data([0])
+      .join('g')
+      .attr('class', 'defsg')
+      .selectAll('.color-gradient')
+      .data([0])
+      .join('defs')
+      .attr('class', 'color-gradient');
+
+    const colorlegendheight = plotheight / 1.5;
+    const colorlegendscale = d3
+      .scaleLinear()
+      .range([colorlegendheight, 0])
+      .domain([zminrange, zmaxrange]);
+
+    const colorLegendAxis = d3
+      .axisRight()
+      .scale(colorlegendscale)
+      .ticks(5);
+
+    let gradientid = Math.floor(Math.random() * 1e6) + '-gradient';
+
+    // innerhtml avoids bugs at render, for some reason lineargradient id isn't picked up otherwise
+    defs.html(
+      `<LinearGradient
+   class="linear-gradient"
+   id="${gradientid}"
+   y1="0%"
+   x1="100%"
+   y2="100%"
+   x2="100%"
+   spreadMethod="pad">
+     <stop
+       class="stop0"
+       stop-color="${!reversecolor ? colorFunc(1.0) : colorFunc(0.0)}"
+       offset="0%"
+       stop-opacity="1"
+     ></stop>
+     <stop
+       class="stop33"
+       stop-color="${!reversecolor ? colorFunc(0.66) : colorFunc(0.33)}"
+       offset="33%"
+       stop-opacity="1"
+     ></stop>
+     <stop
+       class="stop66"
+       stop-color="${!reversecolor ? colorFunc(0.33) : colorFunc(0.66)}"
+       offset="66%"
+       stop-opacity="1"
+     ></stop>
+     <stop
+       class="stop100"
+       stop-color="${!reversecolor ? colorFunc(0.0) : colorFunc(1.0)}"
+       offset="100%"
+       stop-opacity="1"
+     ></stop>
+   </LinearGradient>`
+    );
+
+    const legendg = svg
+      .selectAll('.legendg')
+      .data([0])
+      .join('g')
+      .attr('class', 'legendg')
+      .attr(
+        'transform',
+        `translate(${margins.l + plotwidth + labelmargins.legend},${margins.t +
+          plotheight / 2 -
+          colorlegendheight / 2})`
+      );
+
+    legendg.call(colorLegendAxis);
+    legendg
+      .selectAll('.clr-rect')
+      .data([0])
+      .join('rect')
+      .attr('x', -30)
+      .attr('class', 'clr-rect')
+      .attr('width', 30)
+      .attr('height', colorlegendheight)
+      .style('fill', `url(#${gradientid})`);
 
     /* TOOLTIP */
 

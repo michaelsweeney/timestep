@@ -94,18 +94,6 @@ ListboxComponent.propTypes = {
   children: PropTypes.node
 };
 
-function random(length) {
-  const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-
-  for (let i = 0; i < length; i += 1) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-
-  return result;
-}
-
 const useStyles = makeStyles({
   listbox: {
     boxSizing: 'border-box',
@@ -127,11 +115,6 @@ export default function MultiSeries(props) {
   const classes = useStyles();
   const options = props.series;
 
-  const _OPTIONS = Array.from(new Array(10000))
-    .map(() => random(10 + Math.ceil(Math.random() * 20)))
-    .sort((a, b) => a.toUpperCase().localeCompare(b.toUpperCase()));
-
-  // console.log(OPTIONS);
   return (
     <div className="series-select-container">
       <Autocomplete

@@ -13,15 +13,15 @@ const ScatterControl = props => {
   const [xSeries, setXSeries] = useState([]);
   const [xMinRange, setXMinRange] = useState(0);
   const [xMaxRange, setXMaxRange] = useState(1);
-  const [xMinData, setXMinData] = useState(0);
-  const [xMaxData, setXMaxData] = useState(1);
+  // const [xMinData, setXMinData] = useState(0);
+  // const [xMaxData, setXMaxData] = useState(1);
 
   // y state
   const [ySeries, setYSeries] = useState([]);
   const [yMinRange, setYMinRange] = useState(0);
   const [yMaxRange, setYMaxRange] = useState(1);
-  const [yMinData, setYMinData] = useState(0);
-  const [yMaxData, setYMaxData] = useState(1);
+  // const [yMinData, setYMinData] = useState(0);
+  // const [yMaxData, setYMaxData] = useState(1);
 
   // z state
   const [zSeries, setZSeries] = useState([]);
@@ -31,7 +31,7 @@ const ScatterControl = props => {
   const [zMaxData, setZMaxData] = useState(1);
 
   const [reverseColor, setReverseColor] = useState(false);
-  const [colorscale, setColorscale] = useState('interpolateViridis');
+  const [colorfunc, setColorfunc] = useState('interpolateViridis');
   const [plotdims, setPlotdims] = useState({ width: 50, height: 50 });
   const plotContainer = useRef(null);
 
@@ -57,8 +57,8 @@ const ScatterControl = props => {
       let [min, max] = getMaxMin(d);
       setXMinRange(min);
       setXMaxRange(max);
-      setXMinData(min);
-      setXMaxData(max);
+      // setXMinData(min);
+      // setXMaxData(max);
     });
   };
 
@@ -68,8 +68,8 @@ const ScatterControl = props => {
       let [min, max] = getMaxMin(d);
       setYMinRange(min);
       setYMaxRange(max);
-      setYMinData(min);
-      setYMaxData(max);
+      // setYMinData(min);
+      // setYMaxData(max);
     });
   };
 
@@ -90,7 +90,7 @@ const ScatterControl = props => {
   };
 
   const handleColorScaleChange = e => {
-    setColorscale(e);
+    setColorfunc(e);
   };
 
   const handleReverseColorScale = e => {
@@ -107,7 +107,7 @@ const ScatterControl = props => {
         <Scatter
           plotdims={plotdims}
           units={props.units}
-          colorscale={colorscale}
+          colorfunc={colorfunc}
           reversecolor={reverseColor}
           xseries={xSeries}
           xminrange={xMinRange}

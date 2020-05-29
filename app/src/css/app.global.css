@@ -191,3 +191,11 @@ body {
 
 
 
+
+.series-select-container .MuiAutocomplete-root {
+  display: inline-block;
+}
+
+.range-container div {
+  display: inline-block;
+}

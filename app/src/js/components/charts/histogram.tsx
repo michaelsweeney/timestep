@@ -23,13 +23,13 @@ const Histogram = props => {
     const labelmargins = {
       y: 40,
       x: 40,
-      title: 40
+      title: 30
     };
     const margins = {
       l: 100,
-      t: 100,
+      t: 50,
       b: 50,
-      r: 50
+      r: 100
     };
 
     const plotwidth = width - margins.l - margins.r;
@@ -168,7 +168,7 @@ const Histogram = props => {
       .join('text')
       .attr('class', 'y-axis-text axis-text')
       .attr('text-anchor', 'middle')
-      .text('Frequency Count');
+      .text(() => (series[0] ? 'Frequency' : '-'));
 
     titleg
       .selectAll('text')
