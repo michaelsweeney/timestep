@@ -38,13 +38,14 @@ const Heatmap = props => {
       y: 40,
       x: 40,
       title: 20,
-      legend: 50
+      legend: 50,
+      legendlabel: 100
     };
     const margins = {
       l: 100,
       t: 50,
       b: 50,
-      r: 100
+      r: 125
     };
 
     const plotwidth = width - margins.l - margins.r;
@@ -135,6 +136,13 @@ const Heatmap = props => {
           plotheight +
           labelmargins.x})`
       );
+    xlabelg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('text-anchor', 'middle')
+      .attr('class', 'x-axis-text axis-text')
+      .text('Day of Year');
 
     const ylabelg = svg
       .selectAll('.ylabelg')
@@ -147,6 +155,34 @@ const Heatmap = props => {
           plotheight / 2})rotate(270)`
       );
 
+    ylabelg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('class', 'y-axis-text axis-text')
+      .attr('text-anchor', 'middle')
+      .text('Hour of Day');
+
+    const legendlabelg = svg
+      .selectAll('.legendlabelg')
+      .data([0])
+      .join('g')
+      .attr('class', 'legendlabelg')
+      .attr(
+        'transform',
+        `translate(${margins.l +
+          plotwidth +
+          labelmargins.legendlabel},${margins.t + plotheight / 2})rotate(270)`
+      );
+
+    legendlabelg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('class', 'z-axis-text axis-text')
+      .attr('text-anchor', 'middle')
+      .text(() => (series[0] != undefined ? series[0][unitkey] : '-'));
+
     const titleg = svg
       .selectAll('.titleg')
       .data([0])
@@ -157,22 +193,6 @@ const Heatmap = props => {
         `translate(${margins.l + plotwidth / 2},${margins.t -
           labelmargins.title})`
       );
-
-    xlabelg
-      .selectAll('text')
-      .data([0])
-      .join('text')
-      .attr('text-anchor', 'middle')
-      .attr('class', 'x-axis-text axis-text')
-      .text('Day of Year');
-
-    ylabelg
-      .selectAll('text')
-      .data([0])
-      .join('text')
-      .attr('class', 'y-axis-text axis-text')
-      .attr('text-anchor', 'middle')
-      .text('Hour of Day');
 
     titleg
       .selectAll('text')

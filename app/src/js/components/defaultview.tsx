@@ -1,2 +1,2 @@
-const defaultView = 'Heatmap';
+const defaultView = 'MultiLine';
 export { defaultView };

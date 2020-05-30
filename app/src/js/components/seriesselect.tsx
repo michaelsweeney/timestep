@@ -115,7 +115,6 @@ export default function SeriesSelect(props) {
   const classes = useStyles();
   const options = props.series;
 
-  // console.log(OPTIONS);
   return (
     <div className="series-select-container">
       <Autocomplete

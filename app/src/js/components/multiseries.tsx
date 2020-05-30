@@ -118,7 +118,7 @@ export default function MultiSeries(props) {
   return (
     <div className="series-select-container">
       <Autocomplete
-        limitTags={0}
+        // limitTags={0}
         multiple
         onChange={props.seriesCallback}
         id="virtualize-demo"

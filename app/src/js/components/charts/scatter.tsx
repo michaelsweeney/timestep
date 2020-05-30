@@ -60,7 +60,8 @@ const Scatter = props => {
       y: 40,
       x: 40,
       title: 30,
-      legend: 50
+      legend: 50,
+      legendlabel: 100
     };
     const margins = {
       l: 100,
@@ -159,6 +160,7 @@ const Scatter = props => {
       .on('mouseout', (d, i, node) => {
         handleMouseout(d);
       });
+
     /* AXES */
     const xAxis = d3.axisBottom(xScale);
     const xaxisg = svg
@@ -179,6 +181,7 @@ const Scatter = props => {
       .call(yAxis);
 
     /* LABELS AND TITLES */
+
     const xlabelg = svg
       .selectAll('.xlabelg')
       .data([0])
@@ -190,6 +193,13 @@ const Scatter = props => {
           plotheight +
           labelmargins.x})`
       );
+    xlabelg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('text-anchor', 'middle')
+      .attr('class', 'x-axis-text axis-text')
+      .text(() => (xseries[0] ? xseries[0].name : '-'));
 
     const ylabelg = svg
       .selectAll('.ylabelg')
@@ -202,6 +212,34 @@ const Scatter = props => {
           plotheight / 2})rotate(270)`
       );
 
+    ylabelg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('class', 'y-axis-text axis-text')
+      .attr('text-anchor', 'middle')
+      .text(() => (yseries[0] ? yseries[0].name : '-'));
+
+    const legendlabelg = svg
+      .selectAll('.legendlabelg')
+      .data([0])
+      .join('g')
+      .attr('class', 'legendlabelg')
+      .attr(
+        'transform',
+        `translate(${margins.l +
+          plotwidth +
+          labelmargins.legendlabel},${margins.t + plotheight / 2})rotate(270)`
+      );
+
+    legendlabelg
+      .selectAll('text')
+      .data([0])
+      .join('text')
+      .attr('class', 'z-axis-text axis-text')
+      .attr('text-anchor', 'middle')
+      .text(() => (zseries[0] != undefined ? zseries[0][unitkey] : '-'));
+
     const titleg = svg
       .selectAll('.titleg')
       .data([0])
@@ -212,23 +250,6 @@ const Scatter = props => {
         `translate(${margins.l + plotwidth / 2},${margins.t -
           labelmargins.title})`
       );
-
-    xlabelg
-      .selectAll('text')
-      .data([0])
-      .join('text')
-      .attr('text-anchor', 'middle')
-      .attr('class', 'x-axis-text axis-text')
-      .text(() => (xseries[0] ? xseries[0].name : '-'));
-
-    ylabelg
-      .selectAll('text')
-      .data([0])
-      .join('text')
-      .attr('class', 'y-axis-text axis-text')
-      .attr('text-anchor', 'middle')
-      .text(() => (yseries[0] ? yseries[0].name : '-'));
-
     titleg
       .selectAll('text')
       .data([0])
@@ -358,7 +379,7 @@ const Scatter = props => {
           <div>${d.time}</div>
           <div>x: ${formatInt(d.x)} ${xunits}</div>
           <div>y: ${formatInt(d.y)} ${yunits}</div>
-          <div>y: ${formatInt(d.z)} ${zunits}</div>
+          <div>color: ${formatInt(d.z)} ${zunits}</div>
         `;
         })
         .style('z-index', 999);

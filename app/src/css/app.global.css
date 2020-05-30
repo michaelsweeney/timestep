@@ -199,3 +199,11 @@ body {
 .range-container div {
   display: inline-block;
 }
+
+.multiline-handle-container {
+  margin-left: 100px;
+  /* padding-left: 20%; */
+  /* padding-right: 20%; */
+  /* display: inline-block; */
+}
+
