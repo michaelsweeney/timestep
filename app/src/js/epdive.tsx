@@ -8,7 +8,7 @@ import { UnitRadio } from './components/unitradio';
 import { TimeStepSelect } from './components/timestepselect';
 import { ViewSelector } from './components/viewselector';
 import { ViewControl } from './components/viewcontrol';
-import { defaultView } from './components/defaultview';
+import { defaultView, defaultStep } from './components/defaults';
 import '../css/app.global.css';
 
 const EpDive = () => {
@@ -16,7 +16,7 @@ const EpDive = () => {
   const [units, setUnits] = useState('si');
   const [activeView, setActiveView] = useState(defaultView);
   const [seriesOptions, setSeriesOptions] = useState([]);
-  const [timestepType, setTimestepType] = useState('Hourly');
+  const [timestepType, setTimestepType] = useState(defaultStep);
   const [seriesLookupObj, setSeriesLookupObj] = useState({});
   const handleFileChange = f => {
     setFiles(f);

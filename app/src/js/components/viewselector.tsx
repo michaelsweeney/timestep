@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import { defaultView } from './defaultview';
+import { defaultView } from './defaults';
 
 const ViewSelector = props => {
   const [activeView, setActiveView] = useState(defaultView);

@@ -299,7 +299,7 @@ async function getSeries(filetag, units) {
     if (row.Year) {
       year = row.Year;
     } else {
-      year = new Date().getFullYear();
+      year = 2017; // new Date().getFullYear();
     }
     let time = new Date(
       year + '-' + row.Month + '-' + row.Day + ' ' + row.Hour + ':' + row.Minute

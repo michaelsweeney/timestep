@@ -4,6 +4,11 @@ import * as d3 from 'd3';
 import { formatInt } from '../numformat';
 const Scatter = props => {
   const container = useRef(null);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomDomain, setZoomDomain] = useState({
+    x: [],
+    y: []
+  });
 
   const {
     units,
@@ -55,6 +60,9 @@ const Scatter = props => {
   };
 
   const createChart = () => {
+    let clipid = Math.floor(Math.random() * 1e6) + '-clip';
+    let gradientid = Math.floor(Math.random() * 1e6) + '-gradient';
+
     /* DIMENSIONS */
     const labelmargins = {
       y: 40,
@@ -87,19 +95,23 @@ const Scatter = props => {
       .join('g');
     plotg
       .attr('class', 'plotg')
-      .attr('transform', `translate(${margins.l}, ${margins.t})`);
+      .attr('transform', `translate(${margins.l}, ${margins.t})`)
+      .attr('clip-path', `url(#${clipid})`);
 
     /* SCALES */
 
-    const xScale = d3
-      .scaleLinear()
-      .range([0, plotwidth])
-      .domain([xminrange, xmaxrange]);
+    const xScale = d3.scaleLinear().range([0, plotwidth]);
+    // .domain([xminrange, xmaxrange]);
 
-    const yScale = d3
-      .scaleLinear()
-      .range([plotheight, 0])
-      .domain([yminrange, ymaxrange]);
+    const yScale = d3.scaleLinear().range([plotheight, 0]);
+    // .domain([yminrange, ymaxrange]);
+    if (!isZoomed) {
+      xScale.domain([xminrange, xmaxrange]);
+      yScale.domain([yminrange, ymaxrange]);
+    } else {
+      xScale.domain(zoomDomain.x);
+      yScale.domain(zoomDomain.y);
+    }
 
     const colorScale = createColorScale();
     const colorFunc = d3[colorfunc];
@@ -276,10 +288,12 @@ const Scatter = props => {
     /* COLOR LEGEND */
 
     const defs = svg
-      .selectAll('.defsg')
+      .selectAll('.defs')
       .data([0])
       .join('g')
-      .attr('class', 'defsg')
+      .attr('class', 'defs');
+
+    defs
       .selectAll('.color-gradient')
       .data([0])
       .join('defs')
@@ -295,8 +309,6 @@ const Scatter = props => {
       .axisRight()
       .scale(colorlegendscale)
       .ticks(5);
-
-    let gradientid = Math.floor(Math.random() * 1e6) + '-gradient';
 
     // innerhtml avoids bugs at render, for some reason lineargradient id isn't picked up otherwise
     defs.html(
@@ -388,8 +400,76 @@ const Scatter = props => {
     function handleMouseout(d) {
       tooltipdiv.style('opacity', 0).style('z-index', -1);
     }
-  };
 
+    /* HANDLE ZOOM */
+
+    const clippath = defs
+      .selectAll('.clip-path')
+      .data([0])
+      .join('clipPath')
+      .attr('id', clipid)
+      .attr('class', 'clip-path');
+
+    clippath
+      .selectAll('rect')
+      .data([0])
+      .join('rect')
+      .attr('width', plotwidth)
+      .attr('height', plotheight)
+      .attr('x', 0)
+      .attr('y', 0);
+
+    const brush = d3
+      .brush()
+      .extent([
+        [0, 0],
+        [plotwidth, plotheight]
+      ])
+      .on('end', brushended);
+
+    let idleTimeout;
+    let idleDelay = 350;
+
+    function idled() {
+      idleTimeout = null;
+    }
+
+    function brushended() {
+      let s = d3.event.selection;
+      if (!s) {
+        if (!idleTimeout) return (idleTimeout = setTimeout(idled, idleDelay));
+        xScale.domain([xminrange, xmaxrange]);
+        yScale.domain([yminrange, ymaxrange]);
+        setIsZoomed(false);
+      } else {
+        let xzoom = [s[0][0], s[1][0]].map(xScale.invert, xScale);
+        let yzoom = [s[1][1], s[0][1]].map(yScale.invert, yScale);
+        xScale.domain(xzoom);
+        yScale.domain(yzoom);
+        setIsZoomed(true);
+        setZoomDomain({
+          x: xzoom,
+          y: yzoom
+        });
+        plotg.select('.brush').call(brush.move, null);
+      }
+      zoom();
+    }
+    function zoom() {
+      xaxisg.call(xAxis);
+      yaxisg.call(yAxis);
+      plotg
+        .selectAll('.circle-point')
+        .attr('cx', d => xScale(d.x))
+        .attr('cy', d => yScale(d.y));
+    }
+    plotg
+      .selectAll('.brush')
+      .data([0])
+      .join('g')
+      .attr('class', 'brush')
+      .call(brush);
+  };
   return (
     <div className="scatter-container chart-container" ref={container}></div>
   );

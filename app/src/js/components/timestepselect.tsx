@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-
+import { defaultStep } from './defaults';
 const TimeStepSelect = props => {
-  const [value, setValue] = useState('Hourly');
+  const [value, setValue] = useState(defaultStep);
 
   const handleChange = e => {
     setValue(e.target.value);
