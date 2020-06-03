@@ -69,7 +69,7 @@ const HeatmapControl = props => {
 
   return (
     <React.Fragment>
-      <div ref={plotContainer}>
+      <div className="ref-container" ref={plotContainer}>
         <Heatmap
           plotdims={plotdims}
           series={series}
@@ -85,6 +85,7 @@ const HeatmapControl = props => {
           seriesCallback={handleSeriesSelect}
           series={props.seriesOptions}
         />
+
         <ColorScaleSelect colorScaleCallback={handleColorScaleChange} />
 
         <CheckboxInput
@@ -93,11 +94,13 @@ const HeatmapControl = props => {
         ></CheckboxInput>
 
         <div className="range-container">
-          <RangeSlider
-            title={'Colorscale Range'}
-            defaultValue={[minData, maxData]}
-            rangeCallback={handleRangeChange}
-          ></RangeSlider>
+          <div className="slider-wrapper">
+            <RangeSlider
+              title={'Colorscale Range'}
+              defaultValue={[minData, maxData]}
+              rangeCallback={handleRangeChange}
+            ></RangeSlider>
+          </div>
         </div>
       </div>
     </React.Fragment>

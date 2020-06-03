@@ -43,7 +43,7 @@ const RangeSlider = props => {
   ];
 
   return (
-    <div style={{ width: '200px', display: 'inlineBlock' }}>
+    <div style={{ width: '300px', display: 'inlineBlock' }}>
       <Typography id="discrete-slider-always" gutterBottom>
         {props.title}
       </Typography>

@@ -1,4 +1,4 @@
-import { format } from 'd3';
+import { format, timeFormat } from 'd3';
 
 function formatInt(n) {
   if (!isFinite(+n)) {
@@ -32,4 +32,9 @@ function formatInt(n) {
   }
 }
 
-export { formatInt };
+function formatDate(n) {
+  let parsestr = '%d %b, %H:%M';
+  return timeFormat(parsestr)(n);
+}
+
+export { formatInt, formatDate };

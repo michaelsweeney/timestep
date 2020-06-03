@@ -18,6 +18,16 @@ const EpDive = () => {
   const [seriesOptions, setSeriesOptions] = useState([]);
   const [timestepType, setTimestepType] = useState(defaultStep);
   const [seriesLookupObj, setSeriesLookupObj] = useState({});
+
+  const ignoreReset = true;
+  const [key, setKey] = useState(0);
+
+  useEffect(() => {
+    if (!ignoreReset) {
+      setKey(key + 1);
+    }
+  }, [files, units, timestepType]);
+
   const handleFileChange = f => {
     setFiles(f);
     handleSeriesOptions(f, units, timestepType);
@@ -85,6 +95,7 @@ const EpDive = () => {
         <ViewSelector activeViewCallback={handleActiveViewChange} />
       </div>
       <ViewControl
+        key={key}
         units={units}
         seriesOptions={seriesOptions}
         seriesLookupObj={seriesLookupObj}

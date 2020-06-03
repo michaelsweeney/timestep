@@ -383,12 +383,12 @@ const Scatter = props => {
     function handleMouseover(d) {
       tooltipdiv
         .style('opacity', 1)
-        .style('left', event.pageX - 200 + 'px')
+        .style('left', event.pageX - 250 + 'px')
         .style('top', event.pageY - 150 + 'px')
         .style('transition', 'left 100ms, top 100ms')
         .html(() => {
           return `
-          <div>${d.time}</div>
+          <div>${FormatDate(d.time)}</div>
           <div>x: ${formatInt(d.x)} ${xunits}</div>
           <div>y: ${formatInt(d.y)} ${yunits}</div>
           <div>color: ${formatInt(d.z)} ${zunits}</div>
@@ -401,7 +401,7 @@ const Scatter = props => {
       tooltipdiv.style('opacity', 0).style('z-index', -1);
     }
 
-    /* HANDLE ZOOM */
+    /* HANDLE ZOOM & BRUSH */
 
     const clippath = defs
       .selectAll('.clip-path')

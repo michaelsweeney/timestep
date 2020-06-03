@@ -56,7 +56,7 @@ const HistogramControl = props => {
 
   return (
     <React.Fragment>
-      <div ref={plotContainer}>
+      <div className="ref-container" ref={plotContainer}>
         <Histogram
           plotdims={plotdims}
           series={series}
@@ -73,19 +73,22 @@ const HistogramControl = props => {
         />
 
         <div className="range-container">
-          <RangeSlider
-            title={'Bin Range'}
-            defaultValue={[minData, maxData]}
-            rangeCallback={handleRangeChange}
-          ></RangeSlider>
-
-          <SingleSlider
-            title={'Bins: ' + numBins}
-            min={0}
-            max={50}
-            defaultValue={10}
-            sliderCallback={handleNumBinChange}
-          ></SingleSlider>
+          <div className="slider-wrapper">
+            <RangeSlider
+              title={'Bin Range'}
+              defaultValue={[minData, maxData]}
+              rangeCallback={handleRangeChange}
+            ></RangeSlider>
+          </div>
+          <div className="slider-wrapper">
+            <SingleSlider
+              title={'Bins: ' + numBins}
+              min={0}
+              max={50}
+              defaultValue={10}
+              sliderCallback={handleNumBinChange}
+            ></SingleSlider>
+          </div>
         </div>
       </div>
     </React.Fragment>

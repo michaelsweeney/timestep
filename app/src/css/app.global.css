@@ -196,7 +196,8 @@ body {
   display: inline-block;
 }
 
-.range-container div {
+.range-container .slider-wrapper div{
+  text-align: center;
   display: inline-block;
 }
 
@@ -207,3 +208,14 @@ body {
   /* display: inline-block; */
 }
 
+
+.multiline-container .tooltip-rect {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  transition: opacity 200ms;
+  box-sizing: border-box;
+  border-radius: 5px;
+  z-index: 999;
+}

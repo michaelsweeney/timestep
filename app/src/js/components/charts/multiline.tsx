@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { formatInt } from '../numformat';
+import { formatInt, formatDate } from '../numformat';
 
 import * as d3 from 'd3';
 
@@ -12,19 +12,18 @@ const MultiLine = props => {
     x: []
   });
 
-  let isY1 = true;
-  let isY2 = false;
-
   const yconfig = {
     y1: {
       min: 0,
       max: 1,
-      units: []
+      units: [],
+      active: true
     },
     y2: {
       min: 0,
       max: 1,
-      units: []
+      units: [],
+      active: false
     }
   };
 
@@ -54,13 +53,13 @@ const MultiLine = props => {
   }, [seriesArray, seriesConfig, width, height]);
 
   const handleYAxes = () => {
-    isY2 =
+    yconfig.y2.active =
       seriesConfig.filter(f => {
         return f.yaxis == 'Y2';
       }).length > 0
         ? true
         : false;
-    isY1 =
+    yconfig.y1.active =
       seriesConfig.filter(f => {
         return f.yaxis == 'Y2';
       }).length > 0
@@ -183,13 +182,13 @@ const MultiLine = props => {
       .attr('class', 'yaxis2g')
       .attr('transform', `translate(${margins.l + plotwidth},${margins.t})`);
 
-    if (isY1 || !isY2) {
+    if (yconfig.y1.active || !yconfig.y2.active) {
       yaxis1g.call(yAxis1);
     } else {
       svg.selectAll('.yaxis1g').remove();
     }
 
-    if (isY2) {
+    if (yconfig.y2.active) {
       yaxis2g.call(yAxis2);
     } else {
       svg.selectAll('.yaxis2g').remove();
@@ -220,6 +219,7 @@ const MultiLine = props => {
           }
         })
         .style('stroke', (d, i) => seriesConfig[i].color)
+        .style('stroke-width', '2px')
         .style('fill', 'none');
     }
 
@@ -306,39 +306,23 @@ const MultiLine = props => {
       .attr('class', 'hoverg')
       .attr('transform', `translate(${margins.l},${margins.t})`);
 
-    // const mouserect = hoverg
-    //   .selectAll('.mouserect')
-    //   .data([0])
-    //   .join('rect')
-    //   .attr('class', 'mouserect')
-    //   .attr('height', plotheight)
-    //   .attr('width', plotwidth)
-    //   .style('opacity', 0)
-    //   .on('mousemove', mouseMove)
-    //   .on('mouseout', mouseOut)
-    //   .on('mouseover', mouseOver);
-
-    const tooltipg = hoverg
-      .selectAll('.tooltipg')
-      .data([0])
-      .join('g')
-      .attr('class', 'tooltipg');
-
     const xline = hoverg
       .selectAll('.x-line')
       .data([0])
-      .join('rect')
+      .join('line')
       .attr('class', 'x-line')
-      .attr('width', 1)
-      .attr('height', plotheight);
+      .attr('stroke', 'black')
+      .attr('stroke-dasharray', '5, 5')
+      .attr('y1', 0)
+      .attr('y2', plotheight)
+      .style('opacity', 0);
 
     const markers = hoverg
       .selectAll('.marker-circle')
       .data(seriesArray)
       .join('circle')
       .attr('class', 'marker-circle')
-      .attr('r', 3)
-      .style('stroke', 'blue');
+      .attr('r', 4);
 
     const tooltip = d3
       .select(container.current)
@@ -350,57 +334,59 @@ const MultiLine = props => {
 
     function mouseOver(e) {
       markers.style('opacity', 1);
+      xline.style('opacity', 1);
       tooltip.style('opacity', 1);
     }
+
     function mouseMove(e) {
       let xpos = xScale.invert(d3.mouse(this)[0]);
+
       let bisectDate = d3.bisector(function(d) {
         return d.time;
       }).left;
 
       let pointarray = [];
       seriesArray.forEach((d, i) => {
-        let idx;
-        let point;
-        let marker;
+        let idx = bisectDate(d, xpos);
 
-        if (seriesConfig[i].yaxis == 'Y1' && seriesConfig[i].visible) {
-          idx = bisectDate(d, xpos);
-          point = d[idx];
-          pointarray.push(d[idx]);
+        let pointleft = d[idx];
+        let pointright = d[idx + 1];
 
-          marker = d3.select(markers.nodes()[i]);
-          marker
-            .style('opacity', 1)
-            .transition()
-            .duration(50)
-            .attr('cx', () => xScale(point.time))
-            .attr('cy', () => yScale1(point[valkey]));
-        } else if (seriesConfig[i].yaxis == 'Y2' && seriesConfig[i].visible) {
-          idx = bisectDate(d, xpos);
-          point = d[idx];
-          pointarray.push(d[idx]);
+        let deltaleft = Math.abs(xpos - pointleft.time);
+        let deltaright = Math.abs(pointright.time - xpos);
 
-          marker = d3.select(markers.nodes()[i]);
-          marker
-            .style('opacity', 1)
-            .transition()
-            .duration(50)
-            .attr('cx', () => xScale(point.time))
-            .attr('cy', () => yScale2(point[valkey]));
-        } else {
-          marker = d3.select(markers.nodes()[i]);
-          marker.style('opacity', 0);
-        }
+        let point = deltaleft < deltaright ? pointleft : pointright;
+
+        let marker = d3.select(markers.nodes()[i]);
+        pointarray.push(d[idx]);
+        marker
+          .attr('cx', () => xScale(point.time))
+          .attr('cy', () => {
+            if (seriesConfig[i].yaxis == 'Y1' && seriesConfig[i].visible) {
+              return yScale1(point[valkey]);
+            } else if (
+              seriesConfig[i].yaxis == 'Y2' &&
+              seriesConfig[i].visible
+            ) {
+              return yScale2(point[valkey]);
+            }
+          })
+          .style('fill', () => seriesConfig[i].color)
+          .style('stroke', () => seriesConfig[i].color)
+          .style('opacity', 1);
       });
 
       // should check that all pointarray 'times' line up.
       // if not, find first matching and then drive the rest of the series.
-
       let timecheck = new Set(pointarray.map(d => d.time.getTime()));
       if (timecheck.length > 1) {
         alert('warning: times not aligned between arrays');
       }
+
+      xline
+        .style('opacity', 1)
+        .attr('x1', xScale(pointarray[0].time))
+        .attr('x2', xScale(pointarray[0].time));
 
       tooltip
         .style('left', event.pageX - 100 + 'px')
@@ -408,18 +394,25 @@ const MultiLine = props => {
         .style('transition', 'left 100ms, top 100ms')
         .style('opacity', 1).html(`
       <div>
-      <div>${pointarray[0].time}</div>
-      ${pointarray.map(d => {
-        return `
+      <div>${formatDate(pointarray[0].time)}</div>
+      ${pointarray
+        .map((d, i) => {
+          return `
         <div>
-          <div>${d.name}</div>
-          <div>${formatInt(d[valkey]) + ' ' + d[unitkey]}</div>
-        <div>
+          <div class='tooltip-rect' style='background-color: ${
+            seriesConfig[i].color
+          }; display: inline-block'></div>
+          <div style='display: inline-block'>${formatInt(d[valkey]) +
+            ' ' +
+            d[unitkey]}</div>
+        </div>
         `;
-      })}</div>
+        })
+        .join('')}</div>
       `);
     }
     function mouseOut(e) {
+      xline.style('opacity', 0);
       markers.style('opacity', 0);
       tooltip.style('opacity', 0);
     }
@@ -448,13 +441,19 @@ const MultiLine = props => {
         [0, 0],
         [plotwidth, plotheight]
       ])
-      .on('end', brushended);
+      .on('end', brushended)
+      .on('start', brushstarted);
 
     let idleTimeout;
     let idleDelay = 350;
 
     function idled() {
       idleTimeout = null;
+    }
+
+    function brushstarted() {
+      xline.style('opacity', 0);
+      markers.style('opacity', 0);
     }
 
     function brushended() {

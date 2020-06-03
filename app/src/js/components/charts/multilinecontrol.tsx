@@ -60,7 +60,7 @@ const MultiLineControl = props => {
 
   return (
     <React.Fragment>
-      <div ref={plotContainer}>
+      <div className="ref-container" ref={plotContainer}>
         <MultiLine
           plotdims={plotdims}
           seriesConfig={seriesConfig}

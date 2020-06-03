@@ -103,7 +103,7 @@ const ScatterControl = props => {
 
   return (
     <React.Fragment>
-      <div ref={plotContainer}>
+      <div className="ref-container" ref={plotContainer}>
         <Scatter
           plotdims={plotdims}
           units={props.units}
@@ -146,11 +146,13 @@ const ScatterControl = props => {
         ></CheckboxInput>
 
         <div className="range-container">
-          <RangeSlider
-            title={'Colorscale Range'}
-            defaultValue={[zMinData, zMaxData]}
-            rangeCallback={handleColorRangeChange}
-          ></RangeSlider>
+          <div className="slider-wrapper">
+            <RangeSlider
+              title={'Colorscale Range'}
+              defaultValue={[zMinData, zMaxData]}
+              rangeCallback={handleColorRangeChange}
+            ></RangeSlider>
+          </div>
         </div>
       </div>
     </React.Fragment>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import * as d3 from 'd3';
-import { formatInt } from '../numformat';
+import { formatInt, formatDate } from '../numformat';
 
 const Heatmap = props => {
   const container = useRef(null);
@@ -106,7 +106,33 @@ const Heatmap = props => {
     rects.exit().remove();
 
     /* AXES */
-    const xAxis = d3.axisBottom(xScale).ticks(12);
+
+    //
+    const monthobj = {};
+    series.forEach(d => {
+      let monthformat = {
+        1: 'Jan',
+        2: 'Feb',
+        3: 'Mar',
+        4: 'Apr',
+        5: 'May',
+        6: 'Jun',
+        7: 'Jul',
+        8: 'Aug',
+        9: 'Sep',
+        10: 'Oct',
+        11: 'Nov',
+        12: 'Dec'
+      };
+      monthobj[d['simulationday']] = monthformat[d['month']];
+    });
+    const formatMonth = d => monthobj[d];
+
+    const xAxis = d3
+      .axisBottom(xScale)
+      .ticks(11)
+      .tickFormat(formatMonth);
+
     const yAxis = d3.axisLeft(yScale).ticks(24);
     const xaxisg = svg
       .selectAll('.x-axis-g')
@@ -142,7 +168,7 @@ const Heatmap = props => {
       .join('text')
       .attr('text-anchor', 'middle')
       .attr('class', 'x-axis-text axis-text')
-      .text('Day of Year');
+      .text('Time of Year');
 
     const ylabelg = svg
       .selectAll('.ylabelg')
@@ -214,13 +240,13 @@ const Heatmap = props => {
     function handleMouseover(d) {
       tooltipdiv
         .style('opacity', 1)
-        .style('left', event.pageX - 200 + 'px')
-        .style('top', event.pageY - 100 + 'px')
+        .style('left', event.pageX - 340 + 'px')
+        .style('top', event.pageY - 80 + 'px')
         .style('transition', 'left 100ms, top 100ms')
         .html(() => {
           return `
-            <div>Date: ${d.time}</div>
-            <div>Value: ${formatInt(d[valkey])} (${d[unitkey]})</div>
+            <div>Time: ${formatDate(d.time)}</div>
+            <div>Value: ${formatInt(d[valkey])} ${d[unitkey]}</div>
           `;
         });
     }
