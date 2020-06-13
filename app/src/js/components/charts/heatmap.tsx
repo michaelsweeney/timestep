@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import * as d3 from 'd3';
 import { formatInt, formatDate } from '../numformat';
+import { D3Container } from './d3container';
 
 const Heatmap = props => {
   const container = useRef(null);
-
   const { series, colorfunc, units, minrange, maxrange, reversecolor } = props;
 
   const { width, height } = props.plotdims;
@@ -341,9 +341,7 @@ const Heatmap = props => {
       .style('fill', `url(#${gradientid})`);
   };
 
-  return (
-    <div className="heatmap-container chart-container" ref={container}></div>
-  );
+  return <D3Container refcontainer={container}></D3Container>;
 };
 
 export { Heatmap };

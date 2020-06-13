@@ -1,4 +1,4 @@
 const defaultView = 'MultiLine';
-const defaultStep = 'Monthly';
+const defaultStep = 'Hourly';
 
 export { defaultView, defaultStep };

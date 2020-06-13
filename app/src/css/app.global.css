@@ -2,36 +2,9 @@
 
 body {
   display: block;
-  font-family: 'Roboto';
-  /* width: 100vw;
-  height: 100vh; */
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   box-sizing: border-box;
-}
-.chart-container {
-  height: calc(100vh - 300px);
-  /* width: calc(100vw - 200px) */
-}
-
-.sidebar {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  position: absolute;
-  height: 100vh;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-  width: 175px;
-  text-align: center;
-  box-sizing: border-box;
-
-}
-
-.view-container {
-  position: absolute;
-  width:  calc(100vw - 200px);
-  left: 175px;
-  height: 100vh;
-  padding: 20px;
-  box-sizing: border-box;
-
+  overflow-y: hidden;
 }
 
 .controls-container {
@@ -39,158 +12,8 @@ body {
 }
 
 .controls-container div {
-  margin-top: 5px;
-  margin-bottom: 5px;
   text-align: center;
 }
-
-
-/* SIDEBAR COMPONENTS */
-
-.file-handler {
-  display: inline-block;
-  margin-top: 10px;
-  margin-left: 10px;
-  margin-right: 5px;
-  box-sizing: border-box;
-}
-
-.file-handler button {
-  width: 115px;
-}
-
-.file-list {
-  display: inline-block;
-  margin-top: 10px;
-  margin-left: 10px;
-  margin-right: 5px;
-  box-sizing: border-box;
-
-}
-.file-list button {
-  width: 115px;
-}
-
-.unit-radio {
-  display: inline-block;
-  margin-left: 20px;
-  margin-right: 20px;
-}
-
-.view-selector {
-  display: inline-block;
-  margin-left: 20px;
-  margin-right: 20px;
-  box-sizing: border-box;
-}
-.view-selector button {
-  width: 115px;
-}
-
-.timestep-select {
-  display: inline-block;
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-
-
-
-
-/* END SIDEBAR COMPONENTS */
-
-
-
-
-
-
-
-
-.heatmap-controls-container {
-  padding: 20px;
-}
-
-
-.multiline-handle-container {
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
-
-.multiline-handle-container .legend-row {
-  display: block;
-}
-.legend-row div {
-  display: inline-block;
-}
-
-
-.multiline-handle-container .legend-row:hover {
-  /* opacity: 0.8 !important; */
-  /* border: gray 1px solid; */
-  cursor: default;
-}
-
-.multiline-handle-container div {
-  display: inline-block;
-}
-
-
-.multiline-handle-container .legend-rect {
-  width: 20px;
-  height: 20px;
-  margin-left: 10px;
-  margin-right: 10px;
-  transition: opacity 200ms;
-  box-sizing: border-box;
-  border-radius: 2px;
-}
-
-.multiline-handle-container .legend-rect:hover {
-  opacity: 0.8 !important;
-  /* border: gray 1px solid; */
-  cursor: pointer;
-}
-
-.multiline-handle-container .legend-name:hover {
-  /* opacity: 0.8 !important; */
-  /* border: gray 1px solid; */
-  /* cursor: pointer; */
-}
-
-.multiline-handle-container .legend-axis-switch {
-  font-weight: 600;
-  margin-left: 10px;
-  margin-right: 10px;
-  transition: opacity 200ms;
-  /* border: 1px solid gray; */
-  /* border-radius: 2px; */
-  box-sizing: border-box;
-  border-radius: 2px;
-}
-
-.multiline-handle-container .legend-axis-switch:hover {
-  opacity: 1.0 !important;
-  /* border: gray 1px solid; */
-  cursor: pointer;
-}
-
-
-
-.tooltip {
-  position: absolute;
-  color: white;
-  background-color: rgb(43, 42, 42);
-  transition: left 100ms, top 100ms;
-  /* border: rgb(68, 68, 68) 1px solid; */
-  border-radius: 5px;
-  padding: 10px;
-
-}
-
-
-
 
 .series-select-container .MuiAutocomplete-root {
   display: inline-block;
@@ -201,21 +24,29 @@ body {
   display: inline-block;
 }
 
-.multiline-handle-container {
-  margin-left: 100px;
-  /* padding-left: 20%; */
-  /* padding-right: 20%; */
-  /* display: inline-block; */
+
+/* D3 SPECIFIC GLOBAL CSS, CURRENTLY UNABLE TO USE MAKESTYLES */
+.series-line, .marker-circle {
+  pointer-events: none;
 }
 
+path {
+  shape-rendering: geometricPrecision;
+}
 
-.multiline-container .tooltip-rect {
-  width: 20px;
-  height: 20px;
-  margin-left: 10px;
-  margin-right: 10px;
-  transition: opacity 200ms;
-  box-sizing: border-box;
+.tooltip {
+  cursor: default;
+  pointer-events: none;
+  position: absolute;
+  color: white;
+  background-color: rgb(43, 42, 42);
+  transition: left 100ms, top 100ms;
   border-radius: 5px;
-  z-index: 999;
+  padding: 10px;
 }
+
+
+
+
+
+

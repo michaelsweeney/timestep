@@ -1,36 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import fs from 'fs';
-import { loadAllSeries, getSeries } from './components/sqlload';
-
-import { FileList } from './components/filelist';
-import { FileHandler } from './components/filehandler';
-import { UnitRadio } from './components/unitradio';
-import { TimeStepSelect } from './components/timestepselect';
-import { ViewSelector } from './components/viewselector';
+import { loadAllSeries, getFileSummary } from './components/sqlload';
+import { Sidebar } from './components/sidebar';
 import { ViewControl } from './components/viewcontrol';
 import { defaultView, defaultStep } from './components/defaults';
 import '../css/app.global.css';
 
 const EpDive = () => {
   const [files, setFiles] = useState([]);
+  const [fileInfo, setFileInfo] = useState([]);
   const [units, setUnits] = useState('si');
   const [activeView, setActiveView] = useState(defaultView);
   const [seriesOptions, setSeriesOptions] = useState([]);
   const [timestepType, setTimestepType] = useState(defaultStep);
   const [seriesLookupObj, setSeriesLookupObj] = useState({});
 
-  const ignoreReset = true;
   const [key, setKey] = useState(0);
 
   useEffect(() => {
-    if (!ignoreReset) {
-      setKey(key + 1);
-    }
+    setKey(key + 1);
   }, [files, units, timestepType]);
 
   const handleFileChange = f => {
     setFiles(f);
     handleSeriesOptions(f, units, timestepType);
+
+    getFileSummary(f).then(result => {
+      setFileInfo(result);
+    });
   };
 
   const handleUnitChange = u => {
@@ -86,14 +82,13 @@ const EpDive = () => {
 
   return (
     <div className="main-container">
-      <div className="sidebar">
-        <FileHandler fileCallback={handleFileChange} />
-        <FileList files={files} />
-
-        <UnitRadio unitCallback={handleUnitChange} />
-        <TimeStepSelect timeStepCallback={handleTimeStepSelect} />
-        <ViewSelector activeViewCallback={handleActiveViewChange} />
-      </div>
+      <Sidebar
+        fileCallback={handleFileChange}
+        fileInfo={fileInfo}
+        unitCallback={handleUnitChange}
+        timeStepCallback={handleTimeStepSelect}
+        activeViewCallback={handleActiveViewChange}
+      ></Sidebar>
       <ViewControl
         key={key}
         units={units}
@@ -103,8 +98,6 @@ const EpDive = () => {
         timestepType={timestepType}
         activeView={activeView}
       />
-
-      {/* <Heatmap series={series} units={units} /> */}
     </div>
   );
 };

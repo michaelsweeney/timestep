@@ -1,8 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { remote } from 'electron';
 import Button from '@material-ui/core/Button';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(
+  {
+    root: {
+      display: 'inline-block',
+      marginTop: 10,
+      marginLeft: 10,
+      marginRight: 5,
+      boxSizing: 'border-box'
+    },
+    button: {
+      width: 115
+    }
+  },
+  { name: 'file-handler' }
+);
 
 const FileHandler = props => {
+  const classes = useStyles();
+
   const [isActive, setIsActive] = useState('inactive');
 
   const handleFileChange = files => {
@@ -60,12 +79,12 @@ const FileHandler = props => {
     }
   };
   return (
-    <div className="file-handler">
+    <div className={classes.root}>
       <Button
         disableRipple={true}
         variant="contained"
         color="primary"
-        className={'file-button drag-' + isActive}
+        className={'file-button drag-' + isActive + ' ' + classes.button}
         onClick={openDialog}
         onDragEnter={handleDragEnter}
         onDrop={handleDrop}

@@ -1,9 +1,60 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import * as d3 from 'd3';
-import { isContinueStatement } from '@babel/types';
+
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(
+  {
+    root: {
+      marginBottom: 20,
+      marginTop: 20,
+      marginLeft: 100
+    },
+    legendrow: {
+      display: 'block',
+      '&:hover': {
+        cursor: 'default'
+      },
+      '& div': {
+        display: 'inline-block'
+      }
+    },
+    legendrect: {
+      width: 20,
+      height: 20,
+      marginLeft: 10,
+      marginRight: 10,
+      transition: 'opacity 200',
+      boxSizing: 'border-box',
+      borderRadius: 2,
+      '&:hover': {
+        opacity: 0.8,
+        cursor: 'pointer'
+      }
+    },
+    legendrowdiv: { display: 'inline-block' },
+
+    legendaxisswitch: {
+      marginLeft: 10,
+      marginRight: 10,
+      transition: 'opacity 200ms',
+      boxSizing: 'border-box',
+      borderRadius: 2,
+      '&:hover': {
+        opacity: '1.0 !important',
+        cursor: 'pointer'
+      }
+    },
+    legendname: {}
+  },
+  {
+    name: 'multiline-handle-container'
+  }
+);
 
 const MultiLineLegend = props => {
+  const classes = useStyles();
   const { seriesArray, units, colorScheme } = props;
 
   const [seriesState, setSeriesState] = useState([]);
@@ -40,8 +91,6 @@ const MultiLineLegend = props => {
     props.legendCallback(stateCopy);
   };
 
-  const createChart = () => {};
-
   const rectStyle = d => {
     return {
       backgroundColor: d.color,
@@ -62,12 +111,12 @@ const MultiLineLegend = props => {
   };
 
   return (
-    <div className="multiline-handle-container">
+    <div className={classes.root}>
       {seriesState.map((d, i) => {
         return (
-          <div key={Math.random()} className="legend-row">
+          <div key={Math.random()} className={classes.legendrow}>
             <div
-              className="legend-rect"
+              className={classes.legendrect}
               style={rectStyle(d)}
               onClick={handleVisibleChange}
               arraynum={i}
@@ -76,14 +125,14 @@ const MultiLineLegend = props => {
               arraynum={i}
               onClick={handleYAxisChange}
               style={axisStyle(d)}
-              className="legend-axis-switch"
+              className={classes.legendaxisswitch}
             >
               {d.yaxis}
             </div>
             <div
               style={textStyle(d)}
               // onClick={handleVisibleChange}
-              className="legend-name"
+              className={classes.legendname}
               arraynum={i}
             >
               {d.name}

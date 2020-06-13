@@ -3,8 +3,25 @@ import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import { defaultView } from './defaults';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(
+  {
+    root: {
+      display: 'inline-block',
+      marginLeft: 20,
+      marginRight: 20,
+      boxSizing: 'border-box',
+      '& button': {
+        width: 115
+      }
+    }
+  },
+  { name: 'view-selector' }
+);
 
 const ViewSelector = props => {
+  const classes = useStyles();
   const [activeView, setActiveView] = useState(defaultView);
 
   const handleViewChange = e => {
@@ -24,6 +41,11 @@ const ViewSelector = props => {
       case 'MultiLine':
         setActiveView('MultiLine');
         props.activeViewCallback('MultiLine');
+        break;
+      case 'Statistics':
+        setActiveView('Statistics');
+        props.activeViewCallback('Statistics');
+        break;
     }
   };
 
@@ -31,12 +53,21 @@ const ViewSelector = props => {
     heatmap: activeView == 'Heatmap' ? 'contained' : 'outlined',
     histogram: activeView == 'Histogram' ? 'contained' : 'outlined',
     scatter: activeView == 'Scatter' ? 'contained' : 'outlined',
-    multiline: activeView == 'MultiLine' ? 'contained' : 'outlined'
+    multiline: activeView == 'MultiLine' ? 'contained' : 'outlined',
+    statistics: activeView == 'Statistics' ? 'contained' : 'outlined'
   };
 
   return (
-    <div className="view-selector">
+    <div className={classes.root}>
       <ButtonGroup disableRipple={true} color="primary" orientation="vertical">
+        <Button
+          value={'multiline'}
+          key={'multiline'}
+          variant={buttonlookupobj['multiline']}
+          onClick={handleViewChange}
+        >
+          MultiLine
+        </Button>
         <Button
           value={'heatmap'}
           key={'heatmap'}
@@ -62,12 +93,12 @@ const ViewSelector = props => {
           Scatter
         </Button>
         <Button
-          value={'multiline'}
-          key={'multiline'}
-          variant={buttonlookupobj['multiline']}
+          value={'statistics'}
+          key={'statistics'}
+          variant={buttonlookupobj['statistics']}
           onClick={handleViewChange}
         >
-          MultiLine
+          Statistics
         </Button>
       </ButtonGroup>
     </div>

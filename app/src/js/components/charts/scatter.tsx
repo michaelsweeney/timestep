@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import * as d3 from 'd3';
-import { formatInt } from '../numformat';
+
+import { formatInt, formatDate } from '../numformat';
+import { D3Container } from './d3container';
+
 const Scatter = props => {
   const container = useRef(null);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -250,7 +253,7 @@ const Scatter = props => {
       .join('text')
       .attr('class', 'z-axis-text axis-text')
       .attr('text-anchor', 'middle')
-      .text(() => (zseries[0] != undefined ? zseries[0][unitkey] : '-'));
+      .text(() => (zseries[0] != undefined ? zseries[0][valkey] : '-'));
 
     const titleg = svg
       .selectAll('.titleg')
@@ -269,6 +272,7 @@ const Scatter = props => {
       .attr('class', 'title-text')
       .attr('text-anchor', 'middle')
       .text(() => {
+        return '';
         let xname = xseries[0] ? xseries[0].name : '';
         let yname = yseries[0] ? yseries[0].name : '';
         let zname = zseries[0] ? zseries[0].name : '';
@@ -388,7 +392,7 @@ const Scatter = props => {
         .style('transition', 'left 100ms, top 100ms')
         .html(() => {
           return `
-          <div>${FormatDate(d.time)}</div>
+          <div>${formatDate(d.time)}</div>
           <div>x: ${formatInt(d.x)} ${xunits}</div>
           <div>y: ${formatInt(d.y)} ${yunits}</div>
           <div>color: ${formatInt(d.z)} ${zunits}</div>
@@ -470,9 +474,7 @@ const Scatter = props => {
       .attr('class', 'brush')
       .call(brush);
   };
-  return (
-    <div className="scatter-container chart-container" ref={container}></div>
-  );
+  return <D3Container refcontainer={container}></D3Container>;
 };
 
 export { Scatter };

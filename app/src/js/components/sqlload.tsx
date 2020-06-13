@@ -1,6 +1,34 @@
 import fs from 'fs';
 import sqlite3 from 'sqlite3';
 
+async function getFileSummary(sqlfiles) {
+  dbProto(); // establish async loadfiles
+  let filearray = [];
+
+  for (let i = 0; i < sqlfiles.length; i++) {
+    let sqlfile = sqlfiles[i];
+    let bndexists = fs.existsSync(sqlfile.replace('.sql', '.bnd'))
+      ? true
+      : false;
+    let db = new sqlite3.Database(sqlfile);
+    let query = "SELECT * FROM 'Simulations'";
+    let result = await db.allAsync(query);
+    let reports = await db.allAsync(
+      "SELECT ReportDataDictionaryIndex from 'ReportDataDictionary'"
+    );
+    let fileobj = {
+      filename: sqlfile,
+      bndexists: bndexists,
+      timesteps: result[0].NumTimestepsPerHour,
+      timestamp: result[0].TimeStamp,
+      version: result[0].EnergyPlusVersion,
+      numreports: reports.length
+    };
+    filearray.push(fileobj);
+  }
+  return filearray;
+}
+
 async function loadAllSeries(sqlfiles, timestep) {
   dbProto(); // establish async loadfiles
   checkArray(sqlfiles); // error handling for sql files of same name
@@ -268,22 +296,6 @@ async function getSeries(filetag, units) {
     "SELECT ReportData.Value, ReportData.TimeIndex, Time.Month, Time.Day, Time.SimulationDays, Time.Hour, Time.Minute, Time.Dst, Time.Interval, Time.DayType FROM 'ReportData' INNER JOIN Time ON ReportData.TimeIndex = Time.TimeIndex WHERE ReportData.ReportDataDictionaryIndex = " +
     idx;
   let result;
-
-  // // testing for simpler query to reduce time
-
-  // let query_simple =
-  //   "SELECT ReportData.Value, ReportData.TimeIndex FROM 'ReportData' WHERE ReportData.ReportDataDictionaryIndex = " +
-  //   idx;
-
-  // let simple_result;
-  // try {
-  //   simple_result = await db.allAsync(query_simple);
-  // } catch {
-  //   console.log('no year');
-  //   simple_result = await db.allAsync(query_simple);
-  // }
-
-  // console.log(simple_result);
 
   try {
     result = await db.allAsync(query_year);
@@ -663,7 +675,7 @@ const unitconvert = {
   pct: 1
 };
 
-export { loadAvailSeries, loadAllSeries, getSeries };
+export { loadAvailSeries, loadAllSeries, getSeries, getFileSummary };
 /* --------------------------------------------------------- */
 
 // queries:

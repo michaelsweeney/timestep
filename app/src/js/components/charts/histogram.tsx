@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { formatInt } from '../numformat';
 import * as d3 from 'd3';
+import { D3Container } from './d3container';
 
 const Histogram = props => {
   const container = useRef(null);
@@ -207,9 +208,7 @@ const Histogram = props => {
     }
   };
 
-  return (
-    <div className="histogram-container chart-container" ref={container}></div>
-  );
+  return <D3Container refcontainer={container}></D3Container>;
 };
 
 export { Histogram };

@@ -3,7 +3,23 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import { defaultStep } from './defaults';
+
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(
+  {
+    root: {
+      display: 'inlineBlock',
+      margin: 10
+    }
+  },
+  {
+    name: 'timestep-select'
+  }
+);
+
 const TimeStepSelect = props => {
+  const classes = useStyles();
   const [value, setValue] = useState(defaultStep);
 
   const handleChange = e => {
@@ -11,7 +27,7 @@ const TimeStepSelect = props => {
     props.timeStepCallback(e.target.value);
   };
   return (
-    <div className="timestep-select">
+    <div className={classes.root}>
       <InputLabel id="label">Timestep</InputLabel>
       <Select onChange={handleChange} id="select" value={value}>
         <MenuItem disableRipple={true} value="HVAC Timestep">

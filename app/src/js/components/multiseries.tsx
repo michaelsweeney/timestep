@@ -95,6 +95,11 @@ ListboxComponent.propTypes = {
 };
 
 const useStyles = makeStyles({
+  root: {
+    marginTop: 5,
+    marginBottom: 5,
+    width: 800
+  },
   listbox: {
     boxSizing: 'border-box',
     '& ul': {
@@ -122,13 +127,11 @@ export default function MultiSeries(props) {
         multiple
         onChange={props.seriesCallback}
         id="virtualize-demo"
-        style={{ width: 800 }}
         disableListWrap
         classes={classes}
         ListboxComponent={ListboxComponent}
         renderGroup={renderGroup}
         options={options}
-        // groupBy={option => option[0].toUpperCase()}
         renderInput={params => (
           <TextField
             {...params}

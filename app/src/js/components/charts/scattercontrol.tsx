@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useStyles } from 'react';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';

@@ -56,7 +56,6 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
     if (React.isValidElement(child) && child.type === ListSubheader) {
       return 48;
     }
-
     return itemSize;
   };
 
@@ -95,6 +94,11 @@ ListboxComponent.propTypes = {
 };
 
 const useStyles = makeStyles({
+  root: {
+    marginTop: 5,
+    marginBottom: 5,
+    width: 800
+  },
   listbox: {
     boxSizing: 'border-box',
     '& ul': {
@@ -113,6 +117,7 @@ const renderGroup = params => [
 
 export default function SeriesSelect(props) {
   const classes = useStyles();
+
   const options = props.series;
 
   return (
@@ -120,7 +125,6 @@ export default function SeriesSelect(props) {
       <Autocomplete
         onChange={props.seriesCallback}
         id="virtualize-demo"
-        style={{ width: 800 }}
         disableListWrap
         classes={classes}
         ListboxComponent={ListboxComponent}

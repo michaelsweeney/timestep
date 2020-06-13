@@ -6,6 +6,7 @@ import { MultiLineLegend } from './multilinelegend';
 import { ColorCategorySelect } from '../colorcategoryselect';
 import { MultiLine } from './multiline';
 import { getBBSize } from '../plotdimensions';
+import TuneIcon from '@material-ui/icons/Tune';
 
 const MultiLineControl = props => {
   const [seriesArray, setSeriesArray] = useState([]);
@@ -76,6 +77,7 @@ const MultiLineControl = props => {
       />
 
       <div className="multiline-controls-container controls-container">
+        <TuneIcon />
         <ColorCategorySelect
           colorCategoryCallback={handleColorCategoryChange}
         />

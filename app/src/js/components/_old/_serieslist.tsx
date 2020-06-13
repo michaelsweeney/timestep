@@ -4,8 +4,6 @@ import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { createFilterOptions } from '@material-ui/lab/Autocomplete';
 
-// import { useTheme, makeStyles } from '@material-ui/core/styles';
-
 import { loadAllSeries, getSeries } from '../sqlload';
 
 const SeriesList = props => {

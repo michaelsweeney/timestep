@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { formatInt, formatDate } from '../numformat';
+import { D3Container } from './d3container';
 
 import * as d3 from 'd3';
 
@@ -11,6 +12,8 @@ const MultiLine = props => {
   const [zoomDomain, setZoomDomain] = useState({
     x: []
   });
+
+  const ytoppad = 0.05;
 
   const yconfig = {
     y1: {
@@ -100,13 +103,15 @@ const MultiLine = props => {
     yconfig.y1 = {
       min: d3.extent(y1vals)[0],
       max: d3.extent(y1vals)[1],
-      units: y1units
+      units: y1units,
+      active: yconfig.y1.active
     };
 
     yconfig.y2 = {
       min: d3.extent(y2vals)[0],
       max: d3.extent(y2vals)[1],
-      units: y2units
+      units: y2units,
+      active: yconfig.y2.active
     };
   };
 
@@ -136,12 +141,12 @@ const MultiLine = props => {
     const yScale1 = d3
       .scaleLinear()
       .range([plotheight, 0])
-      .domain([yconfig.y1.min, yconfig.y1.max]);
+      .domain([yconfig.y1.min, yconfig.y1.max * (1 + ytoppad)]);
 
     const yScale2 = d3
       .scaleLinear()
       .range([plotheight, 0])
-      .domain([yconfig.y2.min, yconfig.y2.max]);
+      .domain([yconfig.y2.min, yconfig.y2.max * (1 + ytoppad)]);
 
     const xAxis = d3.axisBottom(xScale);
     const yAxis1 = d3.axisLeft(yScale1);
@@ -187,7 +192,6 @@ const MultiLine = props => {
     } else {
       svg.selectAll('.yaxis1g').remove();
     }
-
     if (yconfig.y2.active) {
       yaxis2g.call(yAxis2);
     } else {
@@ -221,6 +225,10 @@ const MultiLine = props => {
         .style('stroke', (d, i) => seriesConfig[i].color)
         .style('stroke-width', '2px')
         .style('fill', 'none');
+    }
+
+    if (seriesArray.length == 0) {
+      plotg.selectAll('.series-line').remove();
     }
 
     /* LABELS AND TITLES */
@@ -295,7 +303,10 @@ const MultiLine = props => {
       .join('text')
       .attr('class', 'title-text')
       .attr('text-anchor', 'middle')
-      .text(() => 'Timeseries Line');
+      .text(() => {
+        return '';
+        return 'Timeseries Line';
+      });
 
     /* TOOLTIP */
 
@@ -312,7 +323,7 @@ const MultiLine = props => {
       .join('line')
       .attr('class', 'x-line')
       .attr('stroke', 'black')
-      .attr('stroke-dasharray', '5, 5')
+      .attr('stroke-dasharray', '4, 4')
       .attr('y1', 0)
       .attr('y2', plotheight)
       .style('opacity', 0);
@@ -399,9 +410,19 @@ const MultiLine = props => {
         .map((d, i) => {
           return `
         <div>
-          <div class='tooltip-rect' style='background-color: ${
-            seriesConfig[i].color
-          }; display: inline-block'></div>
+          <div class='tooltip-rect' style=
+          "
+          background-color: ${seriesConfig[i].color};
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          margin-left: 10px;
+          margin-right: 10px;
+          transition: opacity 200ms;
+          box-sizing: border-box;
+          border-radius: 2px;
+          "
+          ></div>
           <div style='display: inline-block'>${formatInt(d[valkey]) +
             ' ' +
             d[unitkey]}</div>
@@ -411,6 +432,16 @@ const MultiLine = props => {
         .join('')}</div>
       `);
     }
+
+    // .multiline-container .tooltip-rect {
+    //   width: 20px;
+    //   height: 20px;
+    //   margin-left: 10px;
+    //   margin-right: 10px;
+    //   transition: opacity 200ms;
+    //   box-sizing: border-box;
+    //   border-radius: 2px;
+    // }
     function mouseOut(e) {
       xline.style('opacity', 0);
       markers.style('opacity', 0);
@@ -509,9 +540,7 @@ const MultiLine = props => {
       .call(brush);
   };
 
-  return (
-    <div className="multiline-container chart-container" ref={container}></div>
-  );
+  return <D3Container refcontainer={container}></D3Container>;
 };
 
 export { MultiLine };
