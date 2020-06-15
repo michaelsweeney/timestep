@@ -2,13 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
-import { Heatmap } from './heatmap';
+import { Heatmap } from '../charts/heatmap';
+import { ControlsContainer } from '../controlscontainer';
 import { ColorScaleSelect } from '../colorscaleselect';
 import { CheckboxInput } from '../checkboxinput';
 import { RangeSlider } from '../rangeslider';
 import { getBBSize } from '../plotdimensions';
+import { ViewWrapper } from './viewwrapper';
 
 const HeatmapControl = props => {
+  const [isLoading, setIsLoading] = useState(false);
   const [series, setSeries] = useState([]);
   const [minRange, setMinRange] = useState(0);
   const [maxRange, setMaxRange] = useState(0);
@@ -31,6 +34,7 @@ const HeatmapControl = props => {
   }, []);
 
   const handleSeriesSelect = (e, v) => {
+    setIsLoading(true);
     getSeries(props.seriesLookupObj[v], props.units).then(d => {
       setSeries(d);
 
@@ -40,13 +44,13 @@ const HeatmapControl = props => {
         let max = Math.max(...series.map(d => d[valkey]));
         return [min, max];
       };
-
       let [min, max] = getMaxMin(d);
 
       setMinRange(min);
       setMaxRange(max);
       setMinData(min);
       setMaxData(max);
+      setIsLoading(false);
     });
   };
 
@@ -68,8 +72,8 @@ const HeatmapControl = props => {
   };
 
   return (
-    <React.Fragment>
-      <div className="ref-container" ref={plotContainer}>
+    <>
+      <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <Heatmap
           plotdims={plotdims}
           series={series}
@@ -79,8 +83,8 @@ const HeatmapControl = props => {
           maxrange={maxRange}
           reversecolor={reverseColor}
         ></Heatmap>
-      </div>
-      <div className="heatmap-controls-container controls-container">
+      </ViewWrapper>
+      <ControlsContainer tag="heatmap-controls-container">
         <SeriesSelect
           seriesCallback={handleSeriesSelect}
           series={props.seriesOptions}
@@ -94,16 +98,14 @@ const HeatmapControl = props => {
         ></CheckboxInput>
 
         <div className="range-container">
-          <div className="slider-wrapper">
-            <RangeSlider
-              title={'Colorscale Range'}
-              defaultValue={[minData, maxData]}
-              rangeCallback={handleRangeChange}
-            ></RangeSlider>
-          </div>
+          <RangeSlider
+            title={'Colorscale Range'}
+            defaultValue={[minData, maxData]}
+            rangeCallback={handleRangeChange}
+          ></RangeSlider>
         </div>
-      </div>
-    </React.Fragment>
+      </ControlsContainer>
+    </>
   );
 };
 

@@ -22,12 +22,12 @@ const Histogram = props => {
   const createChart = () => {
     /* DIMENSIONS */
     const labelmargins = {
-      y: 40,
+      y: 30,
       x: 40,
       title: 30
     };
     const margins = {
-      l: 100,
+      l: 50,
       t: 50,
       b: 50,
       r: 100

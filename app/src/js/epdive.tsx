@@ -4,6 +4,19 @@ import { Sidebar } from './components/sidebar';
 import { ViewControl } from './components/viewcontrol';
 import { defaultView, defaultStep } from './components/defaults';
 import '../css/app.global.css';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(
+  {
+    root: {
+      display: 'block',
+      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      boxSizing: 'border-box',
+      overflowY: 'hidden'
+    }
+  },
+  { name: 'main-container' }
+);
 
 const EpDive = () => {
   const [files, setFiles] = useState([]);
@@ -15,6 +28,8 @@ const EpDive = () => {
   const [seriesLookupObj, setSeriesLookupObj] = useState({});
 
   const [key, setKey] = useState(0);
+
+  const classes = useStyles();
 
   useEffect(() => {
     setKey(key + 1);
@@ -81,7 +96,7 @@ const EpDive = () => {
   }, []);
 
   return (
-    <div className="main-container">
+    <div className={classes.root}>
       <Sidebar
         fileCallback={handleFileChange}
         fileInfo={fileInfo}

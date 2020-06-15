@@ -3,12 +3,18 @@ import React, { useState, useEffect, useRef, useStyles } from 'react';
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { ColorScaleSelect } from '../colorscaleselect';
+import { ControlsContainer } from '../controlscontainer';
 import { CheckboxInput } from '../checkboxinput';
 import { RangeSlider } from '../rangeslider';
-import { Scatter } from './scatter';
+import { Scatter } from '../charts/scatter';
 import { getBBSize } from '../plotdimensions';
+import { ViewWrapper } from './viewwrapper';
 
 const ScatterControl = props => {
+  const [isLoadingX, setIsLoadingX] = useState(false);
+  const [isLoadingY, setIsLoadingY] = useState(false);
+  const [isLoadingZ, setIsLoadingZ] = useState(false);
+
   // x state
   const [xSeries, setXSeries] = useState([]);
   const [xMinRange, setXMinRange] = useState(0);
@@ -52,6 +58,7 @@ const ScatterControl = props => {
   }, []);
 
   const handleXSeriesSelect = (e, v) => {
+    setIsLoadingX(true);
     getSeries(props.seriesLookupObj[v], props.units).then(d => {
       setXSeries(d);
       let [min, max] = getMaxMin(d);
@@ -59,10 +66,12 @@ const ScatterControl = props => {
       setXMaxRange(max);
       // setXMinData(min);
       // setXMaxData(max);
+      setIsLoadingX(false);
     });
   };
 
   const handleYSeriesSelect = (e, v) => {
+    setIsLoadingY(true);
     getSeries(props.seriesLookupObj[v], props.units).then(d => {
       setYSeries(d);
       let [min, max] = getMaxMin(d);
@@ -70,10 +79,13 @@ const ScatterControl = props => {
       setYMaxRange(max);
       // setYMinData(min);
       // setYMaxData(max);
+      setIsLoadingY(false);
     });
   };
 
   const handleZSeriesSelect = (e, v) => {
+    setIsLoadingZ(true);
+
     getSeries(props.seriesLookupObj[v], props.units).then(d => {
       setZSeries(d);
       let [min, max] = getMaxMin(d);
@@ -81,6 +93,7 @@ const ScatterControl = props => {
       setZMaxRange(max);
       setZMinData(min);
       setZMaxData(max);
+      setIsLoadingZ(false);
     });
   };
 
@@ -102,8 +115,11 @@ const ScatterControl = props => {
   };
 
   return (
-    <React.Fragment>
-      <div className="ref-container" ref={plotContainer}>
+    <>
+      <ViewWrapper
+        plotContainer={plotContainer}
+        isLoading={isLoadingX || isLoadingY || isLoadingZ ? true : false}
+      >
         <Scatter
           plotdims={plotdims}
           units={props.units}
@@ -119,9 +135,9 @@ const ScatterControl = props => {
           zminrange={zMinRange}
           zmaxrange={zMaxRange}
         />
-      </div>
+      </ViewWrapper>
 
-      <div className="scatter-controls-container controls-container">
+      <ControlsContainer tag="scatter-controls-container">
         <SeriesSelect
           seriesCallback={handleXSeriesSelect}
           series={props.seriesOptions}
@@ -154,8 +170,8 @@ const ScatterControl = props => {
             ></RangeSlider>
           </div>
         </div>
-      </div>
-    </React.Fragment>
+      </ControlsContainer>
+    </>
   );
 };
 

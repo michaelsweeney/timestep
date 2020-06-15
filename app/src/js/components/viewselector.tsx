@@ -11,6 +11,7 @@ const useStyles = makeStyles(
       display: 'inline-block',
       marginLeft: 20,
       marginRight: 20,
+      marginTop: 10,
       boxSizing: 'border-box',
       '& button': {
         width: 115

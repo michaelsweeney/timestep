@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-import { HeatmapControl } from './charts/heatmapcontrol';
-import { HistogramControl } from './charts/histogramcontrol';
-import { MultiLineControl } from './charts/multilinecontrol';
-import { ScatterControl } from './charts/scattercontrol';
-import { StatisticsControl } from './charts/statisticscontrol';
+import { HeatmapControl } from './chartcontrol/heatmapcontrol';
+import { HistogramControl } from './chartcontrol/histogramcontrol';
+import { MultiLineControl } from './chartcontrol/multilinecontrol';
+import { ScatterControl } from './chartcontrol/scattercontrol';
+import { StatisticsControl } from './chartcontrol/statisticscontrol';
 
 import { makeStyles } from '@material-ui/core/styles';
 

@@ -4,11 +4,14 @@ import MultiSeries from '../multiseries'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { MultiLineLegend } from './multilinelegend';
 import { ColorCategorySelect } from '../colorcategoryselect';
-import { MultiLine } from './multiline';
+import { ControlsContainer } from '../controlscontainer';
+import { MultiLine } from '../charts/multiline';
 import { getBBSize } from '../plotdimensions';
-import TuneIcon from '@material-ui/icons/Tune';
+import { ViewWrapper } from './viewwrapper';
 
 const MultiLineControl = props => {
+  const [isLoading, setIsLoading] = useState(false);
+
   const [seriesArray, setSeriesArray] = useState([]);
   const [colorScheme, setColorScheme] = useState('schemeCategory10');
   const [seriesConfig, setSeriesConfig] = useState([]);
@@ -46,10 +49,12 @@ const MultiLineControl = props => {
     }
 
     newkeys.forEach(key => {
+      setIsLoading(true);
       if (!existingkeys.includes(key)) {
         getSeries(key, props.units).then(d => {
           arrayClone.push(d);
           setSeriesArray(arrayClone);
+          setIsLoading(false);
         });
       }
     });
@@ -60,15 +65,15 @@ const MultiLineControl = props => {
   };
 
   return (
-    <React.Fragment>
-      <div className="ref-container" ref={plotContainer}>
+    <>
+      <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <MultiLine
           plotdims={plotdims}
           seriesConfig={seriesConfig}
           units={props.units}
           seriesArray={seriesArray}
         />
-      </div>
+      </ViewWrapper>
       <MultiLineLegend
         legendCallback={handleLegendChange}
         seriesArray={seriesArray}
@@ -76,8 +81,7 @@ const MultiLineControl = props => {
         units={props.units}
       />
 
-      <div className="multiline-controls-container controls-container">
-        <TuneIcon />
+      <ControlsContainer tag="multiline-controls-container">
         <ColorCategorySelect
           colorCategoryCallback={handleColorCategoryChange}
         />
@@ -86,8 +90,8 @@ const MultiLineControl = props => {
           seriesCallback={handleSeriesSelect}
           series={props.seriesOptions}
         />
-      </div>
-    </React.Fragment>
+      </ControlsContainer>
+    </>
   );
 };
 

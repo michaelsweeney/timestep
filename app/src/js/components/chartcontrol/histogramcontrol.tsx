@@ -2,12 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
-import { Histogram } from './histogram';
+import { Histogram } from '../charts/histogram';
+import { ControlsContainer } from '../controlscontainer';
 import { RangeSlider } from '../rangeslider';
 import { SingleSlider } from '../singleslider';
 import { getBBSize } from '../plotdimensions';
+import { ViewWrapper } from './viewwrapper';
 
 const HistogramControl = props => {
+  const [isLoading, setIsLoading] = useState(false);
   const [series, setSeries] = useState([]);
   const [minRange, setMinRange] = useState(0);
   const [maxRange, setMaxRange] = useState(0);
@@ -27,6 +30,8 @@ const HistogramControl = props => {
   }, []);
 
   const handleSeriesSelect = (e, v) => {
+    setIsLoading(true);
+
     getSeries(props.seriesLookupObj[v], props.units).then(d => {
       setSeries(d);
       const getMaxMin = series => {
@@ -40,6 +45,7 @@ const HistogramControl = props => {
       setMaxRange(max);
       setMinData(min);
       setMaxData(max);
+      setIsLoading(false);
     });
   };
 
@@ -55,8 +61,8 @@ const HistogramControl = props => {
   };
 
   return (
-    <React.Fragment>
-      <div className="ref-container" ref={plotContainer}>
+    <>
+      <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <Histogram
           plotdims={plotdims}
           series={series}
@@ -65,33 +71,30 @@ const HistogramControl = props => {
           binmax={maxRange}
           numbins={numBins}
         ></Histogram>
-      </div>
-      <div className="histogram-controls-container controls-container">
+      </ViewWrapper>
+      <ControlsContainer className="histogram-controls-container">
         <SeriesSelect
           seriesCallback={handleSeriesSelect}
           series={props.seriesOptions}
         />
 
         <div className="range-container">
-          <div className="slider-wrapper">
-            <RangeSlider
-              title={'Bin Range'}
-              defaultValue={[minData, maxData]}
-              rangeCallback={handleRangeChange}
-            ></RangeSlider>
-          </div>
-          <div className="slider-wrapper">
-            <SingleSlider
-              title={'Bins: ' + numBins}
-              min={0}
-              max={50}
-              defaultValue={10}
-              sliderCallback={handleNumBinChange}
-            ></SingleSlider>
-          </div>
+          <RangeSlider
+            title={'Bin Range'}
+            defaultValue={[minData, maxData]}
+            rangeCallback={handleRangeChange}
+          ></RangeSlider>
+
+          <SingleSlider
+            title={'Bins: ' + numBins}
+            min={0}
+            max={50}
+            defaultValue={10}
+            sliderCallback={handleNumBinChange}
+          ></SingleSlider>
         </div>
-      </div>
-    </React.Fragment>
+      </ControlsContainer>
+    </>
   );
 };
 

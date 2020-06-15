@@ -34,14 +34,14 @@ const MultiLine = props => {
   const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
 
   const labelmargins = {
-    y1: 50,
+    y1: 30,
     y2: 80,
     x: 40,
     title: 20
   };
 
   const margins = {
-    l: 100,
+    l: 50,
     t: 50,
     b: 50,
     r: 100

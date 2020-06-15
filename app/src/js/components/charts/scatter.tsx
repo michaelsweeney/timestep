@@ -68,14 +68,14 @@ const Scatter = props => {
 
     /* DIMENSIONS */
     const labelmargins = {
-      y: 40,
+      y: 30,
       x: 40,
       title: 30,
       legend: 50,
       legendlabel: 100
     };
     const margins = {
-      l: 100,
+      l: 50,
       t: 50,
       b: 50,
       r: 200
@@ -253,7 +253,7 @@ const Scatter = props => {
       .join('text')
       .attr('class', 'z-axis-text axis-text')
       .attr('text-anchor', 'middle')
-      .text(() => (zseries[0] != undefined ? zseries[0][valkey] : '-'));
+      .text(() => (zseries[0] != undefined ? zseries[0][unitkey] : '-'));
 
     const titleg = svg
       .selectAll('.titleg')
