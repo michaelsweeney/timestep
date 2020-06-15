@@ -29,6 +29,7 @@ const HistogramControl = props => {
       );
     }
     let resizeTimer;
+    window.addEventListener('resize', handleResize);
     setPlotdims(getBBSize(plotContainer));
     return () => window.removeEventListener('resize', handleResize);
   }, []);

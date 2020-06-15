@@ -52,8 +52,8 @@
     ]
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.develar.ElectronReact",
+    "productName": "timestep",
+    "appId": "timestep",
     "files": [
       "dist/",
       "node_modules/",
@@ -103,12 +103,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
+    "url": "git+https://github.com/michaelsweeney/timestep.git"
   },
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "Michael Sweeney",
+    "email": "michael.samuel.sweeney@gmail.com",
+    "url": "https://github.com/michaelsweeney"
   },
   "contributors": [
     {
