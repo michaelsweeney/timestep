@@ -18,7 +18,7 @@ const useStyles = makeStyles(
   { name: 'main-container' }
 );
 
-const EpDive = () => {
+const Timestep = () => {
   const [files, setFiles] = useState([]);
   const [fileInfo, setFileInfo] = useState([]);
   const [units, setUnits] = useState('si');
@@ -117,4 +117,4 @@ const EpDive = () => {
   );
 };
 
-export { EpDive };
+export { Timestep };

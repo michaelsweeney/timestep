@@ -19,15 +19,11 @@ const ScatterControl = props => {
   const [xSeries, setXSeries] = useState([]);
   const [xMinRange, setXMinRange] = useState(0);
   const [xMaxRange, setXMaxRange] = useState(1);
-  // const [xMinData, setXMinData] = useState(0);
-  // const [xMaxData, setXMaxData] = useState(1);
 
   // y state
   const [ySeries, setYSeries] = useState([]);
   const [yMinRange, setYMinRange] = useState(0);
   const [yMaxRange, setYMaxRange] = useState(1);
-  // const [yMinData, setYMinData] = useState(0);
-  // const [yMaxData, setYMaxData] = useState(1);
 
   // z state
   const [zSeries, setZSeries] = useState([]);
@@ -50,8 +46,13 @@ const ScatterControl = props => {
 
   useEffect(() => {
     function handleResize() {
-      setTimeout(() => setPlotdims(getBBSize(plotContainer)), 500);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(
+        () => setPlotdims(getBBSize(plotContainer)),
+        250
+      );
     }
+    let resizeTimer;
     window.addEventListener('resize', handleResize);
     setPlotdims(getBBSize(plotContainer));
     return () => window.removeEventListener('resize', handleResize);

@@ -22,9 +22,13 @@ const HistogramControl = props => {
 
   useEffect(() => {
     function handleResize() {
-      setTimeout(() => setPlotdims(getBBSize(plotContainer)), 500);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(
+        () => setPlotdims(getBBSize(plotContainer)),
+        250
+      );
     }
-    window.addEventListener('resize', handleResize);
+    let resizeTimer;
     setPlotdims(getBBSize(plotContainer));
     return () => window.removeEventListener('resize', handleResize);
   }, []);

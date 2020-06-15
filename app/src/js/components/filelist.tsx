@@ -37,27 +37,31 @@ function getModalStyle() {
   };
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'inline-block',
-      marginTop: 10,
-      marginLeft: 10,
-      marginRight: 5,
-      boxSizing: 'border-box',
-      '& button': {
-        width: 115
-      }
-    },
-    paper: {
-      position: 'absolute',
-      backgroundColor: theme.palette.background.paper,
-      boxShadow: theme.shadows[5],
-      padding: theme.spacing(2, 4, 3)
-    },
-    table: {},
-    title: { fontSize: 20, margin: '5px', textAlign: 'center' }
-  })
+const useStyles = makeStyles(
+  (theme: Theme) =>
+    createStyles({
+      root: {
+        display: 'inline-block',
+        marginTop: 10,
+        marginLeft: 10,
+        marginRight: 5,
+        boxSizing: 'border-box',
+        '& button': {
+          width: 115
+        }
+      },
+      paper: {
+        position: 'absolute',
+        backgroundColor: theme.palette.background.paper,
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing(2, 4, 3)
+      },
+      table: {},
+      title: { fontSize: 20, margin: '5px', textAlign: 'center' }
+    }),
+  {
+    name: 'file-info'
+  }
 );
 
 function FileList(props) {

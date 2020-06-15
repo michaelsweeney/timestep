@@ -1,8 +1,8 @@
 import React from 'react';
-import { EpDive } from './js/epdive';
+import { Timestep } from './js/timestep';
 
 export default function App() {
-  return <EpDive></EpDive>;
+  return <Timestep></Timestep>;
 }
 
 export { App };

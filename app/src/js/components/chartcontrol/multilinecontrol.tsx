@@ -20,8 +20,13 @@ const MultiLineControl = props => {
 
   useEffect(() => {
     function handleResize() {
-      setTimeout(() => setPlotdims(getBBSize(plotContainer)), 500);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(
+        () => setPlotdims(getBBSize(plotContainer)),
+        250
+      );
     }
+    let resizeTimer;
     window.addEventListener('resize', handleResize);
     setPlotdims(getBBSize(plotContainer));
     return () => window.removeEventListener('resize', handleResize);

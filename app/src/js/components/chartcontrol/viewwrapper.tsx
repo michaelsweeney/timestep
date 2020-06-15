@@ -4,7 +4,9 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(
   {
-    root: {},
+    root: {
+      boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)'
+    },
     spinneractive: {
       visibility: 'visible',
       position: 'absolute',
@@ -40,7 +42,7 @@ const useStyles = makeStyles(
 const ViewWrapper = props => {
   const classes = useStyles();
   return (
-    <>
+    <div className={classes.root}>
       <CircularProgress
         className={
           props.isLoading ? classes.spinneractive : classes.spinnerinactive
@@ -55,7 +57,7 @@ const ViewWrapper = props => {
       >
         {props.children}
       </div>
-    </>
+    </div>
   );
 };
 

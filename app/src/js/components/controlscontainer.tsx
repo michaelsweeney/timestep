@@ -6,7 +6,9 @@ const useStyles = makeStyles(
       textAlign: 'center',
       '& div': {
         textAlign: 'center'
-      }
+      },
+      boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+      padding: 10
     }
   },
   { name: 'controls-container' }

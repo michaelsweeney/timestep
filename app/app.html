@@ -2,14 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>epdive</title>
-
-    <script>
-        // window.nodeRequire = require;
-        // delete window.require;
-        // delete window.exports;
-        // delete window.module;
-      </script>
+    <title>timestep</title>
 
     <script>
       (() => {
@@ -20,14 +13,10 @@
           const link = document.createElement('link');
           link.rel = 'stylesheet';
           link.href = './dist/style.css';
-          // HACK: Writing the script path should be done with webpack
           document.getElementsByTagName('head')[0].appendChild(link);
         }
       })();
     </script>
-
-    <!-- <link rel='stylesheet' href='./src/css/app.css'></link> -->
-
 
   </head>
   <body>
@@ -37,12 +26,9 @@
         const scripts = [];
 
         if (process.env.NODE_ENV === 'development') {
-          // Dynamically insert the DLL script in development env in the
-          // renderer process
           scripts.push('../dll/renderer.dev.dll.js');
         }
         if (process.env.START_HOT) {
-          // Dynamically insert the bundled app script in the renderer process
           const port = process.env.PORT || 1212;
           scripts.push(`http://localhost:${port}/dist/renderer.dev.js`);
         } else {
