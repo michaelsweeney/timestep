@@ -63,7 +63,7 @@ const MultiLineLegend = props => {
     let stateCopy = [];
     seriesArray.forEach((d, i) => {
       stateCopy.push({
-        name: d[0].name,
+        name: props.files.length > 1 ? d[0].name_multi : d[0].name_single,
         key: d[0].key,
         color: d3[colorScheme][i],
         yaxis: 'Y1',

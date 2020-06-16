@@ -6,9 +6,26 @@ import { D3Container } from './d3container';
 
 const Heatmap = props => {
   const container = useRef(null);
-  const { series, colorfunc, units, minrange, maxrange, reversecolor } = props;
+  const {
+    files,
+    series,
+    colorfunc,
+    units,
+    minrange,
+    maxrange,
+    reversecolor
+  } = props;
 
   const { width, height } = props.plotdims;
+
+  let title = '-';
+  if (series[0] != undefined) {
+    if (files.length > 1) {
+      title = series[0].name_multi;
+    } else {
+      title = series[0].name_single;
+    }
+  }
 
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
   const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
@@ -226,7 +243,7 @@ const Heatmap = props => {
       .join('text')
       .attr('class', 'title-text')
       .attr('text-anchor', 'middle')
-      .text(() => (series[0] ? series[0].name + ' Heatmap' : '-'));
+      .text(() => title);
 
     /* TOOLTIP */
     let tooltipdiv = d3

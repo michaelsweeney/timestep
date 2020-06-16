@@ -33,7 +33,7 @@ const Statistics = props => {
   seriesArray.forEach(s => {
     let darray = s.map(d => d[valkey]);
     statsarray.push({
-      name: s[0].name,
+      name: props.files.length > 1 ? s[0].name_multi : s[0].name_single,
       sum: d3.sum(darray),
       max: d3.max(darray),
       min: d3.min(darray),

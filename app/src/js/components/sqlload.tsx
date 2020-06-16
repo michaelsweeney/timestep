@@ -95,8 +95,13 @@ async function loadAllSeries(sqlfiles, timestep) {
           }
         }
       }
-      row.name_ip = `${row.file_short}, ${row.KeyValue}: ${row.Name} (${row.units_ip}) - ${row.ReportingFrequency}`;
-      row.name_si = `${row.file_short}, ${row.KeyValue}: ${row.Name} (${row.units_si}) - ${row.ReportingFrequency}`;
+      // if only one file pased, drop filename, otherwise include it
+
+      row.name_ip_multi = `${row.file_short}, ${row.KeyValue}: ${row.Name} (${row.units_ip}) - ${row.ReportingFrequency}`;
+      row.name_si_multi = `${row.file_short}, ${row.KeyValue}: ${row.Name} (${row.units_si}) - ${row.ReportingFrequency}`;
+      row.name_ip_single = `${row.KeyValue}: ${row.Name} (${row.units_ip}) - ${row.ReportingFrequency}`;
+      row.name_si_single = `${row.KeyValue}: ${row.Name} (${row.units_si}) - ${row.ReportingFrequency}`;
+
       loadedobj.push(row);
     });
   }
@@ -262,8 +267,11 @@ async function getSeriesIndex(file, idx) {
         }
       }
     }
-    row.name_ip = `${row.file_short}, ${row.KeyValue}: ${row.Name} (${row.units_ip}) - ${row.ReportingFrequency}`;
-    row.name_si = `${row.file_short}, ${row.KeyValue}: ${row.Name} (${row.units_si}) - ${row.ReportingFrequency}`;
+
+    row.name_ip_multi = `${row.file_short}, ${row.KeyValue}: ${row.Name} (${row.units_ip}) - ${row.ReportingFrequency}`;
+    row.name_si_multi = `${row.file_short}, ${row.KeyValue}: ${row.Name} (${row.units_si}) - ${row.ReportingFrequency}`;
+    row.name_ip_single = `${row.KeyValue}: ${row.Name} (${row.units_si}) - ${row.ReportingFrequency}`;
+    row.name_si_single = `${row.KeyValue}: ${row.Name} (${row.units_si}) - ${row.ReportingFrequency}`;
     loadedobj[key] = row;
   });
   return loadedobj;
@@ -281,11 +289,14 @@ async function getSeries(filetag, units) {
 
   let series_obj = await getSeriesIndex(sqlfile, idx);
   series_obj = Object.values(series_obj)[0];
-  let long_name;
+  let long_name_single;
+  let long_name_multi;
   if (units == 'IP') {
-    long_name = series_obj.name_ip;
+    long_name_single = series_obj.name_ip_single;
+    long_name_multi = series_obj.name_ip_multi;
   } else {
-    long_name = series_obj.name_si;
+    long_name_single = series_obj.name_si_single;
+    long_name_multi = series_obj.name_si_multi;
   }
 
   let db = new sqlite3.Database(sqlfile);
@@ -316,8 +327,9 @@ async function getSeries(filetag, units) {
     let time = new Date(
       year + '-' + row.Month + '-' + row.Day + ' ' + row.Hour + ':' + row.Minute
     );
+    data.name_single = long_name_single;
+    data.name_multi = long_name_multi;
 
-    data.name = long_name;
     data.value_si = row.Value;
     data.time = time;
     data.units_si = series_obj.units_si;

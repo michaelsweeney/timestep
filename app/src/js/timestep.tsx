@@ -57,7 +57,9 @@ const Timestep = () => {
     loadAllSeries(files, timestepType).then(d => {
       if (units == 'ip') {
         let _keyobj = {};
-        let ar = d.map(e => e.name_ip);
+        let ar = d.map(e =>
+          files.length > 1 ? e.name_ip_multi : e.name_ip_single
+        );
         let keys = d.map(e => e.key);
         for (let i = 0; i < keys.length; i++) {
           let currentKey = ar[i];
@@ -69,7 +71,9 @@ const Timestep = () => {
       }
       if (units == 'si') {
         let _keyobj = {};
-        let ar = d.map(e => e.name_si);
+        let ar = d.map(e =>
+          files.length > 1 ? e.name_si_multi : e.name_si_single
+        );
         let keys = d.map(e => e.key);
         for (let i = 0; i < keys.length; i++) {
           let currentKey = ar[i];

@@ -81,6 +81,7 @@ const HeatmapControl = props => {
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <Heatmap
           plotdims={plotdims}
+          files={props.files}
           series={series}
           units={props.units}
           colorfunc={colorfunc}

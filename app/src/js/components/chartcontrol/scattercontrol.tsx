@@ -123,6 +123,7 @@ const ScatterControl = props => {
       >
         <Scatter
           plotdims={plotdims}
+          files={props.files}
           units={props.units}
           colorfunc={colorfunc}
           reversecolor={reverseColor}

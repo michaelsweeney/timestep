@@ -69,6 +69,7 @@ const HistogramControl = props => {
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <Histogram
+          files={props.files}
           plotdims={plotdims}
           series={series}
           units={props.units}

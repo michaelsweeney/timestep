@@ -73,6 +73,7 @@ const MultiLineControl = props => {
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <MultiLine
+          files={props.files}
           plotdims={plotdims}
           seriesConfig={seriesConfig}
           units={props.units}
@@ -80,6 +81,7 @@ const MultiLineControl = props => {
         />
       </ViewWrapper>
       <MultiLineLegend
+        files={props.files}
         legendCallback={handleLegendChange}
         seriesArray={seriesArray}
         colorScheme={colorScheme}

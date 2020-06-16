@@ -2,14 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { formatInt } from '../numformat';
 import * as d3 from 'd3';
 import { D3Container } from './d3container';
+import { cloneNode } from '@babel/types';
 
 const Histogram = props => {
   const container = useRef(null);
 
-  const { series, units, binmin, binmax, numbins } = props;
+  const { files, series, units, binmin, binmax, numbins } = props;
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
   const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
   const { width, height } = props.plotdims;
+
+  let title = '-';
+  if (series[0] != undefined) {
+    if (files.length > 1) {
+      title = series[0].name_multi;
+    } else {
+      title = series[0].name_single;
+    }
+  }
 
   useEffect(() => {
     createChart();
@@ -177,7 +187,7 @@ const Histogram = props => {
       .join('text')
       .attr('class', 'title-text')
       .attr('text-anchor', 'middle')
-      .text(() => (series[0] ? series[0].name + ' Histogram' : '-'));
+      .text(() => title);
 
     /* TOOLTIP */
     let tooltipdiv = d3

@@ -14,6 +14,7 @@ const Scatter = props => {
   });
 
   const {
+    files,
     units,
     colorfunc,
     reversecolor,
@@ -32,6 +33,33 @@ const Scatter = props => {
 
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
   const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
+
+  let plot_title = '-';
+  let x_label = '-';
+  let y_label = '-';
+  let z_label = '-';
+
+  if (files.length > 1) {
+    x_label = xseries[0] ? xseries[0].name_multi : '-';
+    y_label = yseries[0] ? yseries[0].name_multi : '-';
+    z_label = zseries[0] ? zseries[0].name_multi : '-';
+  }
+
+  if (files.length == 1) {
+    x_label = xseries[0] ? xseries[0].name_single : '-';
+    y_label = yseries[0] ? yseries[0].name_single : '-';
+    z_label = zseries[0] ? zseries[0].name_single : '-';
+  }
+
+  if (xseries[0] && yseries[0] && zseries[0]) {
+    plot_title = `${x_label} vs. ${y_label}, colored by ${z_label}`;
+  }
+
+  if (xseries[0] && yseries[0]) {
+    plot_title = `${x_label} vs. ${y_label}, colored by ${z_label}`;
+  } else {
+    plot_title = '-';
+  }
 
   useEffect(() => {
     createChart();
@@ -104,10 +132,8 @@ const Scatter = props => {
     /* SCALES */
 
     const xScale = d3.scaleLinear().range([0, plotwidth]);
-    // .domain([xminrange, xmaxrange]);
 
     const yScale = d3.scaleLinear().range([plotheight, 0]);
-    // .domain([yminrange, ymaxrange]);
     if (!isZoomed) {
       xScale.domain([xminrange, xmaxrange]);
       yScale.domain([yminrange, ymaxrange]);
@@ -158,6 +184,7 @@ const Scatter = props => {
     const xunits = xseries[0] != undefined ? xseries[0][unitkey] : '';
     const yunits = yseries[0] != undefined ? yseries[0][unitkey] : '';
     const zunits = zseries[0] != undefined ? zseries[0][unitkey] : '';
+
     const circles = plotg
       .selectAll('.circle-point')
       .data(dataArr)
@@ -214,7 +241,7 @@ const Scatter = props => {
       .join('text')
       .attr('text-anchor', 'middle')
       .attr('class', 'x-axis-text axis-text')
-      .text(() => (xseries[0] ? xseries[0].name : '-'));
+      .text(x_label);
 
     const ylabelg = svg
       .selectAll('.ylabelg')
@@ -233,7 +260,7 @@ const Scatter = props => {
       .join('text')
       .attr('class', 'y-axis-text axis-text')
       .attr('text-anchor', 'middle')
-      .text(() => (yseries[0] ? yseries[0].name : '-'));
+      .text(y_label);
 
     const legendlabelg = svg
       .selectAll('.legendlabelg')
@@ -253,8 +280,7 @@ const Scatter = props => {
       .join('text')
       .attr('class', 'z-axis-text axis-text')
       .attr('text-anchor', 'middle')
-      .text(() => (zseries[0] != undefined ? zseries[0][unitkey] : '-'));
-
+      .text(z_label);
     const titleg = svg
       .selectAll('.titleg')
       .data([0])
@@ -271,23 +297,7 @@ const Scatter = props => {
       .join('text')
       .attr('class', 'title-text')
       .attr('text-anchor', 'middle')
-      .text(() => {
-        return '';
-        let xname = xseries[0] ? xseries[0].name : '';
-        let yname = yseries[0] ? yseries[0].name : '';
-        let zname = zseries[0] ? zseries[0].name : '';
-
-        // if all dims present
-        if (xname != '' && yname != '' && zname != '') {
-          return `${xname} vs ${yname}, colored by ${zname}`;
-        }
-        // if only x and y present
-        if (xname != '' && yname != '') {
-          return `${xname} vs ${yname}`;
-        } else {
-          return '';
-        }
-      });
+      .text(plot_title);
 
     /* COLOR LEGEND */
 

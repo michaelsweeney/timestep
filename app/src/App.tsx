@@ -1,8 +1,9 @@
 import React from 'react';
 import { Timestep } from './js/timestep';
+import { hot } from 'react-hot-loader/root';
 
-export default function App() {
-  return <Timestep></Timestep>;
+const App = () => {
+  return <Timestep />
 }
 
-export { App };
+export default hot(App)

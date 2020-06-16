@@ -45,7 +45,11 @@ const StatisticsControl = props => {
   return (
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
-        <Statistics units={props.units} seriesArray={seriesArray} />
+        <Statistics
+          units={props.units}
+          seriesArray={seriesArray}
+          files={props.files}
+        />
       </ViewWrapper>
 
       <ControlsContainer tag="statistics-controls-container">
