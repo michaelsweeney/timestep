@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 
 import { formatInt, formatDate } from '../numformat';
 import { D3Container } from './d3container';
+import { idealSplit } from '../textformat';
 
 const Scatter = props => {
   const container = useRef(null);
@@ -34,7 +35,7 @@ const Scatter = props => {
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
   const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
 
-  let plot_title = '-';
+  let plot_title = '';
   let x_label = '-';
   let y_label = '-';
   let z_label = '-';
@@ -51,15 +52,9 @@ const Scatter = props => {
     z_label = zseries[0] ? zseries[0].name_single : '-';
   }
 
-  if (xseries[0] && yseries[0] && zseries[0]) {
-    plot_title = `${x_label} vs. ${y_label}, colored by ${z_label}`;
-  }
-
-  if (xseries[0] && yseries[0]) {
-    plot_title = `${x_label} vs. ${y_label}, colored by ${z_label}`;
-  } else {
-    plot_title = '-';
-  }
+  let x_label_array = idealSplit(x_label);
+  let y_label_array = idealSplit(y_label);
+  let z_label_array = idealSplit(z_label);
 
   useEffect(() => {
     createChart();
@@ -96,18 +91,20 @@ const Scatter = props => {
 
     /* DIMENSIONS */
     const labelmargins = {
-      y: 30,
+      y: 70,
       x: 40,
       title: 30,
       legend: 50,
-      legendlabel: 100
+      legendlabel: 110
     };
     const margins = {
-      l: 50,
-      t: 50,
-      b: 50,
+      l: 100,
+      t: 20,
+      b: 100,
       r: 200
     };
+
+    const labeltextoffset = 20;
 
     const plotwidth = width - margins.l - margins.r;
     const plotheight = height - margins.t - margins.b;
@@ -213,7 +210,7 @@ const Scatter = props => {
       .attr('transform', `translate(${margins.l},${plotheight + margins.t})`)
       .call(xAxis);
 
-    const yAxis = d3.axisLeft(yScale);
+    const yAxis = d3.axisLeft(yScale).tickFormat(formatInt);
     const yaxisg = svg
       .selectAll('.yaxisg')
       .data([0])
@@ -237,11 +234,12 @@ const Scatter = props => {
       );
     xlabelg
       .selectAll('text')
-      .data([0])
+      .data(x_label_array)
       .join('text')
       .attr('text-anchor', 'middle')
       .attr('class', 'x-axis-text axis-text')
-      .text(x_label);
+      .text(d => d)
+      .attr('y', (d, i) => i * labeltextoffset);
 
     const ylabelg = svg
       .selectAll('.ylabelg')
@@ -256,11 +254,12 @@ const Scatter = props => {
 
     ylabelg
       .selectAll('text')
-      .data([0])
+      .data(y_label_array)
       .join('text')
       .attr('class', 'y-axis-text axis-text')
       .attr('text-anchor', 'middle')
-      .text(y_label);
+      .text(d => d)
+      .attr('y', (d, i) => i * labeltextoffset);
 
     const legendlabelg = svg
       .selectAll('.legendlabelg')
@@ -276,11 +275,13 @@ const Scatter = props => {
 
     legendlabelg
       .selectAll('text')
-      .data([0])
+      .data(z_label_array)
       .join('text')
       .attr('class', 'z-axis-text axis-text')
       .attr('text-anchor', 'middle')
-      .text(z_label);
+      .text(d => d)
+      .attr('y', (d, i) => i * labeltextoffset);
+
     const titleg = svg
       .selectAll('.titleg')
       .data([0])
@@ -322,7 +323,8 @@ const Scatter = props => {
     const colorLegendAxis = d3
       .axisRight()
       .scale(colorlegendscale)
-      .ticks(5);
+      .ticks(5)
+      .tickFormat(formatInt);
 
     // innerhtml avoids bugs at render, for some reason lineargradient id isn't picked up otherwise
     defs.html(

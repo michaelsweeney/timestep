@@ -10,23 +10,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
-// const useStyles = makeStyles(
-//   {
-//     root: {
-//       display: 'inline-block',
-//       marginTop: 10,
-//       marginLeft: 10,
-//       marginRight: 5,
-//       boxSizing: 'border-box',
-
-//       '& button': {
-//         width: 115
-//       }
-//     }
-//   },
-//   { name: 'file-list' }
-// );
+import { DEFAULTCONFIG } from '../defaultconfig';
 
 function getModalStyle() {
   const pad = 50; // what does this do?
@@ -84,11 +68,16 @@ function FileList(props) {
 
   const open = Boolean(anchorEl);
 
+  useEffect(() => {
+    if (!DEFAULTCONFIG.isDev || !DEFAULTCONFIG.disableFilePopup) {
+      setAnchorEl(true);
+    }
+  }, [fileInfo]);
+
   return (
     <div className={classes.root}>
       <Button
         disableRipple={true}
-        // aria-describedby={id}
         variant="outlined"
         color="primary"
         onClick={handleClick}

@@ -37,10 +37,15 @@ const ScatterControl = props => {
   const [plotdims, setPlotdims] = useState({ width: 50, height: 50 });
   const plotContainer = useRef(null);
 
+  const domainPad = 0.05;
+
   const getMaxMin = series => {
     const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
     let min = Math.min(...series.map(d => d[valkey]));
     let max = Math.max(...series.map(d => d[valkey]));
+    let pad = (max - min) * domainPad;
+    min = min == 0 ? min : min - pad;
+    max = max + pad;
     return [min, max];
   };
 
@@ -65,8 +70,6 @@ const ScatterControl = props => {
       let [min, max] = getMaxMin(d);
       setXMinRange(min);
       setXMaxRange(max);
-      // setXMinData(min);
-      // setXMaxData(max);
       setIsLoadingX(false);
     });
   };
@@ -78,8 +81,6 @@ const ScatterControl = props => {
       let [min, max] = getMaxMin(d);
       setYMinRange(min);
       setYMaxRange(max);
-      // setYMinData(min);
-      // setYMaxData(max);
       setIsLoadingY(false);
     });
   };

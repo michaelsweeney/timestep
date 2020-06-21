@@ -8,6 +8,7 @@ import { RangeSlider } from '../rangeslider';
 import { SingleSlider } from '../singleslider';
 import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from './viewwrapper';
+import { SettingsContainer } from '../settingscontainer';
 
 const HistogramControl = props => {
   const [isLoading, setIsLoading] = useState(false);
@@ -83,22 +84,23 @@ const HistogramControl = props => {
           seriesCallback={handleSeriesSelect}
           series={props.seriesOptions}
         />
+        <SettingsContainer>
+          <div className="range-container">
+            <RangeSlider
+              title={'Bin Range'}
+              defaultValue={[minData, maxData]}
+              rangeCallback={handleRangeChange}
+            ></RangeSlider>
 
-        <div className="range-container">
-          <RangeSlider
-            title={'Bin Range'}
-            defaultValue={[minData, maxData]}
-            rangeCallback={handleRangeChange}
-          ></RangeSlider>
-
-          <SingleSlider
-            title={'Bins: ' + numBins}
-            min={0}
-            max={50}
-            defaultValue={10}
-            sliderCallback={handleNumBinChange}
-          ></SingleSlider>
-        </div>
+            <SingleSlider
+              title={'Bins: ' + numBins}
+              min={0}
+              max={50}
+              defaultValue={10}
+              sliderCallback={handleNumBinChange}
+            ></SingleSlider>
+          </div>
+        </SettingsContainer>
       </ControlsContainer>
     </>
   );

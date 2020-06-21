@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { loadAllSeries, getFileSummary } from './components/sqlload';
 import { Sidebar } from './components/sidebar';
 import { ViewControl } from './components/viewcontrol';
-import { defaultView, defaultStep } from './components/defaults';
 import '../css/app.global.css';
 import { makeStyles } from '@material-ui/core/styles';
+import { DEFAULTCONFIG } from './defaultconfig';
 
 const useStyles = makeStyles(
   {
@@ -22,9 +22,9 @@ const Timestep = () => {
   const [files, setFiles] = useState([]);
   const [fileInfo, setFileInfo] = useState([]);
   const [units, setUnits] = useState('si');
-  const [activeView, setActiveView] = useState(defaultView);
+  const [activeView, setActiveView] = useState(DEFAULTCONFIG.defaultView);
   const [seriesOptions, setSeriesOptions] = useState([]);
-  const [timestepType, setTimestepType] = useState(defaultStep);
+  const [timestepType, setTimestepType] = useState(DEFAULTCONFIG.defaultStep);
   const [seriesLookupObj, setSeriesLookupObj] = useState({});
 
   const [key, setKey] = useState(0);
@@ -91,12 +91,10 @@ const Timestep = () => {
     handleSeriesOptions(files, units, v);
   };
 
-  // default for dev
   useEffect(() => {
-    handleFileChange([
-      // '/Users/michaelsweeney/Documents/energyplus files/example/output-5ZoneDetailedIceStorage/5ZoneDetailedIceStorageout.sql'
-      '/Users/michaelsweeney/Documents/energyplus files/chop_shade_array.sql'
-    ]);
+    if (DEFAULTCONFIG.isDev) {
+      handleFileChange(DEFAULTCONFIG.defaultFiles);
+    }
   }, []);
 
   return (

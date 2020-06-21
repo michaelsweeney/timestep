@@ -38,7 +38,7 @@ const Histogram = props => {
     };
     const margins = {
       l: 50,
-      t: 50,
+      t: 20,
       b: 50,
       r: 100
     };
@@ -171,7 +171,7 @@ const Histogram = props => {
       .join('text')
       .attr('text-anchor', 'middle')
       .attr('class', 'x-axis-text axis-text')
-      .text(() => (series[0] ? series[0][unitkey] : '-'));
+      .text(title);
 
     ylabelg
       .selectAll('text')
@@ -187,7 +187,7 @@ const Histogram = props => {
       .join('text')
       .attr('class', 'title-text')
       .attr('text-anchor', 'middle')
-      .text(() => title);
+      .text('');
 
     /* TOOLTIP */
     let tooltipdiv = d3

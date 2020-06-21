@@ -14,6 +14,10 @@ const useStyles = makeStyles(
     },
     button: {
       width: 115
+    },
+    buttonactive: {
+      width: 115,
+      backgroundColor: 'rgb(20, 20, 20)'
     }
   },
   { name: 'file-handler' }
@@ -84,7 +88,7 @@ const FileHandler = props => {
         disableRipple={true}
         variant="contained"
         color="primary"
-        className={'file-button drag-' + isActive + ' ' + classes.button}
+        className={isActive == 'active' ? classes.buttonactive : classes.button}
         onClick={openDialog}
         onDragEnter={handleDragEnter}
         onDrop={handleDrop}

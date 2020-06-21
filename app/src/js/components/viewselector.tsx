@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
-import { defaultView } from './defaults';
+import { DEFAULTCONFIG } from '../defaultconfig';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(
@@ -12,10 +12,10 @@ const useStyles = makeStyles(
       marginLeft: 20,
       marginRight: 20,
       marginTop: 10,
-      boxSizing: 'border-box',
-      '& button': {
-        width: 115
-      }
+      boxSizing: 'border-box'
+    },
+    '& button': {
+      width: 115
     }
   },
   { name: 'view-selector' }
@@ -23,7 +23,7 @@ const useStyles = makeStyles(
 
 const ViewSelector = props => {
   const classes = useStyles();
-  const [activeView, setActiveView] = useState(defaultView);
+  const [activeView, setActiveView] = useState(DEFAULTCONFIG.defaultView);
 
   const handleViewChange = e => {
     switch (e.target.innerHTML) {
@@ -50,21 +50,20 @@ const ViewSelector = props => {
     }
   };
 
-  const buttonlookupobj = {
+  const variants = {
+    multiline: activeView == 'MultiLine' ? 'contained' : 'outlined',
+    scatter: activeView == 'Scatter' ? 'contained' : 'outlined',
     heatmap: activeView == 'Heatmap' ? 'contained' : 'outlined',
     histogram: activeView == 'Histogram' ? 'contained' : 'outlined',
-    scatter: activeView == 'Scatter' ? 'contained' : 'outlined',
-    multiline: activeView == 'MultiLine' ? 'contained' : 'outlined',
     statistics: activeView == 'Statistics' ? 'contained' : 'outlined'
   };
-
   return (
     <div className={classes.root}>
       <ButtonGroup disableRipple={true} color="primary" orientation="vertical">
         <Button
           value={'multiline'}
           key={'multiline'}
-          variant={buttonlookupobj['multiline']}
+          variant={variants.multiline}
           onClick={handleViewChange}
         >
           MultiLine
@@ -72,7 +71,7 @@ const ViewSelector = props => {
         <Button
           value={'heatmap'}
           key={'heatmap'}
-          variant={buttonlookupobj['heatmap']}
+          variant={variants.heatmap}
           onClick={handleViewChange}
         >
           Heatmap
@@ -80,7 +79,7 @@ const ViewSelector = props => {
         <Button
           value={'histogram'}
           key={'histogram'}
-          variant={buttonlookupobj['histogram']}
+          variant={variants.histogram}
           onClick={handleViewChange}
         >
           Histogram
@@ -88,7 +87,7 @@ const ViewSelector = props => {
         <Button
           value={'scatter'}
           key={'scatter'}
-          variant={buttonlookupobj['scatter']}
+          variant={variants.scatter}
           onClick={handleViewChange}
         >
           Scatter
@@ -96,7 +95,7 @@ const ViewSelector = props => {
         <Button
           value={'statistics'}
           key={'statistics'}
-          variant={buttonlookupobj['statistics']}
+          variant={variants.statistics}
           onClick={handleViewChange}
         >
           Statistics

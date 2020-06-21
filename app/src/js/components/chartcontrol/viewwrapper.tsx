@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(
   {
     root: {
-      boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+      // boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
       overflow: 'hidden'
     },
     spinneractive: {

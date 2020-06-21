@@ -27,12 +27,11 @@ const StatisticsControl = props => {
     arrayClone = arrayClone.filter(d => !toremove.includes(d[0].key));
     if (toremove.length >= 1) {
       setSeriesArray(arrayClone);
-      setIsLoading(true);
     }
 
     newkeys.forEach(key => {
-      setIsLoading(true);
       if (!existingkeys.includes(key)) {
+        setIsLoading(true);
         getSeries(key, props.units).then(d => {
           arrayClone.push(d);
           setSeriesArray(arrayClone);

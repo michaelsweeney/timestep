@@ -434,151 +434,6 @@ function checkArray(sqlfiles) {
   }
 }
 
-async function loadAllStandardTables(sqlfiles) {
-  dbProto(); // establish async loadfiles
-  checkArray(sqlfiles); // error handling for sql files of same name
-
-  let loadedobj = {}; // compiler for multiple sqlfiles
-
-  for (let i = 0; i < sqlfiles.length; i++) {
-    // loop through each file
-    let sqlfile = sqlfiles[i];
-
-    let db = new sqlite3.Database(sqlfile);
-    let query = "SELECT tbl_name FROM sqlite_master WHERE type = 'table'";
-
-    let result = await db.allAsync(query);
-    result.forEach(row => {
-      let rpt = {};
-      rpt.file = sqlfile;
-      rpt.file_short = sqlfile
-        .replace(/\\/g, '/')
-        .split('/')
-        .pop()
-        .split('.')[0];
-      rpt.key = rpt.file + '|' + row.tbl_name;
-      rpt.name = rpt.file_short + ' - ' + row.tbl_name;
-      loadedobj[rpt.key] = rpt;
-    });
-  }
-  return loadedobj;
-}
-
-async function loadAllTabularDataTables(sqlfiles) {
-  dbProto(); // establish async loadfiles
-  checkArray(sqlfiles); // error handling for sql files of same name
-
-  let loadedobj = {}; // compiler for multiple sqlfiles
-
-  for (let i = 0; i < sqlfiles.length; i++) {
-    // loop through each file
-    let sqlfile = sqlfiles[i];
-
-    let db = new sqlite3.Database(sqlfile);
-    let query =
-      "SELECT DISTINCT reportn.Value As ReportName, fs.Value As ReportForString, tn.Value As TableName FROM TabularData As td INNER JOIN Strings As reportn ON reportn.StringIndex=td.ReportNameIndex INNER JOIN Strings As fs ON fs.StringIndex=td.ReportForStringIndex INNER JOIN Strings As tn ON tn.StringIndex=td.TableNameIndex WHERE tn.StringTypeIndex = 1 OR tn.StringTypeIndex = 2 OR tn.StringTypeIndex = 3 AND td.Value = ''";
-    query =
-      "SELECT DISTINCT ReportName || '|' || ReportForString || '|' || TableName FROM TabularDataWithStrings ";
-
-    let result = await db.allAsync(query);
-    result.forEach(row => {
-      let key = row["ReportName || '|' || ReportForString || '|' || TableName"];
-      let split = key.split('|');
-
-      let rpt = {};
-      rpt.key = sqlfile + '|' + key;
-      rpt.ReportName = split[0];
-      rpt.ReportForString = split[1];
-      rpt.TableName = split[2];
-      rpt.file = sqlfile;
-      rpt.file_short = sqlfile
-        .replace(/\\/g, '/')
-        .split('/')
-        .pop()
-        .split('.')[0];
-      rpt.name =
-        rpt.file_short +
-        ' - ' +
-        rpt.ReportName +
-        ', ' +
-        rpt.ReportForString +
-        ', ' +
-        rpt.TableName;
-      loadedobj[key] = rpt;
-    });
-  }
-  return loadedobj;
-}
-
-async function getStandardTable(tag) {
-  dbProto();
-  let sqlfile = tag[0].replace('"', '');
-  let reportname = tag[1].replace('"', '');
-  let db = new sqlite3.Database(sqlfile);
-  let query = `SELECT * FROM ${reportname}`;
-  let result = await db.allAsync(query);
-  return result;
-}
-
-async function getTabularDataTable(tag) {
-  dbProto();
-
-  let sqlfile = tag[0].replace('"', '');
-  let reportname = tag[1].replace('"', '');
-  let reportfor = tag[2].replace('"', '');
-  let tablename = tag[3].replace('"', '');
-
-  let db = new sqlite3.Database(sqlfile);
-  let query = `
-        SELECT
-
-        TD.RowId,
-        TD.ColumnId,
-        TD.Value,
-
-        rptname.Value as rptname,
-        rptfor.Value as rptfor,
-        tblname.Value as tblname,
-        rowname.Value as rowname,
-        colname.Value as colname,
-        unitname.Value as unitname
-
-        FROM TabularData TD
-
-        INNER JOIN Strings rptname ON TD.ReportNameIndex = rptname.StringIndex
-        INNER JOIN Strings rptfor ON TD.ReportForStringIndex = rptfor.StringIndex
-        INNER JOIN Strings tblname ON TD.TableNameIndex = tblname.StringIndex
-        INNER JOIN Strings rowname ON TD.RowNameIndex = rowname.StringIndex
-        INNER JOIN Strings colname ON TD.ColumnNameIndex = colname.StringIndex
-        INNER JOIN Strings unitname ON TD.UnitsIndex = unitname.StringIndex
-
-        WHERE tblname = "${tablename}"
-        AND rptname = "${reportname}"
-        AND rptfor = "${reportfor}"
-        `;
-
-  let result = await db.allAsync(query);
-  return result;
-}
-
-async function getTables(tag) {
-  dbProto();
-
-  let table;
-
-  let tagsplit = tag.split('|');
-  if (tagsplit.length == 2) {
-    table = await getStandardTable(tagsplit);
-    return table;
-  } else if (tagsplit.length == 4) {
-    table = await getTabularDataTable(tagsplit);
-    return table;
-  } else {
-    console.log(tagsplit.length);
-    console.warn('Table Tag Parsing Error');
-  }
-}
-
 function readBnd(bnd) {
   let bndobj = {};
   fs.readFile(bnd, 'utf8', function(err, contents) {
@@ -601,10 +456,6 @@ const unitdict = {
   m: 'ft',
   m2: 'ft2',
   m3: 'ft3',
-  deg: 'deg',
-  m: 'ft',
-  m2: 'ft2',
-  m3: 'ft3',
   s: 's',
   Hz: 'Hz',
   C: 'F',
@@ -618,16 +469,13 @@ const unitdict = {
   kg_s: 'lb_s',
   m3_s: 'cfm',
   Pa: 'atm',
-  Pa: 'atm',
   J_kg: 'btu/lb',
   kg_m3: 'lb/cfm',
   W_m2: 'w/ft2',
   J_kg_K: 'J/kg-K',
   W_m_K: 'W/m-K',
-  m2_s: 'ft2/s',
   W_m2_K: 'W/m2-K',
   m2_K_W: 'm2-K/W',
-  W: 'W',
   V: 'V',
   A: 'A',
   lx: 'lx',
@@ -641,7 +489,8 @@ const unitdict = {
   m3_kg: 'cfm/lb',
   ach: 'ach',
   hr: 'hr',
-  pct: 'pct'
+  pct: 'pct',
+  W_W: 'W/W'
 };
 
 const unitconvert = {
@@ -670,27 +519,20 @@ const unitconvert = {
   m2_s: 10.7639,
   W_m2_K: 1,
   m2_K_W: 1,
-  W: 1,
   V: 1,
   A: 1,
   lx: 1,
   lm: 1,
   cd: 1,
   cd_m2: 1,
-  m2_s: 1,
   kg_m_s: 'tbd',
   N_s_m2: 'tbd',
   kg_kg_K: 1,
   m3_kg: 'tbd',
   ach: 1,
   hr: 1,
-  pct: 1
+  pct: 1,
+  W_W: 1
 };
 
 export { loadAvailSeries, loadAllSeries, getSeries, getFileSummary };
-/* --------------------------------------------------------- */
-
-// queries:
-
-// SELECT * FROM sqlite_master WHERE type = 'table'
-// SELECT * FROM TabularData

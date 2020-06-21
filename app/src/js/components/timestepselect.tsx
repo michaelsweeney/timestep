@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
-import { defaultStep } from './defaults';
-
+import { DEFAULTCONFIG } from '../defaultconfig';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(
@@ -20,7 +19,7 @@ const useStyles = makeStyles(
 
 const TimeStepSelect = props => {
   const classes = useStyles();
-  const [value, setValue] = useState(defaultStep);
+  const [value, setValue] = useState(DEFAULTCONFIG.defaultStep);
 
   const handleChange = e => {
     setValue(e.target.value);

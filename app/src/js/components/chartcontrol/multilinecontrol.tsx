@@ -54,13 +54,14 @@ const MultiLineControl = props => {
     }
 
     newkeys.forEach(key => {
-      setIsLoading(true);
       if (!existingkeys.includes(key)) {
+        setIsLoading(true);
         getSeries(key, props.units).then(d => {
           arrayClone.push(d);
           setSeriesArray(arrayClone);
           setIsLoading(false);
         });
+      } else {
       }
     });
   };

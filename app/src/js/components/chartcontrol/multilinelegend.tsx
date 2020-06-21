@@ -56,7 +56,7 @@ const useStyles = makeStyles(
 const MultiLineLegend = props => {
   const classes = useStyles();
   const { seriesArray, units, colorScheme } = props;
-
+  console.log(seriesArray);
   const [seriesState, setSeriesState] = useState([]);
 
   useEffect(() => {
