@@ -4,12 +4,10 @@ import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { Histogram } from '../charts/histogram';
 import { ControlsContainer } from '../controlscontainer';
-import { RangeSlider } from '../rangeslider';
-import { SingleSlider } from '../singleslider';
+
 import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from './viewwrapper';
-import { SettingsContainer } from '../settingscontainer';
-
+import { BinControl } from '../bincontrol';
 const HistogramControl = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [series, setSeries] = useState([]);
@@ -84,23 +82,12 @@ const HistogramControl = props => {
           seriesCallback={handleSeriesSelect}
           series={props.seriesOptions}
         />
-        <SettingsContainer>
-          <div className="range-container">
-            <RangeSlider
-              title={'Bin Range'}
-              defaultValue={[minData, maxData]}
-              rangeCallback={handleRangeChange}
-            ></RangeSlider>
-
-            <SingleSlider
-              title={'Bins: ' + numBins}
-              min={0}
-              max={50}
-              defaultValue={10}
-              sliderCallback={handleNumBinChange}
-            ></SingleSlider>
-          </div>
-        </SettingsContainer>
+        <BinControl
+          rangeCallback={handleRangeChange}
+          binCallback={handleNumBinChange}
+          defaultRange={[minData, maxData]}
+          numBins={numBins}
+        ></BinControl>
       </ControlsContainer>
     </>
   );

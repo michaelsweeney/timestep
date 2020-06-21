@@ -24,7 +24,9 @@ function formatInt(n) {
   if (n < 1000) {
     return format(',.0f')(+n);
   }
-
+  if (n < 1000000) {
+    return format('.3s')(+n);
+  }
   if (n >= 1000000) {
     return format('.3s')(+n);
   } else {
@@ -61,6 +63,10 @@ function formatTabular(n) {
   }
   if (n < 1000) {
     return format(',.1f')(+n);
+  }
+
+  if (n < 1000000) {
+    return format('.2s')(+n);
   }
 
   if (n >= 1000000) {

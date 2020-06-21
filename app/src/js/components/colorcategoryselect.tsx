@@ -25,11 +25,8 @@ const ColorCategorySelect = props => {
   const id = Math.floor(Math.random() * 1e6);
   return (
     <FormControl>
-      <InputLabel htmlFor={`grouped-select-${id}`}>Colorscale</InputLabel>
       <Select
-        // variant="outlined"
         native
-        // disableRipple={true}
         style={{ width: 200 }}
         onChange={handleChange}
         defaultValue="schemeCategory10"

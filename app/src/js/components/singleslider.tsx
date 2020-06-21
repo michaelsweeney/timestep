@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { formatInt } from './numformat';
-import Typography from '@material-ui/core/Typography';
 import { Slider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -35,9 +33,6 @@ const SingleSlider = props => {
 
   return (
     <div className={classes.root}>
-      <Typography id="discrete-slider-always" gutterBottom>
-        {props.title}
-      </Typography>
       <Slider
         max={props.max}
         min={props.min}

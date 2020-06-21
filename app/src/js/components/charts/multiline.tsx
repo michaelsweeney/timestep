@@ -34,17 +34,17 @@ const MultiLine = props => {
   const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
 
   const labelmargins = {
-    y1: 30,
-    y2: 80,
+    y1: 40,
+    y2: 60,
     x: 40,
     title: 20
   };
 
   const margins = {
-    l: 50,
+    l: 75,
     t: 50,
     b: 50,
-    r: 100
+    r: 75
   };
 
   const plotwidth = width - margins.l - margins.r;
@@ -149,8 +149,8 @@ const MultiLine = props => {
       .domain([yconfig.y2.min, yconfig.y2.max * (1 + ytoppad)]);
 
     const xAxis = d3.axisBottom(xScale);
-    const yAxis1 = d3.axisLeft(yScale1);
-    const yAxis2 = d3.axisRight(yScale2);
+    const yAxis1 = d3.axisLeft(yScale1).tickFormat(formatInt);
+    const yAxis2 = d3.axisRight(yScale2).tickFormat(formatInt);
 
     const defs = svg
       .selectAll('defs')

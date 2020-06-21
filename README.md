@@ -1,6 +1,3 @@
-Interactive timeseries visualization for EnergyPlus.
+Interactive timeseries visualizations for EnergyPlus.
 
-Required IDF Outputs:
-SQLite: SimpleAndTabular
-
-(tbd)
+En

@@ -2,13 +2,12 @@ import React, { useState, useEffect, useRef, useStyles } from 'react';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
-import { ColorScaleSelect } from '../colorscaleselect';
 import { ControlsContainer } from '../controlscontainer';
-import { CheckboxInput } from '../checkboxinput';
-import { RangeSlider } from '../rangeslider';
 import { Scatter } from '../charts/scatter';
 import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from './viewwrapper';
+
+import { ColorControl } from '../colorcontrol';
 
 const ScatterControl = props => {
   const [isLoadingX, setIsLoadingX] = useState(false);
@@ -157,22 +156,12 @@ const ScatterControl = props => {
           title={'Select Color Series'}
         />
 
-        <ColorScaleSelect colorScaleCallback={handleColorScaleChange} />
-
-        <CheckboxInput
-          title="Reverse Colorscale"
-          callback={handleReverseColorScale}
-        ></CheckboxInput>
-
-        <div className="range-container">
-          <div className="slider-wrapper">
-            <RangeSlider
-              title={'Colorscale Range'}
-              defaultValue={[zMinData, zMaxData]}
-              rangeCallback={handleColorRangeChange}
-            ></RangeSlider>
-          </div>
-        </div>
+        <ColorControl
+          defaultRange={[zMinData, zMaxData]}
+          colorScaleCallback={handleColorScaleChange}
+          reverseCallback={handleReverseColorScale}
+          rangeCallback={handleColorRangeChange}
+        />
       </ControlsContainer>
     </>
   );

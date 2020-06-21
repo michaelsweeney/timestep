@@ -201,7 +201,8 @@ const Scatter = props => {
       });
 
     /* AXES */
-    const xAxis = d3.axisBottom(xScale);
+    const xAxis = d3.axisBottom(xScale).tickFormat(formatInt);
+
     const xaxisg = svg
       .selectAll('.xaxisg')
       .data([0])

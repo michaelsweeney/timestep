@@ -1,6 +1,5 @@
 import React from 'react';
 import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 
 // make new component
@@ -70,11 +69,8 @@ const ColorScaleSelect = props => {
   const id = Math.floor(Math.random() * 1e6);
   return (
     <FormControl>
-      <InputLabel htmlFor={`grouped-select-${id}`}>Colorscale</InputLabel>
       <Select
-        // variant="outlined"
         native
-        // disableRipple={true}
         style={{ width: 200 }}
         onChange={handleChange}
         defaultValue="Viridis"

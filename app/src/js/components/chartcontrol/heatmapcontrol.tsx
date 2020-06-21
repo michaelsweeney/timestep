@@ -4,12 +4,10 @@ import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { Heatmap } from '../charts/heatmap';
 import { ControlsContainer } from '../controlscontainer';
-import { ColorScaleSelect } from '../colorscaleselect';
-import { CheckboxInput } from '../checkboxinput';
-import { RangeSlider } from '../rangeslider';
+
 import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from './viewwrapper';
-
+import { ColorControl } from '../colorcontrol';
 const HeatmapControl = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [series, setSeries] = useState([]);
@@ -90,26 +88,19 @@ const HeatmapControl = props => {
           reversecolor={reverseColor}
         ></Heatmap>
       </ViewWrapper>
+
       <ControlsContainer tag="heatmap-controls-container">
         <SeriesSelect
           seriesCallback={handleSeriesSelect}
           series={props.seriesOptions}
         />
 
-        <ColorScaleSelect colorScaleCallback={handleColorScaleChange} />
-
-        <CheckboxInput
-          title="Reverse Colorscale"
-          callback={handleReverseColorScale}
-        ></CheckboxInput>
-
-        <div className="range-container">
-          <RangeSlider
-            title={'Colorscale Range'}
-            defaultValue={[minData, maxData]}
-            rangeCallback={handleRangeChange}
-          ></RangeSlider>
-        </div>
+        <ColorControl
+          defaultRange={[minData, maxData]}
+          colorScaleCallback={handleColorScaleChange}
+          reverseCallback={handleReverseColorScale}
+          rangeCallback={handleRangeChange}
+        />
       </ControlsContainer>
     </>
   );
