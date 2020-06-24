@@ -5,6 +5,7 @@ import { getSeries } from '../sqlload';
 import { Statistics } from '../charts/statistics';
 import { ControlsContainer } from '../controlscontainer';
 import { ViewWrapper } from './viewwrapper';
+import { CopySave } from '../copysave';
 
 const StatisticsControl = props => {
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +58,7 @@ const StatisticsControl = props => {
           series={props.seriesOptions}
         />
       </ControlsContainer>
+      <CopySave obj={seriesArray}></CopySave>
     </>
   );
 };

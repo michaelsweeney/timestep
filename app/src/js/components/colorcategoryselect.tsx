@@ -25,6 +25,7 @@ const ColorCategorySelect = props => {
   const id = Math.floor(Math.random() * 1e6);
   return (
     <FormControl>
+      <InputLabel>Color Category</InputLabel>
       <Select
         native
         style={{ width: 200 }}

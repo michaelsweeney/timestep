@@ -8,6 +8,7 @@ import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from './viewwrapper';
 
 import { ColorControl } from '../colorcontrol';
+import { CopySave } from '../copysave';
 
 const ScatterControl = props => {
   const [isLoadingX, setIsLoadingX] = useState(false);
@@ -163,6 +164,7 @@ const ScatterControl = props => {
           rangeCallback={handleColorRangeChange}
         />
       </ControlsContainer>
+      <CopySave obj={[xSeries, ySeries, zSeries]}></CopySave>
     </>
   );
 };

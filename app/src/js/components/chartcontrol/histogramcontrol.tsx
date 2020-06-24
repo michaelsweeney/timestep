@@ -8,6 +8,8 @@ import { ControlsContainer } from '../controlscontainer';
 import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from './viewwrapper';
 import { BinControl } from '../bincontrol';
+import { CopySave } from '../copysave';
+
 const HistogramControl = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [series, setSeries] = useState([]);
@@ -89,6 +91,8 @@ const HistogramControl = props => {
           numBins={numBins}
         ></BinControl>
       </ControlsContainer>
+      <CopySave obj={series}></CopySave>
+
     </>
   );
 };

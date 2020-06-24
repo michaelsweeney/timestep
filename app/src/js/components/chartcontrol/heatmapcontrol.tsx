@@ -8,6 +8,8 @@ import { ControlsContainer } from '../controlscontainer';
 import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from './viewwrapper';
 import { ColorControl } from '../colorcontrol';
+import { CopySave } from '../copysave';
+
 const HeatmapControl = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [series, setSeries] = useState([]);
@@ -88,13 +90,11 @@ const HeatmapControl = props => {
           reversecolor={reverseColor}
         ></Heatmap>
       </ViewWrapper>
-
       <ControlsContainer tag="heatmap-controls-container">
         <SeriesSelect
           seriesCallback={handleSeriesSelect}
           series={props.seriesOptions}
         />
-
         <ColorControl
           defaultRange={[minData, maxData]}
           colorScaleCallback={handleColorScaleChange}
@@ -102,6 +102,7 @@ const HeatmapControl = props => {
           rangeCallback={handleRangeChange}
         />
       </ControlsContainer>
+      <CopySave obj={series}></CopySave>
     </>
   );
 };

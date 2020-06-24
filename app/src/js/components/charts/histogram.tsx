@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { formatInt } from '../numformat';
 import * as d3 from 'd3';
 import { D3Container } from './d3container';
-import { cloneNode } from '@babel/types';
 
 const Histogram = props => {
   const container = useRef(null);
@@ -38,7 +37,7 @@ const Histogram = props => {
     };
     const margins = {
       l: 50,
-      t: 20,
+      t: 50,
       b: 50,
       r: 100
     };
@@ -106,7 +105,10 @@ const Histogram = props => {
       });
 
     /* AXES */
-    const xAxis = d3.axisBottom(xScale).ticks(numbins);
+    const xAxis = d3
+      .axisBottom(xScale)
+      .ticks(numbins)
+      .tickFormat(formatInt);
 
     const xAxis_container = svg
       .selectAll('.xaxisg')
@@ -171,7 +173,7 @@ const Histogram = props => {
       .join('text')
       .attr('text-anchor', 'middle')
       .attr('class', 'x-axis-text axis-text')
-      .text(title);
+      .text(series[0] ? series[0][unitkey] : '-');
 
     ylabelg
       .selectAll('text')
@@ -187,7 +189,7 @@ const Histogram = props => {
       .join('text')
       .attr('class', 'title-text')
       .attr('text-anchor', 'middle')
-      .text('');
+      .text(title);
 
     /* TOOLTIP */
     let tooltipdiv = d3

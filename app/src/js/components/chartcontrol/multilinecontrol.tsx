@@ -8,10 +8,11 @@ import { ControlsContainer } from '../controlscontainer';
 import { MultiLine } from '../charts/multiline';
 import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from './viewwrapper';
+import { CopySave } from '../copysave';
 
 const MultiLineControl = props => {
   const [isLoading, setIsLoading] = useState(false);
-
+  const [loadingArray, setLoadingArray] = useState([]);
   const [seriesArray, setSeriesArray] = useState([]);
   const [colorScheme, setColorScheme] = useState('schemeCategory10');
   const [seriesConfig, setSeriesConfig] = useState([]);
@@ -38,12 +39,12 @@ const MultiLineControl = props => {
 
   const handleSeriesSelect = (e, v) => {
     let arrayClone = [...seriesArray];
-    let newkeys = v.map(tag => props.seriesLookupObj[tag]);
+    let selectedkeys = v.map(tag => props.seriesLookupObj[tag]);
     let existingkeys = arrayClone.map(d => d[0].key);
 
     let toremove = [];
     existingkeys.forEach(existkey => {
-      if (!newkeys.includes(existkey)) {
+      if (!selectedkeys.includes(existkey)) {
         toremove.push(existkey);
       }
     });
@@ -53,16 +54,28 @@ const MultiLineControl = props => {
       setSeriesArray(arrayClone);
     }
 
-    newkeys.forEach(key => {
+    let promises = [];
+    let newkeys = [];
+
+    selectedkeys.forEach(key => {
       if (!existingkeys.includes(key)) {
         setIsLoading(true);
-        getSeries(key, props.units).then(d => {
-          arrayClone.push(d);
-          setSeriesArray(arrayClone);
-          setIsLoading(false);
-        });
-      } else {
+        newkeys.push(key);
+        promises.push(getSeries(key, props.units));
       }
+    });
+
+    // setLoadingArray(newkeys);
+    setIsLoading(true);
+    Promise.all(promises).then(d => {
+      d.forEach(a => arrayClone.push(a));
+      setSeriesArray(arrayClone);
+      // console.log('new keys', newkeys);
+      // console.log('selected keys', selectedkeys);
+      // console.log('existing keys', existingkeys);
+      // console.log('loading array', loadingArray);
+      // console.log('series array', seriesArray);
+      setIsLoading(false);
     });
   };
 
@@ -90,15 +103,15 @@ const MultiLineControl = props => {
       />
 
       <ControlsContainer tag="multiline-controls-container">
-        <ColorCategorySelect
-          colorCategoryCallback={handleColorCategoryChange}
-        />
-
         <MultiSeries
           seriesCallback={handleSeriesSelect}
           series={props.seriesOptions}
         />
+        <ColorCategorySelect
+          colorCategoryCallback={handleColorCategoryChange}
+        />
       </ControlsContainer>
+      <CopySave obj={seriesArray}></CopySave>
     </>
   );
 };
