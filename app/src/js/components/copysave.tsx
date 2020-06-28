@@ -6,7 +6,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
+import { Button, Checkbox } from '@material-ui/core';
 
 const useStyles = makeStyles(
   {
@@ -17,16 +17,22 @@ const useStyles = makeStyles(
   }
 );
 
+function reformatObject(objarray) {
+  // arraytype == 'scatter'
+  // arraytype == 'single'
+  // arraytype == 'multi'
+}
+
 function objectArrayToCsvString(objarray) {
+  console.log(objarray);
   return objarray.map(obj => Object.values(obj).join(',')).join('\n');
 }
 
 const CopySave = props => {
   const classes = useStyles();
-  const formatted = objectArrayToCsvString(props.obj);
+  const formatted = objectArrayToCsvString(props.array);
 
   const handleCopy = () => {
-    console.log(formatted);
     clipboard.writeText(formatted);
   };
   const handleSave = () => {
@@ -48,10 +54,20 @@ const CopySave = props => {
 
   return (
     <div className={classes.root}>
-      <Button variant="outlined" color="primary" onClick={handleCopy}>
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={handleCopy}
+        disableRipple={true}
+      >
         <AssignmentIcon />
       </Button>
-      <Button variant="outlined" color="primary" onClick={handleSave}>
+      <Button
+        variant="outlined"
+        color="primary"
+        onClick={handleSave}
+        disableRipple={true}
+      >
         <SaveAltIcon />
       </Button>
     </div>

@@ -58,7 +58,11 @@ const StatisticsControl = props => {
           series={props.seriesOptions}
         />
       </ControlsContainer>
-      <CopySave obj={seriesArray}></CopySave>
+      <CopySave
+        array={seriesArray}
+        arraytype="multi"
+        units={props.units}
+      ></CopySave>
     </>
   );
 };

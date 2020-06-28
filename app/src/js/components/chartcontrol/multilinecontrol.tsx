@@ -111,7 +111,11 @@ const MultiLineControl = props => {
           colorCategoryCallback={handleColorCategoryChange}
         />
       </ControlsContainer>
-      <CopySave obj={seriesArray}></CopySave>
+      <CopySave
+        array={seriesArray}
+        arraytype="multi"
+        units={props.units}
+      ></CopySave>
     </>
   );
 };

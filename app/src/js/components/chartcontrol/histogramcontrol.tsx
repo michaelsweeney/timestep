@@ -91,8 +91,11 @@ const HistogramControl = props => {
           numBins={numBins}
         ></BinControl>
       </ControlsContainer>
-      <CopySave obj={series}></CopySave>
-
+      <CopySave
+        array={series}
+        arraytype="single"
+        units={props.units}
+      ></CopySave>
     </>
   );
 };

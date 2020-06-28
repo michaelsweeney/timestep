@@ -2,8 +2,22 @@ import React from 'react';
 import { Timestep } from './js/timestep';
 import { hot } from 'react-hot-loader/root';
 
-const App = () => {
-  return <Timestep />
-}
+import {
+  StylesProvider,
+  createGenerateClassName
+} from '@material-ui/core/styles';
 
-export default hot(App)
+const generateClassName = createGenerateClassName({
+  productionPrefix: 'c',
+  disableGlobal: true
+});
+
+const App = () => {
+  return (
+    <StylesProvider generateClassName={generateClassName}>
+      <Timestep />
+    </StylesProvider>
+  );
+};
+
+export default hot(App);

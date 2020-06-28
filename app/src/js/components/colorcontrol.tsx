@@ -51,7 +51,7 @@ const ColorControl = props => {
         defaultValue={props.defaultRange}
         rangeCallback={props.rangeCallback}
       ></RangeSlider>
-      <Button style={{ display: 'none' }}>x</Button>{' '}
+      {/* <Button style={{ display: 'none' }}>x</Button>{' '} */}
       {/* ADDING A BLANK BUTTON AVOIDS MUI RESTYLING SIDEBAR BUTTONS. WHY ??*/}
     </div>
   );

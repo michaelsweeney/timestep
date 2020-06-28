@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { remote } from 'electron';
-import Button from '@material-ui/core/Button';
+import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(

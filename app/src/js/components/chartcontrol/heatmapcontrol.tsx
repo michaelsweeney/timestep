@@ -102,7 +102,11 @@ const HeatmapControl = props => {
           rangeCallback={handleRangeChange}
         />
       </ControlsContainer>
-      <CopySave obj={series}></CopySave>
+      <CopySave
+        array={series}
+        arraytype="single"
+        units={props.units}
+      ></CopySave>
     </>
   );
 };

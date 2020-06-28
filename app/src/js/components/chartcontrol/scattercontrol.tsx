@@ -164,7 +164,11 @@ const ScatterControl = props => {
           rangeCallback={handleColorRangeChange}
         />
       </ControlsContainer>
-      <CopySave obj={[xSeries, ySeries, zSeries]}></CopySave>
+      <CopySave
+        array={[xSeries, ySeries, zSeries]}
+        arraytype="scatter"
+        units={props.units}
+      ></CopySave>
     </>
   );
 };

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
+import { Select, InputLabel, FormControl } from '@material-ui/core';
 
 // make new component
 const colorcategories = {

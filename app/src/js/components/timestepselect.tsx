@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
+import { Select, InputLabel, MenuItem } from '@material-ui/core';
+
 import { DEFAULTCONFIG } from '../defaultconfig';
 import { makeStyles } from '@material-ui/core/styles';
 

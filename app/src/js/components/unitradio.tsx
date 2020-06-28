@@ -10,8 +10,13 @@ const useStyles = makeStyles(
       marginLeft: 20,
       marginRight: 20,
       marginTop: 10
+    },
+    radio: { padding: 12 },
+    '& span': {
+      padding: 12
     }
   },
+
   {
     name: 'unit-radio'
   }
@@ -29,6 +34,7 @@ const UnitRadio = props => {
     <div className={classes.root}>
       <span>SI</span>
       <Radio
+        className={classes.radio}
         disableRipple={true}
         color="primary"
         checked={selectedValue === 'si'}
@@ -38,6 +44,7 @@ const UnitRadio = props => {
         inputProps={{ 'aria-label': 'SI' }}
       />
       <Radio
+        className={classes.radio}
         disableRipple={true}
         color="primary"
         checked={selectedValue === 'ip'}

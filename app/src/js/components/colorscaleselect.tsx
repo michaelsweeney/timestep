@@ -1,6 +1,5 @@
 import React from 'react';
-import Select from '@material-ui/core/Select';
-import FormControl from '@material-ui/core/FormControl';
+import { Select, FormControl } from '@material-ui/core';
 
 // make new component
 const colorcategories = {
