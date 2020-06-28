@@ -62,6 +62,7 @@ const StatisticsControl = props => {
         array={seriesArray}
         arraytype="multi"
         units={props.units}
+        files={props.files}
       ></CopySave>
     </>
   );

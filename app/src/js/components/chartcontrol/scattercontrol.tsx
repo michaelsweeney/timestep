@@ -168,6 +168,8 @@ const ScatterControl = props => {
         array={[xSeries, ySeries, zSeries]}
         arraytype="scatter"
         units={props.units}
+        files={props.files}
+
       ></CopySave>
     </>
   );

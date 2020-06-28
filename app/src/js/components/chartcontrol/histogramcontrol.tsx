@@ -95,6 +95,8 @@ const HistogramControl = props => {
         array={series}
         arraytype="single"
         units={props.units}
+        files={props.files}
+
       ></CopySave>
     </>
   );
