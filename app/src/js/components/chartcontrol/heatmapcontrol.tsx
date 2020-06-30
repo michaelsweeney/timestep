@@ -3,10 +3,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { Heatmap } from '../charts/heatmap';
-import { ControlsContainer } from '../controlscontainer';
 
 import { getBBSize } from '../plotdimensions';
-import { ViewWrapper } from './viewwrapper';
+import { ViewWrapper } from '../viewwrapper';
+import { ControlsWrapper, ControlsContent } from '../controlswrapper';
+
 import { ColorControl } from '../colorcontrol';
 import { CopySave } from '../copysave';
 
@@ -90,24 +91,27 @@ const HeatmapControl = props => {
           reversecolor={reverseColor}
         ></Heatmap>
       </ViewWrapper>
-      <ControlsContainer tag="heatmap-controls-container">
-        <SeriesSelect
-          seriesCallback={handleSeriesSelect}
-          series={props.seriesOptions}
-        />
-        <ColorControl
-          defaultRange={[minData, maxData]}
-          colorScaleCallback={handleColorScaleChange}
-          reverseCallback={handleReverseColorScale}
-          rangeCallback={handleRangeChange}
-        />
-      </ControlsContainer>
+      <ControlsWrapper>
+        <ControlsContent tag="tab-series" tabname="Series Select">
+          <SeriesSelect
+            seriesCallback={handleSeriesSelect}
+            series={props.seriesOptions}
+          />
+        </ControlsContent>
+        <ControlsContent tag="tab-options" tabname="Chart Options">
+          <ColorControl
+            defaultRange={[minData, maxData]}
+            colorScaleCallback={handleColorScaleChange}
+            reverseCallback={handleReverseColorScale}
+            rangeCallback={handleRangeChange}
+          />
+        </ControlsContent>
+      </ControlsWrapper>
       <CopySave
         array={series}
         arraytype="single"
         units={props.units}
         files={props.files}
-
       ></CopySave>
     </>
   );

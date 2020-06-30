@@ -36,7 +36,7 @@ const MultiLine = props => {
   const labelmargins = {
     y1: 40,
     y2: 60,
-    x: 40,
+    x: 0,
     title: 20
   };
 
@@ -47,8 +47,23 @@ const MultiLine = props => {
     r: 75
   };
 
+  const contextmargins = {
+    l: 75,
+    t: 0,
+    b: 20,
+    r: 75
+  };
+
+  const contextheight = 50;
+  const contextwidth = width - contextmargins.l - contextmargins.r;
   const plotwidth = width - margins.l - margins.r;
-  const plotheight = height - margins.t - margins.b;
+  const plotheight =
+    height -
+    margins.t -
+    margins.b -
+    contextheight -
+    contextmargins.t -
+    contextmargins.b;
 
   useEffect(() => {
     handleYAxes();
@@ -131,6 +146,10 @@ const MultiLine = props => {
     let xdomain = d3.extent(times);
 
     const xScale = d3.scaleTime().range([0, plotwidth]);
+    const contextXScale = d3
+      .scaleTime()
+      .range([0, plotwidth])
+      .domain(xdomain);
 
     if (!isZoomed) {
       xScale.domain(xdomain);
@@ -149,6 +168,7 @@ const MultiLine = props => {
       .domain([yconfig.y2.min, yconfig.y2.max * (1 + ytoppad)]);
 
     const xAxis = d3.axisBottom(xScale);
+    const contextXAxis = d3.axisBottom(contextXScale);
     const yAxis1 = d3.axisLeft(yScale1).tickFormat(formatInt);
     const yAxis2 = d3.axisRight(yScale2).tickFormat(formatInt);
 
@@ -164,6 +184,34 @@ const MultiLine = props => {
       .attr('class', 'plotg')
       .attr('transform', `translate(${margins.l},${margins.t})`)
       .attr('clip-path', `url(#${clipid})`);
+
+    const contextg = svg
+      .selectAll('.contextg')
+      .data([0])
+      .join('g')
+      .attr('class', 'contextg')
+      .attr(
+        'transform',
+        `translate(${contextmargins.l},${margins.t +
+          plotheight +
+          margins.b +
+          contextmargins.t})`
+      );
+
+    const contextxaxisg = svg
+      .selectAll('.contextxaxisg')
+      .data([0])
+      .join('g')
+      .attr('class', 'contextxaxisg')
+      .attr(
+        'transform',
+        `translate(${contextmargins.l},${margins.t +
+          plotheight +
+          margins.b +
+          contextheight +
+          contextmargins.t})`
+      )
+      .call(contextXAxis);
 
     const xaxisg = svg
       .selectAll('.xaxisg')
@@ -249,7 +297,7 @@ const MultiLine = props => {
       .join('text')
       .attr('text-anchor', 'middle')
       .attr('class', 'x-axis-text axis-text')
-      .text('Time');
+      .text('');
 
     const ylabel1g = svg
       .selectAll('.ylabel1g')
@@ -303,10 +351,7 @@ const MultiLine = props => {
       .join('text')
       .attr('class', 'title-text')
       .attr('text-anchor', 'middle')
-      .text(() => {
-        return '';
-        return 'Timeseries Line';
-      });
+      .text('');
 
     /* TOOLTIP */
 
@@ -342,6 +387,17 @@ const MultiLine = props => {
       .join('div')
       .attr('class', 'tooltip')
       .style('opacity', 0);
+
+    function hideHover() {
+      markers.style('opacity', 0);
+      xline.style('opacity', 0);
+      tooltip.style('opacity', 0);
+    }
+    function showHover() {
+      markers.style('opacity', 0);
+      xline.style('opacity', 0);
+      tooltip.style('opacity', 0);
+    }
 
     function mouseOver(e) {
       markers.style('opacity', 1);
@@ -433,16 +489,8 @@ const MultiLine = props => {
       `);
     }
 
-    // .multiline-container .tooltip-rect {
-    //   width: 20px;
-    //   height: 20px;
-    //   margin-left: 10px;
-    //   margin-right: 10px;
-    //   transition: opacity 200ms;
-    //   box-sizing: border-box;
-    //   border-radius: 2px;
-    // }
     function mouseOut(e) {
+      console.log(e);
       xline.style('opacity', 0);
       markers.style('opacity', 0);
       tooltip.style('opacity', 0);
@@ -470,10 +518,22 @@ const MultiLine = props => {
       .brushX()
       .extent([
         [0, 0],
+        [contextwidth, contextheight]
+      ])
+      .on('brush end', brushed);
+
+    const zoom = d3
+      .zoom()
+      .scaleExtent([1, Infinity])
+      .translateExtent([
+        [0, 0],
         [plotwidth, plotheight]
       ])
-      .on('end', brushended)
-      .on('start', brushstarted);
+      .extent([
+        [0, 0],
+        [plotwidth, plotheight]
+      ])
+      .on('zoom', zoomed);
 
     let idleTimeout;
     let idleDelay = 350;
@@ -482,62 +542,66 @@ const MultiLine = props => {
       idleTimeout = null;
     }
 
-    function brushstarted() {
-      xline.style('opacity', 0);
-      markers.style('opacity', 0);
-    }
-
-    function brushended() {
-      let s = d3.event.selection;
-      if (!s) {
-        if (!idleTimeout) return (idleTimeout = setTimeout(idled, idleDelay));
-        xScale.domain(xdomain);
-        yScale1.domain([yconfig.y1.min, yconfig.y1.max]);
-        yScale2.domain([yconfig.y2.min, yconfig.y2.max]);
-
-        setIsZoomed(false);
-      } else {
-        let xzoom = [s[0], s[1]].map(xScale.invert, xScale);
-        xScale.domain(xzoom);
-        setIsZoomed(true);
-        setZoomDomain({
-          x: xzoom
-        });
-        hoverg.select('.brush').call(brush.move, null);
-      }
-      zoom();
-    }
-    function zoom() {
+    function brushed() {
+      if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return; // ignore brush-by-zoom
+      var s = d3.event.selection || contextXScale.range();
+      xScale.domain(s.map(contextXScale.invert, contextXScale));
+      plotg.selectAll('.series-line').attr('d', (d, i) => {
+        if (seriesConfig[i].yaxis == 'Y1' && seriesConfig[i].visible) {
+          return lineY1(d);
+        }
+        if (seriesConfig[i].yaxis == 'Y2' && seriesConfig[i].visible) {
+          return lineY2(d);
+        }
+      });
       xaxisg.call(xAxis);
-      plotg
-        .selectAll('.series-line')
-        .data(seriesArray)
-        .join('path')
-        .attr('class', 'series-line')
-        .attr('d', (d, i) => {
-          if (seriesConfig[i].yaxis == 'Y1' && seriesConfig[i].visible) {
-            return lineY1(d);
-          }
-          if (seriesConfig[i].yaxis == 'Y2' && seriesConfig[i].visible) {
-            return lineY2(d);
-          }
-        })
-        .style('stroke', (d, i) => seriesConfig[i].color)
-        .style('fill', 'none');
+      hoverg
+        .select('.hover-rect')
+        .call(
+          zoom.transform,
+          d3.zoomIdentity.scale(plotwidth / (s[1] - s[0])).translate(-s[0], 0)
+        );
     }
 
-    hoverg
+    function zoomed() {
+      if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') return; // ignore zoom-by-brush
+      var t = d3.event.transform;
+      xScale.domain(t.rescaleX(contextXScale).domain());
+      plotg.selectAll('.series-line').attr('d', (d, i) => {
+        if (seriesConfig[i].yaxis == 'Y1' && seriesConfig[i].visible) {
+          return lineY1(d);
+        }
+        if (seriesConfig[i].yaxis == 'Y2' && seriesConfig[i].visible) {
+          return lineY2(d);
+        }
+      });
+      xaxisg.call(xAxis);
+      contextg
+        .select('.brush')
+        .call(brush.move, xScale.range().map(t.invertX, t));
+    }
+
+    contextg
       .selectAll('.brush')
       .data([0])
       .join('g')
       .attr('class', 'brush')
-      .on('mousedown', () => tooltip.style('opacity', 0))
-      .on('mouseup', () => tooltip.style('opacity', 1))
+      .call(brush);
 
+    hoverg
+      .selectAll('.hover-rect')
+      .data([0])
+      .join('rect')
+      .attr('class', 'hover-rect')
+      .attr('width', plotwidth)
+      .attr('height', plotheight)
+      .style('opacity', 0)
+      .on('mousedown', hideHover)
+      .on('mouseup', showHover)
       .on('mousemove', mouseMove)
       .on('mouseout', mouseOut)
       .on('mouseover', mouseOver)
-      .call(brush);
+      .call(zoom);
   };
 
   return <D3Container refcontainer={container}></D3Container>;

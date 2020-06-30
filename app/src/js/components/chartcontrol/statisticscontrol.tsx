@@ -3,8 +3,9 @@ import React, { useState, useRef } from 'react';
 import MultiSeries from '../multiseries'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { Statistics } from '../charts/statistics';
-import { ControlsContainer } from '../controlscontainer';
-import { ViewWrapper } from './viewwrapper';
+import { ViewWrapper } from '../viewwrapper';
+import { ControlsWrapper, ControlsContent } from '../controlswrapper';
+
 import { CopySave } from '../copysave';
 
 const StatisticsControl = props => {
@@ -51,13 +52,15 @@ const StatisticsControl = props => {
           files={props.files}
         />
       </ViewWrapper>
+      <ControlsWrapper>
+        <ControlsContent tag="tab-series" tabname="Series Select">
+          <MultiSeries
+            seriesCallback={handleSeriesSelect}
+            series={props.seriesOptions}
+          />
+        </ControlsContent>
+      </ControlsWrapper>
 
-      <ControlsContainer tag="statistics-controls-container">
-        <MultiSeries
-          seriesCallback={handleSeriesSelect}
-          series={props.seriesOptions}
-        />
-      </ControlsContainer>
       <CopySave
         array={seriesArray}
         arraytype="multi"

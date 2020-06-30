@@ -3,10 +3,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { Histogram } from '../charts/histogram';
-import { ControlsContainer } from '../controlscontainer';
 
 import { getBBSize } from '../plotdimensions';
-import { ViewWrapper } from './viewwrapper';
+import { ViewWrapper } from '../viewwrapper';
+import { ControlsWrapper, ControlsContent } from '../controlswrapper';
+
 import { BinControl } from '../bincontrol';
 import { CopySave } from '../copysave';
 
@@ -79,24 +80,28 @@ const HistogramControl = props => {
           numbins={numBins}
         ></Histogram>
       </ViewWrapper>
-      <ControlsContainer className="histogram-controls-container">
-        <SeriesSelect
-          seriesCallback={handleSeriesSelect}
-          series={props.seriesOptions}
-        />
-        <BinControl
-          rangeCallback={handleRangeChange}
-          binCallback={handleNumBinChange}
-          defaultRange={[minData, maxData]}
-          numBins={numBins}
-        ></BinControl>
-      </ControlsContainer>
+
+      <ControlsWrapper>
+        <ControlsContent tag="tab-series" tabname="Series Select">
+          <SeriesSelect
+            seriesCallback={handleSeriesSelect}
+            series={props.seriesOptions}
+          />
+        </ControlsContent>
+        <ControlsContent tag="tab-options" tabname="Chart Options">
+          <BinControl
+            rangeCallback={handleRangeChange}
+            binCallback={handleNumBinChange}
+            defaultRange={[minData, maxData]}
+            numBins={numBins}
+          ></BinControl>
+        </ControlsContent>
+      </ControlsWrapper>
       <CopySave
         array={series}
         arraytype="single"
         units={props.units}
         files={props.files}
-
       ></CopySave>
     </>
   );

@@ -4,10 +4,10 @@ import MultiSeries from '../multiseries'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { MultiLineLegend } from './multilinelegend';
 import { ColorCategorySelect } from '../colorcategoryselect';
-import { ControlsContainer } from '../controlscontainer';
 import { MultiLine } from '../charts/multiline';
 import { getBBSize } from '../plotdimensions';
-import { ViewWrapper } from './viewwrapper';
+import { ViewWrapper } from '../viewwrapper';
+import { ControlsWrapper, ControlsContent } from '../controlswrapper';
 import { CopySave } from '../copysave';
 
 const MultiLineControl = props => {
@@ -101,22 +101,26 @@ const MultiLineControl = props => {
         colorScheme={colorScheme}
         units={props.units}
       />
+      <ControlsWrapper>
+        <ControlsContent tag="tab-series" tabname="Series Select">
+          <MultiSeries
+            seriesCallback={handleSeriesSelect}
+            series={props.seriesOptions}
+          />
+        </ControlsContent>
 
-      <ControlsContainer tag="multiline-controls-container">
-        <MultiSeries
-          seriesCallback={handleSeriesSelect}
-          series={props.seriesOptions}
-        />
-        <ColorCategorySelect
-          colorCategoryCallback={handleColorCategoryChange}
-        />
-      </ControlsContainer>
+        <ControlsContent tag="tab-options" tabname="Chart Options">
+          <ColorCategorySelect
+            colorCategoryCallback={handleColorCategoryChange}
+          />
+        </ControlsContent>
+      </ControlsWrapper>
+
       <CopySave
         array={seriesArray}
         arraytype="multi"
         units={props.units}
         files={props.files}
-
       ></CopySave>
     </>
   );

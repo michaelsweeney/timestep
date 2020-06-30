@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef, useStyles } from 'react';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
-import { ControlsContainer } from '../controlscontainer';
 import { Scatter } from '../charts/scatter';
 import { getBBSize } from '../plotdimensions';
-import { ViewWrapper } from './viewwrapper';
+import { ViewWrapper } from '../viewwrapper';
+import { ControlsWrapper, ControlsContent } from '../controlswrapper';
 
 import { ColorControl } from '../colorcontrol';
 import { CopySave } from '../copysave';
@@ -139,37 +139,40 @@ const ScatterControl = props => {
           zmaxrange={zMaxRange}
         />
       </ViewWrapper>
+      <ControlsWrapper>
+        <ControlsContent tag="tab-series" tabname="Series Select">
+          <SeriesSelect
+            seriesCallback={handleXSeriesSelect}
+            series={props.seriesOptions}
+            title={'Select X Series'}
+          />
+          <SeriesSelect
+            seriesCallback={handleYSeriesSelect}
+            series={props.seriesOptions}
+            title={'Select Y Series'}
+          />
+          <SeriesSelect
+            seriesCallback={handleZSeriesSelect}
+            series={props.seriesOptions}
+            title={'Select Color Series'}
+          />
+        </ControlsContent>
 
-      <ControlsContainer tag="scatter-controls-container">
-        <SeriesSelect
-          seriesCallback={handleXSeriesSelect}
-          series={props.seriesOptions}
-          title={'Select X Series'}
-        />
-        <SeriesSelect
-          seriesCallback={handleYSeriesSelect}
-          series={props.seriesOptions}
-          title={'Select Y Series'}
-        />
-        <SeriesSelect
-          seriesCallback={handleZSeriesSelect}
-          series={props.seriesOptions}
-          title={'Select Color Series'}
-        />
+        <ControlsContent tag="tab-options" tabname="Chart Options">
+          <ColorControl
+            defaultRange={[zMinData, zMaxData]}
+            colorScaleCallback={handleColorScaleChange}
+            reverseCallback={handleReverseColorScale}
+            rangeCallback={handleColorRangeChange}
+          />
+        </ControlsContent>
+      </ControlsWrapper>
 
-        <ColorControl
-          defaultRange={[zMinData, zMaxData]}
-          colorScaleCallback={handleColorScaleChange}
-          reverseCallback={handleReverseColorScale}
-          rangeCallback={handleColorRangeChange}
-        />
-      </ControlsContainer>
       <CopySave
         array={[xSeries, ySeries, zSeries]}
         arraytype="scatter"
         units={props.units}
         files={props.files}
-
       ></CopySave>
     </>
   );

@@ -87,7 +87,7 @@ function FileList(props) {
       </Button>
       <Modal open={open} onClose={handleClose}>
         <div style={modalStyle} className={classes.paper}>
-          <div className={classes.title}>Loaded File Summary</div>
+          <div className={classes.title}>Loaded Files</div>
           <TableContainer component={Paper}>
             <Table className={classes.table}>
               <TableHead>
