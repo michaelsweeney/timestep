@@ -59,14 +59,15 @@ const StatisticsControl = props => {
             series={props.seriesOptions}
           />
         </ControlsContent>
+        <ControlsContent tag="tab-export" tabname="Export">
+          <CopySave
+            array={seriesArray}
+            arraytype="multi"
+            units={props.units}
+            files={props.files}
+          ></CopySave>
+        </ControlsContent>
       </ControlsWrapper>
-
-      <CopySave
-        array={seriesArray}
-        arraytype="multi"
-        units={props.units}
-        files={props.files}
-      ></CopySave>
     </>
   );
 };

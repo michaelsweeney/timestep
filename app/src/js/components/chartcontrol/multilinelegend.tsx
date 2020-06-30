@@ -3,6 +3,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 
 import { makeStyles } from '@material-ui/core/styles';
+import {
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
+} from '@material-ui/core';
 
 const useStyles = makeStyles(
   {
@@ -110,36 +116,37 @@ const MultiLineLegend = props => {
   };
 
   return (
-    <div className={classes.root}>
+    <TableContainer className={classes.root}>
       {seriesState.map((d, i) => {
         return (
-          <div key={Math.random()} className={classes.legendrow}>
-            <div
-              className={classes.legendrect}
-              style={rectStyle(d)}
-              onClick={handleVisibleChange}
-              arraynum={i}
-            ></div>
-            <div
+          <TableRow key={Math.random()} className={classes.legendrow}>
+            <TableCell>
+              <div
+                className={classes.legendrect}
+                style={rectStyle(d)}
+                onClick={handleVisibleChange}
+                arraynum={i}
+              ></div>
+            </TableCell>
+            <TableCell
               arraynum={i}
               onClick={handleYAxisChange}
               style={axisStyle(d)}
               className={classes.legendaxisswitch}
             >
               {d.yaxis}
-            </div>
-            <div
+            </TableCell>
+            <TableCell
               style={textStyle(d)}
-              // onClick={handleVisibleChange}
               className={classes.legendname}
               arraynum={i}
             >
               {d.name}
-            </div>
-          </div>
+            </TableCell>
+          </TableRow>
         );
       })}
-    </div>
+    </TableContainer>
   );
 };
 

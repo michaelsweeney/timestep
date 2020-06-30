@@ -166,14 +166,16 @@ const ScatterControl = props => {
             rangeCallback={handleColorRangeChange}
           />
         </ControlsContent>
-      </ControlsWrapper>
 
-      <CopySave
-        array={[xSeries, ySeries, zSeries]}
-        arraytype="scatter"
-        units={props.units}
-        files={props.files}
-      ></CopySave>
+        <ControlsContent tag="tab-export" tabname="Export">
+          <CopySave
+            array={[xSeries, ySeries, zSeries]}
+            arraytype="scatter"
+            units={props.units}
+            files={props.files}
+          ></CopySave>
+        </ControlsContent>
+      </ControlsWrapper>
     </>
   );
 };

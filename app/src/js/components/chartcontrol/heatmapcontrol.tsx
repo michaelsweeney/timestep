@@ -106,13 +106,16 @@ const HeatmapControl = props => {
             rangeCallback={handleRangeChange}
           />
         </ControlsContent>
+
+        <ControlsContent tag="tab-export" tabname="Export">
+          <CopySave
+            array={series}
+            arraytype="single"
+            units={props.units}
+            files={props.files}
+          ></CopySave>
+        </ControlsContent>
       </ControlsWrapper>
-      <CopySave
-        array={series}
-        arraytype="single"
-        units={props.units}
-        files={props.files}
-      ></CopySave>
     </>
   );
 };

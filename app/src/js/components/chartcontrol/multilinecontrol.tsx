@@ -12,7 +12,6 @@ import { CopySave } from '../copysave';
 
 const MultiLineControl = props => {
   const [isLoading, setIsLoading] = useState(false);
-  const [loadingArray, setLoadingArray] = useState([]);
   const [seriesArray, setSeriesArray] = useState([]);
   const [colorScheme, setColorScheme] = useState('schemeCategory10');
   const [seriesConfig, setSeriesConfig] = useState([]);
@@ -65,16 +64,10 @@ const MultiLineControl = props => {
       }
     });
 
-    // setLoadingArray(newkeys);
     setIsLoading(true);
     Promise.all(promises).then(d => {
       d.forEach(a => arrayClone.push(a));
       setSeriesArray(arrayClone);
-      // console.log('new keys', newkeys);
-      // console.log('selected keys', selectedkeys);
-      // console.log('existing keys', existingkeys);
-      // console.log('loading array', loadingArray);
-      // console.log('series array', seriesArray);
       setIsLoading(false);
     });
   };
@@ -94,13 +87,7 @@ const MultiLineControl = props => {
           seriesArray={seriesArray}
         />
       </ViewWrapper>
-      <MultiLineLegend
-        files={props.files}
-        legendCallback={handleLegendChange}
-        seriesArray={seriesArray}
-        colorScheme={colorScheme}
-        units={props.units}
-      />
+
       <ControlsWrapper>
         <ControlsContent tag="tab-series" tabname="Series Select">
           <MultiSeries
@@ -114,14 +101,26 @@ const MultiLineControl = props => {
             colorCategoryCallback={handleColorCategoryChange}
           />
         </ControlsContent>
-      </ControlsWrapper>
 
-      <CopySave
-        array={seriesArray}
-        arraytype="multi"
-        units={props.units}
-        files={props.files}
-      ></CopySave>
+        <ControlsContent tag="tab-legend" tabname="Legend">
+          <MultiLineLegend
+            files={props.files}
+            legendCallback={handleLegendChange}
+            seriesArray={seriesArray}
+            colorScheme={colorScheme}
+            units={props.units}
+          />
+        </ControlsContent>
+
+        <ControlsContent tag="tab-export" tabname="Export">
+          <CopySave
+            array={seriesArray}
+            arraytype="multi"
+            units={props.units}
+            files={props.files}
+          ></CopySave>
+        </ControlsContent>
+      </ControlsWrapper>
     </>
   );
 };
