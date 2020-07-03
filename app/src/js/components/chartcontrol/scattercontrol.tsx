@@ -5,7 +5,8 @@ import { getSeries } from '../sqlload';
 import { Scatter } from '../charts/scatter';
 import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from '../viewwrapper';
-import { ControlsWrapper, ControlsContent } from '../controlswrapper';
+import { ControlsWrapper } from '../controlswrapper';
+import { ControlsContent } from '../controlscontent';
 
 import { ColorControl } from '../colorcontrol';
 import { CopySave } from '../copysave';
@@ -158,7 +159,7 @@ const ScatterControl = props => {
           />
         </ControlsContent>
 
-        <ControlsContent tag="tab-options" tabname="Chart Options">
+        <ControlsContent tag="tab-options" tabname="Options">
           <ColorControl
             defaultRange={[zMinData, zMaxData]}
             colorScaleCallback={handleColorScaleChange}

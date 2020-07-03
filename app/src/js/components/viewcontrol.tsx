@@ -14,9 +14,10 @@ const useStyles = makeStyles(
       position: 'absolute',
       width: 'calc(100vw - 200px)',
       left: '175px',
-      height: '100vh',
-      padding: '20px',
-      boxSizing: 'border-box'
+      height: '99vh',
+      boxSizing: 'border-box',
+      overflowY: 'hidden',
+      overflowX: 'hidden'
     }
   },
   { name: 'view-container' }

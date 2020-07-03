@@ -6,8 +6,8 @@ import { Histogram } from '../charts/histogram';
 
 import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from '../viewwrapper';
-import { ControlsWrapper, ControlsContent } from '../controlswrapper';
-
+import { ControlsWrapper } from '../controlswrapper';
+import { ControlsContent } from '../controlscontent';
 import { BinControl } from '../bincontrol';
 import { CopySave } from '../copysave';
 
@@ -88,7 +88,7 @@ const HistogramControl = props => {
             series={props.seriesOptions}
           />
         </ControlsContent>
-        <ControlsContent tag="tab-options" tabname="Chart Options">
+        <ControlsContent tag="tab-options" tabname="Options">
           <BinControl
             rangeCallback={handleRangeChange}
             binCallback={handleNumBinChange}

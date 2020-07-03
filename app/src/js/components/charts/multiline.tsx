@@ -41,20 +41,20 @@ const MultiLine = props => {
   };
 
   const margins = {
-    l: 75,
-    t: 50,
-    b: 50,
+    l: 100,
+    t: 40,
+    b: 25,
     r: 75
   };
 
   const contextmargins = {
-    l: 75,
+    l: 100,
     t: 0,
     b: 20,
     r: 75
   };
 
-  const contextheight = 50;
+  const contextheight = 40;
   const contextwidth = width - contextmargins.l - contextmargins.r;
   const plotwidth = width - margins.l - margins.r;
   const plotheight =

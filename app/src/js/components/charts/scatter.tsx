@@ -99,8 +99,8 @@ const Scatter = props => {
     };
     const margins = {
       l: 100,
-      t: 20,
-      b: 100,
+      t: 40,
+      b: 75,
       r: 200
     };
 

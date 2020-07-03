@@ -7,7 +7,8 @@ import { ColorCategorySelect } from '../colorcategoryselect';
 import { MultiLine } from '../charts/multiline';
 import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from '../viewwrapper';
-import { ControlsWrapper, ControlsContent } from '../controlswrapper';
+import { ControlsWrapper } from '../controlswrapper';
+import { ControlsContent } from '../controlscontent';
 import { CopySave } from '../copysave';
 
 const MultiLineControl = props => {
@@ -96,12 +97,6 @@ const MultiLineControl = props => {
           />
         </ControlsContent>
 
-        <ControlsContent tag="tab-options" tabname="Chart Options">
-          <ColorCategorySelect
-            colorCategoryCallback={handleColorCategoryChange}
-          />
-        </ControlsContent>
-
         <ControlsContent tag="tab-legend" tabname="Legend">
           <MultiLineLegend
             files={props.files}
@@ -109,6 +104,11 @@ const MultiLineControl = props => {
             seriesArray={seriesArray}
             colorScheme={colorScheme}
             units={props.units}
+          />
+        </ControlsContent>
+        <ControlsContent tag="tab-options" tabname="Chart Options">
+          <ColorCategorySelect
+            colorCategoryCallback={handleColorCategoryChange}
           />
         </ControlsContent>
 

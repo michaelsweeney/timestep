@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Radio from '@material-ui/core/Radio';
+import { Radio, InputLabel } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -9,12 +9,10 @@ const useStyles = makeStyles(
       display: 'inline-block',
       marginLeft: 20,
       marginRight: 20,
-      marginTop: 10
+      marginTop: 20,
+      marginBottom: 10
     },
-    radio: { padding: 12 },
-    '& span': {
-      padding: 12
-    }
+    radio: { padding: 6 }
   },
 
   {
@@ -32,6 +30,7 @@ const UnitRadio = props => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
+      <InputLabel>Units</InputLabel>
       <span>SI</span>
       <Radio
         className={classes.radio}

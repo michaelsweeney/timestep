@@ -4,7 +4,8 @@ import MultiSeries from '../multiseries'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { Statistics } from '../charts/statistics';
 import { ViewWrapper } from '../viewwrapper';
-import { ControlsWrapper, ControlsContent } from '../controlswrapper';
+import { ControlsWrapper } from '../controlswrapper';
+import { ControlsContent } from '../controlscontent';
 
 import { CopySave } from '../copysave';
 

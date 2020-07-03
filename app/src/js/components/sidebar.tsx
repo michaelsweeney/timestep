@@ -12,16 +12,18 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(
   {
     root: {
-      top: -15,
-      left: -5,
-      paddingTop: 20,
-      paddingBottom: 10,
+      // top: -15,
+      // left: -5,
+      // paddingTop: 20,
+      // paddingBottom: 20,
       position: 'absolute',
-      height: '125vh',
-      boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+      borderRight: '2px solid rgba(0,0,0,0.3)',
+      height: '98vh',
+      // boxShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
       width: 175,
       textAlign: 'center',
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      overflow: 'hidden'
     }
   },
   {

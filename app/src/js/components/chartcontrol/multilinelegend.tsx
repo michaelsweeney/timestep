@@ -15,7 +15,10 @@ const useStyles = makeStyles(
     root: {
       marginBottom: 20,
       marginTop: 20,
-      marginLeft: 100
+      marginLeft: 100,
+      '& td': {
+        padding: 8
+      }
     },
     legendrow: {
       display: 'block',
@@ -54,6 +57,7 @@ const useStyles = makeStyles(
     },
     legendname: {}
   },
+
   {
     name: 'multiline-handle-container'
   }

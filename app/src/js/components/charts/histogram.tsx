@@ -31,14 +31,14 @@ const Histogram = props => {
   const createChart = () => {
     /* DIMENSIONS */
     const labelmargins = {
-      y: 30,
+      y: 40,
       x: 40,
-      title: 30
+      title: 20
     };
     const margins = {
-      l: 50,
-      t: 50,
-      b: 50,
+      l: 100,
+      t: 40,
+      b: 75,
       r: 100
     };
 
@@ -208,7 +208,9 @@ const Histogram = props => {
         .style('transition', 'left 100ms, top 100ms')
         .html(() => {
           return `
-            <div>Range: ${d.x0} - ${d.x1} ${d[0][unitkey]}</div>
+            <div>Range: ${formatInt(d.x0)} - ${formatInt(d.x1)} ${
+            d[0][unitkey]
+          }</div>
             <div>Count: ${d.length}</div>
           `;
         })

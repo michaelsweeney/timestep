@@ -74,7 +74,6 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(
         <VariableSizeList
           itemData={itemData}
           height={getHeight() + 2 * LISTBOX_PADDING}
-          width="100%"
           ref={gridRef}
           outerElementType={OuterElementType}
           innerElementType="ul"
@@ -97,7 +96,7 @@ const useStyles = makeStyles({
   root: {
     marginTop: 5,
     marginBottom: 5,
-    width: 800
+    width: '100%'
   },
   listbox: {
     boxSizing: 'border-box',

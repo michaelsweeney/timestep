@@ -52,16 +52,16 @@ const Heatmap = props => {
   const createChart = () => {
     /* DIMENSIONS */
     const labelmargins = {
-      y: 30,
+      y: 40,
       x: 40,
       title: 20,
       legend: 50,
       legendlabel: 100
     };
     const margins = {
-      l: 50,
-      t: 50,
-      b: 50,
+      l: 100,
+      t: 40,
+      b: 75,
       r: 125
     };
 

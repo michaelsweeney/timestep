@@ -12,7 +12,8 @@ const useStyles = makeStyles(
       display: 'block',
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
       boxSizing: 'border-box',
-      overflowY: 'hidden'
+      overflowY: 'hidden',
+      overflowX: 'hidden'
     }
   },
   { name: 'main-container' }
