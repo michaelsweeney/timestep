@@ -93,8 +93,8 @@ ListboxComponent.propTypes = {
 
 const useStyles = makeStyles({
   root: {
-    marginTop: 5,
-    marginBottom: 5,
+    marginTop: 10,
+    marginBottom: 10,
     width: '100%'
   },
   listbox: {
@@ -118,7 +118,7 @@ export default function MultiSeries(props) {
   const options = props.series;
 
   return (
-    <div className="series-select-container">
+    <div className={classes.root}>
       <Autocomplete
         limitTags={1}
         multiple

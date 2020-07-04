@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { formatInt } from '../numformat';
 import * as d3 from 'd3';
 import { D3Container } from './d3container';
+import { histogramdims } from './chartdimensions';
 
 const Histogram = props => {
   const container = useRef(null);
@@ -30,17 +31,8 @@ const Histogram = props => {
 
   const createChart = () => {
     /* DIMENSIONS */
-    const labelmargins = {
-      y: 40,
-      x: 40,
-      title: 20
-    };
-    const margins = {
-      l: 100,
-      t: 40,
-      b: 75,
-      r: 100
-    };
+
+    const { labelmargins, margins } = histogramdims;
 
     const plotwidth = width - margins.l - margins.r;
     const plotheight = height - margins.t - margins.b;

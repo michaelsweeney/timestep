@@ -12,6 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(
   {
     root: {
+      // right: 5,
       // top: -15,
       // left: -5,
       // paddingTop: 20,
@@ -23,7 +24,10 @@ const useStyles = makeStyles(
       width: 175,
       textAlign: 'center',
       boxSizing: 'border-box',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      '& div': {
+        left: -5
+      }
     }
   },
   {

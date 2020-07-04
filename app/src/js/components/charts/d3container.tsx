@@ -32,16 +32,3 @@ const D3Container = props => {
 };
 
 export { D3Container };
-
-// /* D3 SPECIFIC GLOBAL CSS, CURRENTLY UNABLE TO USE MAKESTYLES */
-// .series-line, .marker-circle {
-//   pointer-events: none;
-// }
-
-// path {
-//   shape-rendering: geometricPrecision;
-// }
-
-// .tooltip {
-
-// }

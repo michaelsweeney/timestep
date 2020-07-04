@@ -5,6 +5,7 @@ import * as d3 from 'd3';
 import { formatInt, formatDate } from '../numformat';
 import { D3Container } from './d3container';
 import { idealSplit } from '../textformat';
+import { scatterdims } from './chartdimensions';
 
 const Scatter = props => {
   const container = useRef(null);
@@ -90,19 +91,8 @@ const Scatter = props => {
     let gradientid = Math.floor(Math.random() * 1e6) + '-gradient';
 
     /* DIMENSIONS */
-    const labelmargins = {
-      y: 70,
-      x: 40,
-      title: 30,
-      legend: 50,
-      legendlabel: 110
-    };
-    const margins = {
-      l: 100,
-      t: 40,
-      b: 75,
-      r: 200
-    };
+
+    const { labelmargins, margins } = scatterdims;
 
     const labeltextoffset = 20;
 

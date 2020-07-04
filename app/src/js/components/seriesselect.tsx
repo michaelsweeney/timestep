@@ -120,7 +120,7 @@ export default function SeriesSelect(props) {
   const options = props.series;
 
   return (
-    <div className="series-select-container">
+    <div className={classes.root}>
       <Autocomplete
         onChange={props.seriesCallback}
         id="virtualize-demo"

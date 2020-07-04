@@ -10,9 +10,9 @@ import { InputLabel } from '@material-ui/core';
 const useStyles = makeStyles(
   {
     root: {
+      marginLeft: 30,
       marginTop: 10,
       marginBottom: 10,
-      padding: 10,
       width: 300
     }
   },

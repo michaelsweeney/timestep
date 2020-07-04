@@ -99,7 +99,7 @@ const HeatmapControl = props => {
             series={props.seriesOptions}
           />
         </ControlsContent>
-        <ControlsContent tag="tab-options" tabname="Chart Options">
+        <ControlsContent tag="tab-options" tabname="Options">
           <ColorControl
             defaultRange={[minData, maxData]}
             colorScaleCallback={handleColorScaleChange}

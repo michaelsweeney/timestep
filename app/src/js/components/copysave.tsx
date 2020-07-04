@@ -12,7 +12,10 @@ import { Button, Tooltip } from '@material-ui/core';
 
 const useStyles = makeStyles(
   {
-    root: {}
+    root: {
+      paddingLeft: 20,
+      paddingRight: 20
+    }
   },
   {
     name: 'copy-save-container'
@@ -72,7 +75,6 @@ const CopySave = props => {
   };
 
   const checkMultipleFiles = () => {
-    console.log(files.length);
     if (files.length > 1) {
       alert(
         'Copy/Paste operations are currently unavailable when multiple files have been loaded'

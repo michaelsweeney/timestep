@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { formatInt, formatDate } from '../numformat';
 import { D3Container } from './d3container';
+import { heatmapdims } from './chartdimensions';
 
 const Heatmap = props => {
   const container = useRef(null);
@@ -51,19 +52,8 @@ const Heatmap = props => {
 
   const createChart = () => {
     /* DIMENSIONS */
-    const labelmargins = {
-      y: 40,
-      x: 40,
-      title: 20,
-      legend: 50,
-      legendlabel: 100
-    };
-    const margins = {
-      l: 100,
-      t: 40,
-      b: 75,
-      r: 125
-    };
+
+    const { labelmargins, margins } = heatmapdims;
 
     const plotwidth = width - margins.l - margins.r;
     const plotheight = height - margins.t - margins.b;

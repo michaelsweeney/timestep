@@ -5,7 +5,10 @@ const useStyles = makeStyles(
   {
     root: {
       textAlign: 'center',
-      padding: 20
+      marginTop: '15%',
+      marginBottom: '20%',
+      padding: 20,
+      color: 'rgba(0,0,0,0.54)'
     },
     title: {
       fontSize: 24,
@@ -32,7 +35,9 @@ const LandingPage = props => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <div className={classes.title}>Welcome to Timestep</div>
+      <div className={classes.title}>
+        Timestep: EnergyPlus timeseries visualization tool
+      </div>
 
       <div className={classes.maintext}>No Files are currently loaded.</div>
 

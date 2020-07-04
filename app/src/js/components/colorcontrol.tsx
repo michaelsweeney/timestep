@@ -1,26 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { ColorScaleSelect } from './colorscaleselect';
 import { RangeSlider } from './rangeslider';
-import { InputLabel, FormLabel, Checkbox, Button } from '@material-ui/core';
+import { InputLabel, Checkbox } from '@material-ui/core';
 
 const useStyles = makeStyles(
   {
     root: {
-      marginTop: 10,
-      marginBottom: 10,
-      padding: 10,
-      width: 300
+      paddingLeft: 25
     },
-    checkbox: {},
-    formlabel: {
-      marginBottom: 10,
-      color: 'rgba(0, 0, 0, 0.54);'
+
+    checkboxcontainer: {
+      position: 'relative',
+      top: 5,
+      left: 10,
+      display: 'inline-block',
+      '& label': {
+        display: 'inline-block',
+        position: 'relative'
+        // top: 5
+      }
     },
-    checkboxcontainer: {},
-    '& div': {
+    colorselectcontainer: {
+      marginTop: 20,
       display: 'inline-block'
+    },
+    colordomaincontainer: {
+      marginTop: 20
     }
   },
 
@@ -34,25 +41,28 @@ const ColorControl = props => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.formlabel}>Color Options</div>
-      <InputLabel>scale</InputLabel>
-      <ColorScaleSelect colorScaleCallback={props.colorScaleCallback} />
-      <div className={classes.checkboxcontainer}>
-        <InputLabel>reversed</InputLabel>
-        <Checkbox
-          className={classes.checkbox}
-          color="primary"
-          disableRipple={true}
-          onChange={props.reverseCallback}
-        />
+      <div>
+        <div className={classes.colorselectcontainer}>
+          <InputLabel>Colorscale</InputLabel>
+          <ColorScaleSelect colorScaleCallback={props.colorScaleCallback} />
+        </div>
+        <div className={classes.checkboxcontainer}>
+          <Checkbox
+            className={classes.checkbox}
+            color="primary"
+            disableRipple={true}
+            onChange={props.reverseCallback}
+          />
+          <InputLabel>Reversed</InputLabel>
+        </div>
       </div>
-      <InputLabel>domain</InputLabel>
-      <RangeSlider
-        defaultValue={props.defaultRange}
-        rangeCallback={props.rangeCallback}
-      ></RangeSlider>
-      {/* <Button style={{ display: 'none' }}>x</Button>{' '} */}
-      {/* ADDING A BLANK BUTTON AVOIDS MUI RESTYLING SIDEBAR BUTTONS. WHY ??*/}
+      <div className={classes.colordomaincontainer}>
+        <InputLabel>Color Domain</InputLabel>
+        <RangeSlider
+          defaultValue={props.defaultRange}
+          rangeCallback={props.rangeCallback}
+        ></RangeSlider>
+      </div>
     </div>
   );
 };

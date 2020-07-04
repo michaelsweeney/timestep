@@ -106,7 +106,7 @@ const MultiLineControl = props => {
             units={props.units}
           />
         </ControlsContent>
-        <ControlsContent tag="tab-options" tabname="Chart Options">
+        <ControlsContent tag="tab-options" tabname="Options">
           <ColorCategorySelect
             colorCategoryCallback={handleColorCategoryChange}
           />

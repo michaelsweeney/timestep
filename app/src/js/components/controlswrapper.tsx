@@ -9,8 +9,7 @@ const useStyles = makeStyles(
       marginLeft: 75,
       marginRight: 75,
       marginTop: 10,
-      width: '90%',
-      borderTop: '2px solid rgba(0,0,0,0.3)'
+      width: '90%'
     },
     tabs: {},
     tab: {},

@@ -13,8 +13,6 @@ import {
   Modal
 } from '@material-ui/core';
 
-import { LandingPage } from './landingpage';
-
 function getModalStyle() {
   const pad = 50; // what does this do?
   return {
@@ -77,77 +75,55 @@ function FileList(props) {
     }
   }, [fileInfo]);
 
-  console.log(fileInfo.length);
-
-  if (fileInfo.length > 0) {
-    return (
-      <div className={classes.root}>
-        <Button
-          disableRipple={true}
-          variant="outlined"
-          color="primary"
-          onClick={handleClick}
-        >
-          FILE INFO
-        </Button>
-        <Modal open={open} onClose={handleClose}>
-          <div style={modalStyle} className={classes.paper}>
-            <div className={classes.title}>Loaded Files</div>
-            <TableContainer component={Paper}>
-              <Table className={classes.table}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Filename</TableCell>
-                    <TableCell>Timestamp</TableCell>
-                    <TableCell>Timestep Frequency</TableCell>
-                    <TableCell>E+ version</TableCell>
-                    <TableCell>Report Count</TableCell>
-                    <TableCell>BND loaded</TableCell>
+  return (
+    <div className={classes.root}>
+      <Button
+        disableRipple={true}
+        variant="outlined"
+        color="primary"
+        onClick={handleClick}
+      >
+        FILE INFO
+      </Button>
+      <Modal open={open} onClose={handleClose}>
+        <div style={modalStyle} className={classes.paper}>
+          <div className={classes.title}>Loaded Files</div>
+          <TableContainer component={Paper}>
+            <Table className={classes.table}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Filename</TableCell>
+                  <TableCell>Timestamp</TableCell>
+                  <TableCell>Timestep Frequency</TableCell>
+                  <TableCell>E+ version</TableCell>
+                  <TableCell>Report Count</TableCell>
+                  <TableCell>BND loaded</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {fileInfo.map(f => (
+                  <TableRow key={f.filename}>
+                    <TableCell>{f.filename}</TableCell>
+                    <TableCell>{f.timestamp}</TableCell>
+                    <TableCell>{f.timesteps}</TableCell>
+                    <TableCell>
+                      {
+                        f.version
+                          .replace('EnergyPlus, Version ', '')
+                          .split('-')[0]
+                      }
+                    </TableCell>
+                    <TableCell>{f.numreports}</TableCell>
+                    <TableCell>{f.bndexists ? 'Yes' : 'No'}</TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {fileInfo.map(f => (
-                    <TableRow key={f.filename}>
-                      <TableCell>{f.filename}</TableCell>
-                      <TableCell>{f.timestamp}</TableCell>
-                      <TableCell>{f.timesteps}</TableCell>
-                      <TableCell>
-                        {
-                          f.version
-                            .replace('EnergyPlus, Version ', '')
-                            .split('-')[0]
-                        }
-                      </TableCell>
-                      <TableCell>{f.numreports}</TableCell>
-                      <TableCell>{f.bndexists ? 'Yes' : 'No'}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
-        </Modal>
-      </div>
-    );
-  } else {
-    return (
-      <div className={classes.root}>
-        <Button
-          disableRipple={true}
-          variant="outlined"
-          color="primary"
-          onClick={handleClick}
-        >
-          FILE INFO
-        </Button>
-        <Modal open={open} onClose={handleClose}>
-          <div style={modalStyle} className={classes.paper}>
-            <LandingPage />
-          </div>
-        </Modal>
-      </div>
-    );
-  }
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
+      </Modal>
+    </div>
+  );
 }
 
 export { FileList };

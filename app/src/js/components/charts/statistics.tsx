@@ -18,6 +18,13 @@ import { formatTabular } from '../numformat';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
+      height: 'calc(100vh - 300px)',
+      paddingLeft: 25,
+      paddingTop: 25,
+      paddingRight: 25,
+      boxShadow: 'none'
+    },
+    table: {
       boxShadow: 'none'
     }
   })
@@ -46,8 +53,8 @@ const Statistics = props => {
   });
 
   return (
-    <div className="multiline-container" ref={container}>
-      <TableContainer className={classes.root} component={Paper}>
+    <div className={classes.root} ref={container}>
+      <TableContainer className={classes.table} component={Paper}>
         <Table className={classes.table}>
           <TableHead>
             <TableRow>

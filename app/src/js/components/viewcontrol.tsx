@@ -7,6 +7,7 @@ import { ScatterControl } from './chartcontrol/scattercontrol';
 import { StatisticsControl } from './chartcontrol/statisticscontrol';
 
 import { makeStyles } from '@material-ui/core/styles';
+import { LandingPage } from './landingpage';
 
 const useStyles = makeStyles(
   {
@@ -26,6 +27,10 @@ const useStyles = makeStyles(
 const ViewControl = props => {
   const { units, files, timestepType, seriesLookupObj, seriesOptions } = props;
   const classes = useStyles();
+
+  if (files.length == 0) {
+    return <LandingPage />;
+  }
 
   if (props.activeView == 'Histogram') {
     return (

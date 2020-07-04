@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { formatInt, formatDate } from '../numformat';
 import { D3Container } from './d3container';
+import { multilinedims } from './chartdimensions';
 
 import * as d3 from 'd3';
 
@@ -33,26 +34,7 @@ const MultiLine = props => {
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
   const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
 
-  const labelmargins = {
-    y1: 40,
-    y2: 60,
-    x: 0,
-    title: 20
-  };
-
-  const margins = {
-    l: 100,
-    t: 40,
-    b: 25,
-    r: 75
-  };
-
-  const contextmargins = {
-    l: 100,
-    t: 0,
-    b: 20,
-    r: 75
-  };
+  const { labelmargins, margins, contextmargins } = multilinedims;
 
   const contextheight = 40;
   const contextwidth = width - contextmargins.l - contextmargins.r;
