@@ -109,7 +109,6 @@ const createWindow = async () => {
 };
 
 
-
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
