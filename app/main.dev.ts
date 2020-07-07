@@ -14,6 +14,8 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 
+
+
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -64,7 +66,7 @@ const createWindow = async () => {
     webPreferences: {
       nodeIntegration: true
     },
-    icon: __dirname + '/resources/icons/Icon.icns'
+    icon: __dirname + '/resources/Icon.icns'
 
     // webPreferences:
     //   process.env.NODE_ENV === 'development' || process.env.E2E_BUILD === 'true'
@@ -90,7 +92,7 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
       mainWindow.focus();
-      mainWindow.webContents.openDevTools()
+      // mainWindow.webContents.openDevTools()
     }
   });
 
@@ -106,9 +108,7 @@ const createWindow = async () => {
   new AppUpdater();
 };
 
-/**
- * Add event listeners...
- */
+
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
