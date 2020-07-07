@@ -23,6 +23,7 @@ const HeatmapControl = props => {
   const [colorfunc, setColorfunc] = useState('interpolateViridis');
   const [plotdims, setPlotdims] = useState({ width: 50, height: 50 });
   const plotContainer = useRef(null);
+  const [activeTab, setActiveTab] = useState('tab-series');
 
   // handle resizing / div size
 
@@ -77,6 +78,9 @@ const HeatmapControl = props => {
       setReverseColor(false);
     }
   };
+  const handleTabChange = tag => {
+    setActiveTab(tag);
+  };
 
   return (
     <>
@@ -92,7 +96,10 @@ const HeatmapControl = props => {
           reversecolor={reverseColor}
         ></Heatmap>
       </ViewWrapper>
-      <ControlsWrapper>
+      <ControlsWrapper
+        activetab={activeTab}
+        tabChangeCallback={handleTabChange}
+      >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <SeriesSelect
             seriesCallback={handleSeriesSelect}
@@ -107,7 +114,6 @@ const HeatmapControl = props => {
             rangeCallback={handleRangeChange}
           />
         </ControlsContent>
-
         <ControlsContent tag="tab-export" tabname="Export">
           <CopySave
             array={series}

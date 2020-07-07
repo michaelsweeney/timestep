@@ -14,10 +14,10 @@ const useStyles = makeStyles(
   {
     root: {
       marginBottom: 20,
-      marginTop: 20,
-      marginLeft: 100,
+      marginTop: 10,
+      marginLeft: 20,
       '& td': {
-        padding: 8
+        padding: 5
       }
     },
     legendrow: {

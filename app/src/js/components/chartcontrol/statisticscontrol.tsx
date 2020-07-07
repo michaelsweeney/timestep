@@ -13,6 +13,8 @@ const StatisticsControl = props => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [seriesArray, setSeriesArray] = useState([]);
+  const [activeTab, setActiveTab] = useState('tab-series');
+
   const plotContainer = useRef(null);
 
   const handleSeriesSelect = (e, v) => {
@@ -43,6 +45,9 @@ const StatisticsControl = props => {
       }
     });
   };
+  const handleTabChange = tag => {
+    setActiveTab(tag);
+  };
 
   return (
     <>
@@ -53,7 +58,10 @@ const StatisticsControl = props => {
           files={props.files}
         />
       </ViewWrapper>
-      <ControlsWrapper>
+      <ControlsWrapper
+        activetab={activeTab}
+        tabChangeCallback={handleTabChange}
+      >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <MultiSeries
             seriesCallback={handleSeriesSelect}

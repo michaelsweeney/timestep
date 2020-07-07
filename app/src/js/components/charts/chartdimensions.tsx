@@ -7,7 +7,7 @@ const heatmapdims = {
     legendlabel: 100
   },
   margins: {
-    l: 100,
+    l: 75,
     t: 50,
     b: 75,
     r: 125
@@ -21,7 +21,7 @@ const histogramdims = {
     title: 20
   },
   margins: {
-    l: 100,
+    l: 75,
     t: 40,
     b: 75,
     r: 100
@@ -37,10 +37,10 @@ const scatterdims = {
     legendlabel: 110
   },
   margins: {
-    l: 100,
+    l: 110,
     t: 40,
     b: 75,
-    r: 200
+    r: 150
   }
 };
 
@@ -53,14 +53,14 @@ const multilinedims = {
   },
 
   margins: {
-    l: 100,
+    l: 75,
     t: 40,
     b: 25,
     r: 75
   },
 
   contextmargins: {
-    l: 100,
+    l: 75,
     t: 0,
     b: 20,
     r: 75

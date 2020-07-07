@@ -9,6 +9,17 @@ const useStyles = makeStyles(
     root: {
       display: 'inlineBlock',
       margin: 10
+    },
+    select: {
+      textAlign: 'center',
+      left: '0px',
+      '& svg': {
+        display: 'none'
+      },
+      '& div': {
+        textAlign: 'center',
+        paddingRight: '0 !important'
+      }
     }
   },
   {
@@ -27,7 +38,12 @@ const TimeStepSelect = props => {
   return (
     <div className={classes.root}>
       <InputLabel id="label">Timestep</InputLabel>
-      <Select onChange={handleChange} id="select" value={value}>
+      <Select
+        className={classes.select}
+        onChange={handleChange}
+        id="select"
+        value={value}
+      >
         <MenuItem disableRipple={true} value="HVAC Timestep">
           HVAC Timestep
         </MenuItem>

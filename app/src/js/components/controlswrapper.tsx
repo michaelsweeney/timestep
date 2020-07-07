@@ -40,16 +40,14 @@ const ControlsWrapper = props => {
   const classes = useStyles();
   const valtabobj = {};
   childprops.forEach(o => (valtabobj[o.tabname] = o.tag));
-  const [value, setValue] = useState(childprops[0].tag);
 
-  const handleTabChange = tag => {
-    setValue(tag);
-  };
+  const activetab = props.activetab;
+
   return (
     <div className={classes.root}>
       <Tabs
         className={classes.tabs}
-        value={value}
+        value={activetab}
         indicatorColor="primary"
         textColor="primary"
         // centered
@@ -62,7 +60,7 @@ const ControlsWrapper = props => {
               className={classes.tab}
               label={t.tabname}
               value={t.tag}
-              onClick={() => handleTabChange(t.tag)}
+              onClick={() => props.tabChangeCallback(t.tag)}
             />
           );
         })}
@@ -72,7 +70,7 @@ const ControlsWrapper = props => {
           <div
             key={i}
             className={classes.view}
-            style={{ display: value === t.tag ? 'inline-block' : 'none' }}
+            style={{ display: activetab === t.tag ? 'inline-block' : 'none' }}
           >
             {Children.toArray(props.children)[i]}
           </div>

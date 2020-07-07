@@ -37,6 +37,7 @@ const ScatterControl = props => {
   const [colorfunc, setColorfunc] = useState('interpolateViridis');
   const [plotdims, setPlotdims] = useState({ width: 50, height: 50 });
   const plotContainer = useRef(null);
+  const [activeTab, setActiveTab] = useState('tab-series');
 
   const domainPad = 0.05;
 
@@ -116,6 +117,9 @@ const ScatterControl = props => {
       setReverseColor(false);
     }
   };
+  const handleTabChange = tag => {
+    setActiveTab(tag);
+  };
 
   return (
     <>
@@ -140,7 +144,10 @@ const ScatterControl = props => {
           zmaxrange={zMaxRange}
         />
       </ViewWrapper>
-      <ControlsWrapper>
+      <ControlsWrapper
+        activetab={activeTab}
+        tabChangeCallback={handleTabChange}
+      >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <SeriesSelect
             seriesCallback={handleXSeriesSelect}

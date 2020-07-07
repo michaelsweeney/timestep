@@ -17,6 +17,7 @@ const useStyles = makeStyles(
       // left: -5,
       // paddingTop: 20,
       // paddingBottom: 20,
+      paddingRight: 5,
       position: 'absolute',
       borderRight: '2px solid rgba(0,0,0,0.3)',
       height: '98vh',
@@ -26,7 +27,7 @@ const useStyles = makeStyles(
       boxSizing: 'border-box',
       overflow: 'hidden',
       '& div': {
-        left: -5
+        // left: -5
       }
     }
   },

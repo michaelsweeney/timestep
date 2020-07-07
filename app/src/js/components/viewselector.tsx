@@ -12,6 +12,9 @@ const useStyles = makeStyles(
       marginLeft: 10,
       marginRight: 20,
       marginTop: 10,
+      paddingRight: 5,
+      position: 'relative',
+      left: '-5px',
       boxSizing: 'border-box'
     },
     tabs: {

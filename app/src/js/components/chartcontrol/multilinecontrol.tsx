@@ -17,6 +17,7 @@ const MultiLineControl = props => {
   const [colorScheme, setColorScheme] = useState('schemeCategory10');
   const [seriesConfig, setSeriesConfig] = useState([]);
   const [plotdims, setPlotdims] = useState({ width: 50, height: 50 });
+  const [activeTab, setActiveTab] = useState('tab-series');
   const plotContainer = useRef(null);
 
   useEffect(() => {
@@ -70,11 +71,20 @@ const MultiLineControl = props => {
       d.forEach(a => arrayClone.push(a));
       setSeriesArray(arrayClone);
       setIsLoading(false);
+      // setActiveTab('tab-legend');
     });
   };
 
   const handleLegendChange = v => {
     setSeriesConfig(v);
+  };
+
+  const handleTabChange = tag => {
+    setActiveTab(tag);
+  };
+
+  const handleSelectClose = () => {
+    setActiveTab('tab-legend');
   };
 
   return (
@@ -89,9 +99,13 @@ const MultiLineControl = props => {
         />
       </ViewWrapper>
 
-      <ControlsWrapper>
+      <ControlsWrapper
+        activetab={activeTab}
+        tabChangeCallback={handleTabChange}
+      >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <MultiSeries
+            dispatchClose={handleSelectClose}
             seriesCallback={handleSeriesSelect}
             series={props.seriesOptions}
           />

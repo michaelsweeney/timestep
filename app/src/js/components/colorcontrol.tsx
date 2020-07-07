@@ -19,7 +19,6 @@ const useStyles = makeStyles(
       '& label': {
         display: 'inline-block',
         position: 'relative'
-        // top: 5
       }
     },
     colorselectcontainer: {
