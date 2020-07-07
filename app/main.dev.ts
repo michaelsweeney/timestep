@@ -53,9 +53,9 @@ const createWindow = async () => {
   ) {
     await installExtensions();
   }
-  console.log(__dirname)
 
   mainWindow = new BrowserWindow({
+    title: 'timestep',
     show: false,
     width: 1024,
     height: 728,
@@ -63,7 +63,9 @@ const createWindow = async () => {
     minHeight: 600,
     webPreferences: {
       nodeIntegration: true
-    }
+    },
+    icon: __dirname + '/resources/icons/Icon.icns'
+
     // webPreferences:
     //   process.env.NODE_ENV === 'development' || process.env.E2E_BUILD === 'true'
     //     ? {

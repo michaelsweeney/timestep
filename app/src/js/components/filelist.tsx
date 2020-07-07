@@ -71,7 +71,9 @@ function FileList(props) {
 
   useEffect(() => {
     if (!DEFAULTCONFIG.isDev || !DEFAULTCONFIG.disableFilePopup) {
-      setAnchorEl(true);
+      if (fileInfo.length > 0) {
+        setAnchorEl(true);
+      }
     }
   }, [fileInfo]);
 

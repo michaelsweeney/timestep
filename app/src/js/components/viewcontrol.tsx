@@ -29,7 +29,11 @@ const ViewControl = props => {
   const classes = useStyles();
 
   if (files.length == 0) {
-    return <LandingPage />;
+    return (
+      <div className={classes.root}>
+        <LandingPage />
+      </div>
+    );
   }
 
   if (props.activeView == 'Histogram') {

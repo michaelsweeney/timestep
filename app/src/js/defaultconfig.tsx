@@ -1,8 +1,9 @@
 const DEFAULTCONFIG = {
-  isDev: true,
+  isDev: false,
   defaultFiles: [
-    // '/Users/michaelsweeney/Documents/energyplus files/example/output-5ZoneDetailedIceStorage/5ZoneDetailedIceStorageout.sql'
-    '/Users/michaelsweeney/Documents/energyplus files/chop_shade_array.sql'
+    // '/Users/michaelsweeney/Documents/energyplus files/example/output-5ZoneDetailedIceStorage/5ZoneDetailedIceStorageout.sql',
+    '/Users/michaelsweeney/Documents/energyplus files/sql1.sql'
+    // '/Users/michaelsweeney/Documents/energyplus files/sql2.sql',
   ],
   disableFilePopup: true,
   defaultView: 'MultiLine',

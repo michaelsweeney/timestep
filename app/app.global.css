@@ -45,3 +45,7 @@ a:hover {
   text-decoration: none;
   cursor: pointer;
 } */
+
+
+
+@import '~@fortawesome/fontawesome-free/css/all.css';
