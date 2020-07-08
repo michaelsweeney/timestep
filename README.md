@@ -26,6 +26,7 @@ Current Build (BETA) for Mac and Windows (includes sample SQL datasets): https:/
 Install & Setup Instructions:
 <ol>
   <li>Download the current build from the above hyperlink for your operating system.</li>
+   <li>(Optional): Download the SQL sample files via the same hyperlink.</li>
   <li>Unzip the directory and place it in its own folder.</li>
   <li>Double-click "timestep" (timestep.exe on Windows)</li>
   <li>Ensure that any desired EnergyPlus simulations have been run with the following command in the IDF file: "Output:SQLite, SimpleAndTabular"</li>
