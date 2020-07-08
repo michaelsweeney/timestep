@@ -1,3 +1,3 @@
 Interactive timeseries visualizations for EnergyPlus.
 
-Current Build for Mac and Windows (includes sample SQL datasets): https://drive.google.com/drive/folders/1xnP2RhkEQw84DnWFDBtBwglMRt37MH_4?usp=sharing
+Current Build for Mac and Windows (includes sample SQL datasets): https://www.dropbox.com/sh/za0zxhf0hmzzme0/AAB6Q2os56CV9uYupeWaQmToa?dl=0
