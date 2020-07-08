@@ -15,7 +15,7 @@ const useStyles = makeStyles(
       position: 'absolute',
       width: 'calc(100vw - 200px)',
       left: '175px',
-      height: '99vh',
+      height: '98vh',
       boxSizing: 'border-box',
       overflowY: 'hidden',
       overflowX: 'hidden',
