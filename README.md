@@ -10,7 +10,7 @@ Current Timestep features:
   <li>Heatmap, Multi-Line, Scatter Plot, Histogram, and Statistical Summary outputs</li>
   <li>CSV and clipboard export</li>
   <li>Support for multiple files</li>
-  <li>BND file cross-referencing (where available) for intelligent units parsing</li
+  <li>BND file cross-referencing (where available) for intelligent units parsing</li>
  </ul>
 
 Future Timestep features:
