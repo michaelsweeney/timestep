@@ -5,27 +5,20 @@ const useStyles = makeStyles(
   {
     root: {
       textAlign: 'center',
-      marginTop: '15%',
-      marginBottom: '20%',
+      marginTop: 200,
+      marginBottom: 40,
       padding: 20,
-      color: 'rgba(0,0,0,0.54)'
+      color: 'rgba(0,0,0,0.8)'
     },
     title: {
       fontSize: 24,
-      marginBottom: 16,
-      fontWeight: 500
+      marginBottom: 16
     },
     maintext: {
       fontSize: 16,
-      marginBottom: 16,
-      fontWeight: 500
-    },
-    subtext: {
-      fontSize: 16,
-      fontWeight: 250
+      marginBottom: 5
     }
   },
-
   {
     name: 'landing-page'
   }
@@ -40,11 +33,10 @@ const LandingPage = props => {
       </div>
 
       <div className={classes.maintext}>No Files are currently loaded.</div>
-
       <div className={classes.maintext}>
         Select "LOAD FILES" or drop SQL file to load timeseries results.
       </div>
-      <div className={classes.subtext}>
+      <div className={classes.maintext}>
         Make sure that "Output:SQLite:SimpleAndTabular" has been included in
         your IDF file.
       </div>

@@ -6,19 +6,11 @@ import { shell } from 'electron';
 
 const useStyles = makeStyles(
   {
-    root: {
-      position: 'absolute',
-      bottom: 10,
-      left: 50,
-      backgroundColor: 'white'
-    },
-    icon: {
-      '&:hover': {
-        color: 'red'
-      }
-    },
+    root: {},
+
     button: {
-      borderWidth: '0px !important'
+      borderWidth: '0px !important',
+      verticalAlign: 'bottom'
     }
   },
   {

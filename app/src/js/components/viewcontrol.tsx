@@ -18,7 +18,10 @@ const useStyles = makeStyles(
       height: '99vh',
       boxSizing: 'border-box',
       overflowY: 'hidden',
-      overflowX: 'hidden'
+      overflowX: 'hidden',
+      '&::-webkit-scrollbar': {
+        display: 'none'
+      }
     }
   },
   { name: 'view-container' }

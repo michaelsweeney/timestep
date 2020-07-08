@@ -9,6 +9,7 @@ import { Logo } from './logo';
 import { InfoContainer } from './infocontainer';
 
 import { makeStyles } from '@material-ui/core/styles';
+import { callbackify } from 'util';
 
 const useStyles = makeStyles(
   {
@@ -21,6 +22,12 @@ const useStyles = makeStyles(
       textAlign: 'center',
       boxSizing: 'border-box',
       overflow: 'hidden'
+    },
+    topContainer: {
+      height: 'calc(100% - 50px)'
+    },
+    bottomContainer: {
+      // height: '75px'
     }
   },
   {
@@ -32,13 +39,17 @@ const Sidebar = props => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <Logo></Logo>
-      <FileHandler fileCallback={props.fileCallback} />
-      <FileList fileInfo={props.fileInfo} />
-      <UnitRadio unitCallback={props.unitCallback} />
-      <TimeStepSelect timeStepCallback={props.timeStepCallback} />
-      <ViewSelector activeViewCallback={props.activeViewCallback} />
-      <InfoContainer />
+      <div className={classes.topContainer}>
+        <Logo></Logo>
+        <FileHandler fileCallback={props.fileCallback} />
+        <FileList fileInfo={props.fileInfo} />
+        <UnitRadio unitCallback={props.unitCallback} />
+        <TimeStepSelect timeStepCallback={props.timeStepCallback} />
+        <ViewSelector activeViewCallback={props.activeViewCallback} />
+      </div>
+      <div className={classes.bottomContainer}>
+        <InfoContainer />
+      </div>
     </div>
   );
 };

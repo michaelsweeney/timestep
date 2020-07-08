@@ -28,7 +28,7 @@ const Logo = () => {
         version="1.1"
         viewBox="0 0 70 70"
       >
-        <text x="-30" y="50" fontFamily="Roboto-Light" fontSize="30">
+        <text x="-30" y="50" fontFamily="Roboto" fontWeight="300" fontSize="30">
           timestep
         </text>
         <line
