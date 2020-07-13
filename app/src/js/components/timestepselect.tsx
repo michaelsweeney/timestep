@@ -9,18 +9,19 @@ const useStyles = makeStyles(
     root: {
       display: 'inlineBlock',
       margin: 10
-    },
-    select: {
-      textAlign: 'center',
-      left: '0px',
-      '& svg': {
-        display: 'none'
-      },
-      '& div': {
-        textAlign: 'center',
-        paddingRight: '0 !important'
-      }
     }
+    // select: {
+    //   textAlign: 'center',
+    //   left: '0px',
+    //   '& svg': {
+    //     position: 'relative',
+    //     left: 5
+    //   },
+    //   '& div': {
+    //     textAlign: 'center',
+    //     paddingRight: '0 !important'
+    //   }
+    // }
   },
   {
     name: 'timestep-select'
@@ -37,7 +38,7 @@ const TimeStepSelect = props => {
   };
   return (
     <div className={classes.root}>
-      <InputLabel id="label">Timestep</InputLabel>
+      <InputLabel id="label">Interval</InputLabel>
       <Select
         className={classes.select}
         onChange={handleChange}
