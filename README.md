@@ -44,14 +44,13 @@ Please email timestepvis@gmail.com with questions or feedback on the BETA releas
 ![Histogram](/screenshots/histogram.png)
 
 ### Multiple File Support 
-![Histogram](/screenshots/multiple sim files.png)
+![MultiSim](/screenshots/multiple_sim_files.png)
 
 ### Multiple File Support 
 ![Scatter](/screenshots/scatter.png)
 
-
 ### Searchable Report Querying 
-![Scatter](/screenshots/searchable reports.png)
+![Searchable Reports](/screenshots/searchable_reports.png)
 
 ### Statistical Summary 
-![Scatter](/screenshots/statistics.png)
+![Stats](/screenshots/statistics.png)
