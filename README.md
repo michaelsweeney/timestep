@@ -17,7 +17,6 @@ Future Timestep features:
 - Support for tabular data (similar to eplusout.html reports)</li>
 - Additional chart types like 2D hexbins, scatter matrices, and box/violin distribution plots</li>
 
-![Histogram](/screenshots/histogram.png)
 
 Current Build (BETA) for Mac and Windows (includes sample SQL datasets): https://www.dropbox.com/sh/za0zxhf0hmzzme0/AAB6Q2os56CV9uYupeWaQmToa?dl=0
 
@@ -36,3 +35,23 @@ Install & Setup Instructions:
 Please email timestepvis@gmail.com with questions or feedback on the BETA release.
 
 
+## Screenshots:
+
+### Heatmap
+![Heatmap](/screenshots/heatmap.png)
+
+### Frequency Histogram
+![Histogram](/screenshots/histogram.png)
+
+### Multiple File Support 
+![Histogram](/screenshots/multiple sim files.png)
+
+### Multiple File Support 
+![Scatter](/screenshots/scatter.png)
+
+
+### Searchable Report Querying 
+![Scatter](/screenshots/searchable reports.png)
+
+### Statistical Summary 
+![Scatter](/screenshots/statistics.png)
