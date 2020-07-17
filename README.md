@@ -56,31 +56,3 @@ Please email timestepvis@gmail.com with questions or feedback on the BETA releas
 ![Stats](/screenshots/statistics.png)
 
 
-<!--html_preserve-->
-
-<!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="https://www.gstatic.com/firebasejs/7.16.0/firebase-app.js"></script>
-
-<!-- TODO: Add SDKs for Firebase products that you want to use
-     https://firebase.google.com/docs/web/setup#available-libraries -->
-<script src="https://www.gstatic.com/firebasejs/7.16.0/firebase-analytics.js"></script>
-
-<script>
-  // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyDX4XnRTGpAoEDqNsEgvvHCvjBiK8fr3Q0",
-    authDomain: "timestep-3e075.firebaseapp.com",
-    databaseURL: "https://timestep-3e075.firebaseio.com",
-    projectId: "timestep-3e075",
-    storageBucket: "timestep-3e075.appspot.com",
-    messagingSenderId: "1029218208896",
-    appId: "1:1029218208896:web:543777347897a0fe4eaa65",
-    measurementId: "G-0RBV956ZYJ"
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
-</script>
-
-
-<!--/html_preserve-->
