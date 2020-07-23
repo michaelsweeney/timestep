@@ -19,7 +19,7 @@ const useStyles = makeStyles(
 );
 
 const handleLink = () => {
-  let link = 'https://github.com/michaelsweeney/timestep';
+  let link = 'https://michaelsweeney.github.io/timestep';
   shell.openExternal(link);
 };
 

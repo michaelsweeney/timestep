@@ -9,7 +9,7 @@ import { Logo } from './logo';
 import { InfoContainer } from './infocontainer';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { callbackify } from 'util';
+import { LineBreak } from './linebreak';
 
 const useStyles = makeStyles(
   {
@@ -41,10 +41,13 @@ const Sidebar = props => {
     <div className={classes.root}>
       <div className={classes.topContainer}>
         <Logo></Logo>
+        {/* <LineBreak /> */}
         <FileHandler fileCallback={props.fileCallback} />
         <FileList fileInfo={props.fileInfo} />
+        <LineBreak />
         <UnitRadio unitCallback={props.unitCallback} />
         <TimeStepSelect timeStepCallback={props.timeStepCallback} />
+        <LineBreak />
         <ViewSelector activeViewCallback={props.activeViewCallback} />
       </div>
       <div className={classes.bottomContainer}>
