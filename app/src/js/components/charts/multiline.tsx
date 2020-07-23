@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { formatInt, formatDate } from '../numformat';
+import { formatDomain, formatDate, formatInt } from '../numformat';
 import { D3Container } from './d3container';
 import { multilinedims } from './chartdimensions';
 
@@ -149,10 +149,13 @@ const MultiLine = props => {
       .range([plotheight, 0])
       .domain([yconfig.y2.min, yconfig.y2.max * (1 + ytoppad)]);
 
+    const yAxis1Format = formatDomain([yconfig.y1.min, yconfig.y1.max]);
+    const yAxis2Format = formatDomain([yconfig.y2.min, yconfig.y2.max]);
+
     const xAxis = d3.axisBottom(xScale);
     const contextXAxis = d3.axisBottom(contextXScale);
-    const yAxis1 = d3.axisLeft(yScale1).tickFormat(formatInt);
-    const yAxis2 = d3.axisRight(yScale2).tickFormat(formatInt);
+    const yAxis1 = d3.axisLeft(yScale1).tickFormat(yAxis1Format);
+    const yAxis2 = d3.axisRight(yScale2).tickFormat(yAxis2Format);
 
     const defs = svg
       .selectAll('defs')
@@ -472,7 +475,6 @@ const MultiLine = props => {
     }
 
     function mouseOut(e) {
-      console.log(e);
       xline.style('opacity', 0);
       markers.style('opacity', 0);
       tooltip.style('opacity', 0);

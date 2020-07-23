@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import * as d3 from 'd3';
-import { formatInt, formatDate } from '../numformat';
+import { formatDate, formatDomain } from '../numformat';
 import { D3Container } from './d3container';
 import { heatmapdims } from './chartdimensions';
 
@@ -18,6 +18,8 @@ const Heatmap = props => {
   } = props;
 
   const { width, height } = props.plotdims;
+
+  const clrAxisFormat = formatDomain([minrange, maxrange]);
 
   let title = '-';
   if (series[0] != undefined) {
@@ -253,7 +255,7 @@ const Heatmap = props => {
         .html(() => {
           return `
             <div>Time: ${formatDate(d.time)}</div>
-            <div>Value: ${formatInt(d[valkey])} ${d[unitkey]}</div>
+            <div>Value: ${clrAxisFormat(d[valkey])} ${d[unitkey]}</div>
           `;
         });
     }
@@ -283,7 +285,8 @@ const Heatmap = props => {
     const colorLegendAxis = d3
       .axisRight()
       .scale(colorlegendscale)
-      .ticks(5);
+      .ticks(5)
+      .tickFormat(clrAxisFormat);
 
     let gradientid = Math.floor(Math.random() * 1e6) + '-gradient';
 

@@ -13,11 +13,15 @@ const useStyles = makeStyles(
       boxSizing: 'border-box'
     },
     button: {
-      width: 115
+      width: 115,
+      whiteSpace: 'nowrap',
+      transition: 'background-color 500ms'
     },
     buttonactive: {
       width: 115,
-      backgroundColor: 'rgb(20, 20, 20)'
+      whiteSpace: 'nowrap',
+      backgroundColor: 'rgba(20, 20, 20, 0.5) !important',
+      transition: 'background-color 5000ms'
     }
   },
   { name: 'file-handler' }

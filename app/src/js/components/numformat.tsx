@@ -1,6 +1,26 @@
 import { format, timeFormat } from 'd3';
 
+function formatDomain(ar) {
+  let [min, max] = ar;
+  let absmin = Math.abs(min);
+  let absmax = Math.abs(max);
+  let spread = max - min;
+  let ideal = Math.max(spread, absmin, absmax);
+  return formatFunc(ideal);
+}
+
 function formatInt(n) {
+  if (!isFinite(+n)) {
+    return 0;
+  }
+  if (n == 0) {
+    return 0;
+  } else {
+    return formatFunc(n)(+n);
+  }
+}
+
+function formatFunc(n) {
   if (!isFinite(+n)) {
     return 0;
   }
@@ -10,27 +30,27 @@ function formatInt(n) {
   }
 
   if (n < 0.001) {
-    return format('.1e')(+n);
+    return format('.1e');
   }
 
   if (n < 1) {
-    return format('.2n')(+n);
+    return format('.2n');
   }
 
   if (n < 10) {
-    format('.2n')(+n);
+    format('.2n');
   }
 
   if (n < 1000) {
-    return format(',.0f')(+n);
+    return format(',.0f');
   }
   if (n < 1000000) {
-    return format('.3s')(+n);
+    return format('.3s');
   }
   if (n >= 1000000) {
-    return format('.3s')(+n);
+    return format('.3s');
   } else {
-    return format(',.0f')(+n);
+    return format(',.0f');
   }
 }
 
@@ -81,4 +101,4 @@ function formatDate(n) {
   return timeFormat(parsestr)(n);
 }
 
-export { formatInt, formatDate, formatTabular };
+export { formatInt, formatDate, formatTabular, formatDomain };

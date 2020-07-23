@@ -4,7 +4,7 @@ const heatmapdims = {
     x: 40,
     title: 20,
     legend: 50,
-    legendlabel: 100
+    legendlabel: 105
   },
   margins: {
     l: 75,

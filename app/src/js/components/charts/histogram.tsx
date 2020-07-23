@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { formatInt } from '../numformat';
+import { formatDomain } from '../numformat';
 import * as d3 from 'd3';
 import { D3Container } from './d3container';
 import { histogramdims } from './chartdimensions';
@@ -97,10 +97,13 @@ const Histogram = props => {
       });
 
     /* AXES */
+
+    const xDomainFunc = formatDomain([binmin, binmax]);
+
     const xAxis = d3
       .axisBottom(xScale)
       .ticks(numbins)
-      .tickFormat(formatInt);
+      .tickFormat(xDomainFunc);
 
     const xAxis_container = svg
       .selectAll('.xaxisg')
@@ -200,7 +203,7 @@ const Histogram = props => {
         .style('transition', 'left 100ms, top 100ms')
         .html(() => {
           return `
-            <div>Range: ${formatInt(d.x0)} - ${formatInt(d.x1)} ${
+            <div>Range: ${xDomainFunc(d.x0)} - ${xDomainFunc(d.x1)} ${
             d[0][unitkey]
           }</div>
             <div>Count: ${d.length}</div>

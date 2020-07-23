@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import * as d3 from 'd3';
 
-import { formatInt, formatDate } from '../numformat';
+import { formatDomain, formatDate } from '../numformat';
 import { D3Container } from './d3container';
 import { idealSplit } from '../textformat';
 import { scatterdims } from './chartdimensions';
@@ -191,7 +191,11 @@ const Scatter = props => {
       });
 
     /* AXES */
-    const xAxis = d3.axisBottom(xScale).tickFormat(formatInt);
+    const xAxisFormat = formatDomain([xminrange, xmaxrange]);
+    const yAxisFormat = formatDomain([yminrange, ymaxrange]);
+    const clrAxisFormat = formatDomain([zminrange, zmaxrange]);
+
+    const xAxis = d3.axisBottom(xScale).tickFormat(xAxisFormat);
 
     const xaxisg = svg
       .selectAll('.xaxisg')
@@ -201,7 +205,7 @@ const Scatter = props => {
       .attr('transform', `translate(${margins.l},${plotheight + margins.t})`)
       .call(xAxis);
 
-    const yAxis = d3.axisLeft(yScale).tickFormat(formatInt);
+    const yAxis = d3.axisLeft(yScale).tickFormat(yAxisFormat);
     const yaxisg = svg
       .selectAll('.yaxisg')
       .data([0])
@@ -315,7 +319,7 @@ const Scatter = props => {
       .axisRight()
       .scale(colorlegendscale)
       .ticks(5)
-      .tickFormat(formatInt);
+      .tickFormat(clrAxisFormat);
 
     // innerhtml avoids bugs at render, for some reason lineargradient id isn't picked up otherwise
     defs.html(
@@ -396,9 +400,9 @@ const Scatter = props => {
         .html(() => {
           return `
           <div>${formatDate(d.time)}</div>
-          <div>x: ${formatInt(d.x)} ${xunits}</div>
-          <div>y: ${formatInt(d.y)} ${yunits}</div>
-          <div>color: ${formatInt(d.z)} ${zunits}</div>
+          <div>x: ${xAxisFormat(d.x)} ${xunits}</div>
+          <div>y: ${yAxisFormat(d.y)} ${yunits}</div>
+          <div>color: ${clrAxisFormat(d.z)} ${zunits}</div>
         `;
         })
         .style('z-index', 999);
