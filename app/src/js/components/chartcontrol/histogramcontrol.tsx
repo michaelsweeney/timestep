@@ -4,7 +4,6 @@ import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { Histogram } from '../charts/histogram';
 
-import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from '../viewwrapper';
 import { ControlsWrapper } from '../controlswrapper';
 import { ControlsContent } from '../controlscontent';
@@ -19,23 +18,46 @@ const HistogramControl = props => {
   const [minData, setMinData] = useState(0);
   const [maxData, setMaxData] = useState(1);
   const [numBins, setNumBins] = useState(20);
-  const [plotdims, setPlotdims] = useState({ width: 50, height: 50 });
-  const plotContainer = useRef(null);
+
   const [activeTab, setActiveTab] = useState('tab-series');
 
-  useEffect(() => {
-    function handleResize() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(
-        () => setPlotdims(getBBSize(plotContainer)),
-        250
-      );
+  const plotContainer = useRef(null);
+  const controlsVisibleHeight = 200;
+  const controlsHiddenHeight = 50;
+  const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
+  '';
+  const handleControlsHeightChange = height => {
+    setControlsHeight(height);
+  };
+
+  const toggleHideControlsTabs = () => {
+    if (controlsVisible) {
+      setControlsVisible(false);
+      setControlsHeight(controlsHiddenHeight);
+    } else {
+      setControlsVisible(true);
+      setControlsHeight(controlsVisibleHeight);
     }
-    let resizeTimer;
-    window.addEventListener('resize', handleResize);
-    setPlotdims(getBBSize(plotContainer));
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  };
+
+  const handleTabChange = tag => {
+    if (tag == activeTab) {
+      toggleHideControlsTabs();
+    } else {
+      setControlsVisible(true);
+      setControlsHeight(controlsVisibleHeight);
+      setActiveTab(tag);
+    }
+  };
+
+  useEffect(() => {
+    setPlotDims({
+      width: props.dims.width,
+      height: Math.max(props.dims.height - controlsHeight - 20, 50)
+    });
+  }, [props.dims, controlsHeight]);
 
   const handleSeriesSelect = (e, v) => {
     setIsLoading(true);
@@ -67,16 +89,13 @@ const HistogramControl = props => {
   const handleNumBinChange = v => {
     setNumBins(v);
   };
-  const handleTabChange = tag => {
-    setActiveTab(tag);
-  };
 
   return (
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <Histogram
           files={props.files}
-          plotdims={plotdims}
+          plotdims={plotDims}
           series={series}
           units={props.units}
           binmin={minRange}
@@ -84,10 +103,13 @@ const HistogramControl = props => {
           numbins={numBins}
         ></Histogram>
       </ViewWrapper>
-
       <ControlsWrapper
+        height={controlsHeight}
         activetab={activeTab}
         tabChangeCallback={handleTabChange}
+        isVisible={controlsVisible}
+        toggleHideCallback={toggleHideControlsTabs}
+        controlsHeightCallback={handleControlsHeightChange}
       >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <SeriesSelect

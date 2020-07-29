@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 import MultiSeries from '../multiseries'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
@@ -16,6 +16,38 @@ const StatisticsControl = props => {
   const [activeTab, setActiveTab] = useState('tab-series');
 
   const plotContainer = useRef(null);
+  const controlsVisibleHeight = 200;
+  const controlsHiddenHeight = 50;
+  const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
+
+  const toggleHideControlsTabs = () => {
+    if (controlsVisible) {
+      setControlsVisible(false);
+      setControlsHeight(controlsHiddenHeight);
+    } else {
+      setControlsVisible(true);
+      setControlsHeight(controlsVisibleHeight);
+    }
+  };
+
+  const handleTabChange = tag => {
+    if (tag == activeTab) {
+      toggleHideControlsTabs();
+    } else {
+      setControlsVisible(true);
+      setControlsHeight(controlsVisibleHeight);
+      setActiveTab(tag);
+    }
+  };
+
+  useEffect(() => {
+    setPlotDims({
+      width: props.dims.width,
+      height: Math.max(props.dims.height - controlsHeight - 20, 50)
+    });
+  }, [props.dims, controlsHeight]);
 
   const handleSeriesSelect = (e, v) => {
     let arrayClone = [...seriesArray];
@@ -45,9 +77,6 @@ const StatisticsControl = props => {
       }
     });
   };
-  const handleTabChange = tag => {
-    setActiveTab(tag);
-  };
 
   return (
     <>
@@ -59,8 +88,11 @@ const StatisticsControl = props => {
         />
       </ViewWrapper>
       <ControlsWrapper
+        height={controlsHeight}
         activetab={activeTab}
         tabChangeCallback={handleTabChange}
+        isVisible={controlsVisible}
+        toggleHideCallback={toggleHideControlsTabs}
       >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <MultiSeries

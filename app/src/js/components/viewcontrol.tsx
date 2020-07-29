@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { HeatmapControl } from './chartcontrol/heatmapcontrol';
 import { HistogramControl } from './chartcontrol/histogramcontrol';
@@ -12,10 +12,9 @@ import { LandingPage } from './landingpage';
 const useStyles = makeStyles(
   {
     root: {
-      position: 'absolute',
-      width: 'calc(100vw - 200px)',
-      left: '175px',
-      height: '98vh',
+      width: 'calc(100% - 175px)',
+      display: 'inline-block',
+      height: '100%',
       boxSizing: 'border-box',
       overflowY: 'hidden',
       overflowX: 'hidden',
@@ -29,81 +28,65 @@ const useStyles = makeStyles(
 
 const ViewControl = props => {
   const { units, files, timestepType, seriesLookupObj, seriesOptions } = props;
+
   const classes = useStyles();
 
-  if (files.length == 0) {
-    return (
-      <div className={classes.root}>
-        <LandingPage />
-      </div>
-    );
-  }
+  const [containerDims, setContainerDims] = useState({
+    width: 700,
+    height: 500
+  });
 
-  if (props.activeView == 'Histogram') {
-    return (
-      <div className={classes.root}>
-        <HistogramControl
-          seriesOptions={seriesOptions}
-          units={units}
-          files={files}
-          timestepType={timestepType}
-          seriesLookupObj={seriesLookupObj}
-        />
-      </div>
-    );
-  }
-  if (props.activeView == 'Heatmap') {
-    return (
-      <div className={classes.root}>
-        <HeatmapControl
-          seriesOptions={seriesOptions}
-          units={units}
-          files={files}
-          timestepType={timestepType}
-          seriesLookupObj={seriesLookupObj}
-        />
-      </div>
-    );
-  }
-  if (props.activeView == 'MultiLine') {
-    return (
-      <div className={classes.root}>
-        <MultiLineControl
-          seriesOptions={seriesOptions}
-          units={units}
-          files={files}
-          timestepType={timestepType}
-          seriesLookupObj={seriesLookupObj}
-        />
-      </div>
-    );
-  }
-  if (props.activeView == 'Scatter') {
-    return (
-      <div className={classes.root}>
-        <ScatterControl
-          seriesOptions={seriesOptions}
-          units={units}
-          files={files}
-          timestepType={timestepType}
-          seriesLookupObj={seriesLookupObj}
-        />
-      </div>
-    );
-  }
-  if (props.activeView == 'Statistics') {
-    return (
-      <div className={classes.root}>
-        <StatisticsControl
-          seriesOptions={seriesOptions}
-          units={units}
-          files={files}
-          timestepType={timestepType}
-          seriesLookupObj={seriesLookupObj}
-        />
-      </div>
-    );
-  }
+  const container = useRef(null);
+
+  const getContainerDims = node => {
+    return {
+      width: node.getBoundingClientRect()['width'],
+      height: node.getBoundingClientRect()['height']
+    };
+  };
+
+  // get initial dims after mount
+  useEffect(() => {
+    let dims = getContainerDims(container.current);
+    setContainerDims(dims);
+  }, []);
+
+  // get dims on window resize
+  useEffect(() => {
+    function handleResize() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        let dims = getContainerDims(container.current);
+        setContainerDims(dims);
+      }, 250);
+    }
+    let resizeTimer;
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  });
+
+  const propobj = {
+    seriesOptions: seriesOptions,
+    units: units,
+    files: files,
+    dims: containerDims,
+    timestepType: timestepType,
+    seriesLookupObj: seriesLookupObj
+  };
+
+  const viewobj = {
+    Histogram: <HistogramControl {...propobj} />,
+    Heatmap: <HeatmapControl {...propobj} />,
+    Scatter: <ScatterControl {...propobj} />,
+    MultiLine: <MultiLineControl {...propobj} />,
+    Statistics: <StatisticsControl {...propobj} />
+  };
+
+  return (
+    <div ref={container} className={classes.root}>
+      {files.length == 0 ? <LandingPage /> : viewobj[props.activeView]}
+    </div>
+  );
 };
 
 export { ViewControl };

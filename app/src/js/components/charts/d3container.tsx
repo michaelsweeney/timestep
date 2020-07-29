@@ -4,7 +4,8 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(
   {
     root: {
-      height: 'calc(100vh - 300px)',
+      height: '100%',
+      boxSizing: 'border-box',
       '& path': {
         shapeRendering: 'geometricPrecision'
       },

@@ -13,7 +13,10 @@ const useStyles = makeStyles(
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
       boxSizing: 'border-box',
       overflowY: 'hidden',
-      overflowX: 'hidden'
+      overflowX: 'hidden',
+      width: 'calc(100vw)',
+      height: 'calc(100vh)',
+      padding: '10px'
     }
   },
   { name: 'main-container' }
@@ -101,6 +104,7 @@ const Timestep = () => {
   return (
     <div className={classes.root}>
       <Sidebar
+        views={['MultiLine', 'Heatmap', 'Scatter', 'Histogram', 'Statistics']}
         fileCallback={handleFileChange}
         fileInfo={fileInfo}
         unitCallback={handleUnitChange}

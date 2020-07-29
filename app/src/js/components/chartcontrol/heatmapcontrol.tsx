@@ -4,7 +4,6 @@ import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { Heatmap } from '../charts/heatmap';
 
-import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from '../viewwrapper';
 import { ControlsWrapper } from '../controlswrapper';
 import { ControlsContent } from '../controlscontent';
@@ -21,25 +20,41 @@ const HeatmapControl = props => {
   const [maxData, setMaxData] = useState(0);
   const [reverseColor, setReverseColor] = useState(false);
   const [colorfunc, setColorfunc] = useState('interpolateViridis');
-  const [plotdims, setPlotdims] = useState({ width: 50, height: 50 });
-  const plotContainer = useRef(null);
   const [activeTab, setActiveTab] = useState('tab-series');
 
-  // handle resizing / div size
+  const plotContainer = useRef(null);
+  const controlsVisibleHeight = 200;
+  const controlsHiddenHeight = 50;
+  const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
+
+  const toggleHideControlsTabs = () => {
+    if (controlsVisible) {
+      setControlsVisible(false);
+      setControlsHeight(controlsHiddenHeight);
+    } else {
+      setControlsVisible(true);
+      setControlsHeight(controlsVisibleHeight);
+    }
+  };
+
+  const handleTabChange = tag => {
+    if (tag == activeTab) {
+      toggleHideControlsTabs();
+    } else {
+      setControlsVisible(true);
+      setControlsHeight(controlsVisibleHeight);
+      setActiveTab(tag);
+    }
+  };
 
   useEffect(() => {
-    function handleResize() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(
-        () => setPlotdims(getBBSize(plotContainer)),
-        250
-      );
-    }
-    let resizeTimer;
-    window.addEventListener('resize', handleResize);
-    setPlotdims(getBBSize(plotContainer));
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    setPlotDims({
+      width: props.dims.width,
+      height: Math.max(props.dims.height - controlsHeight - 20, 50)
+    });
+  }, [props.dims, controlsHeight]);
 
   const handleSeriesSelect = (e, v) => {
     setIsLoading(true);
@@ -78,15 +93,11 @@ const HeatmapControl = props => {
       setReverseColor(false);
     }
   };
-  const handleTabChange = tag => {
-    setActiveTab(tag);
-  };
-
   return (
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <Heatmap
-          plotdims={plotdims}
+          plotdims={plotDims}
           files={props.files}
           series={series}
           units={props.units}
@@ -97,8 +108,11 @@ const HeatmapControl = props => {
         ></Heatmap>
       </ViewWrapper>
       <ControlsWrapper
+        height={controlsHeight}
         activetab={activeTab}
         tabChangeCallback={handleTabChange}
+        isVisible={controlsVisible}
+        toggleHideCallback={toggleHideControlsTabs}
       >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <SeriesSelect

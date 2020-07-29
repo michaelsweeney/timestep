@@ -7,7 +7,8 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Table
 } from '@material-ui/core';
 
 const useStyles = makeStyles(
@@ -121,35 +122,37 @@ const MultiLineLegend = props => {
 
   return (
     <TableContainer className={classes.root}>
-      {seriesState.map((d, i) => {
-        return (
-          <TableRow key={Math.random()} className={classes.legendrow}>
-            <TableCell>
-              <div
-                className={classes.legendrect}
-                style={rectStyle(d)}
-                onClick={handleVisibleChange}
+      <Table>
+        {seriesState.map((d, i) => {
+          return (
+            <TableRow key={Math.random()} className={classes.legendrow}>
+              <TableCell>
+                <div
+                  className={classes.legendrect}
+                  style={rectStyle(d)}
+                  onClick={handleVisibleChange}
+                  arraynum={i}
+                ></div>
+              </TableCell>
+              <TableCell
                 arraynum={i}
-              ></div>
-            </TableCell>
-            <TableCell
-              arraynum={i}
-              onClick={handleYAxisChange}
-              style={axisStyle(d)}
-              className={classes.legendaxisswitch}
-            >
-              {d.yaxis}
-            </TableCell>
-            <TableCell
-              style={textStyle(d)}
-              className={classes.legendname}
-              arraynum={i}
-            >
-              {d.name}
-            </TableCell>
-          </TableRow>
-        );
-      })}
+                onClick={handleYAxisChange}
+                style={axisStyle(d)}
+                className={classes.legendaxisswitch}
+              >
+                {d.yaxis}
+              </TableCell>
+              <TableCell
+                style={textStyle(d)}
+                className={classes.legendname}
+                arraynum={i}
+              >
+                {d.name}
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </Table>
     </TableContainer>
   );
 };

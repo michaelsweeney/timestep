@@ -1,24 +1,25 @@
-
 @font-face {
-  font-family: "Roboto";
-  src: local('Roboto-Black') url("../fonts/Roboto-Black.ttf") format("truetype"),
-  local('Roboto-BlackItalic') url("../fonts/Roboto-BlackItalic.ttf") format("truetype"),
-  local('Roboto-Bold') url("../fonts/Roboto-Bold.ttf") format("truetype"),
-  local('Roboto-BoldItalic') url("../fonts/Roboto-BoldItalic.ttf") format("truetype"),
-  local('Roboto-Light') url("../fonts/Roboto-Light.ttf") format("truetype"),
-  local('Roboto-LightItalic') url("../fonts/Roboto-LightItalic.ttf") format("truetype"),
-  local('Roboto-Medium') url("../fonts/Roboto-Medium.ttf") format("truetype"),
-  local('Roboto-MediumItalic') url("../fonts/Roboto-MediumItalic.ttf") format("truetype"),
-  local('Roboto-Regular') url("../fonts/Roboto-Regular.ttf") format("truetype"),
-  local('Roboto-Thin') url("../fonts/Roboto-Thin.ttf") format("truetype"),
-  local('Roboto-ThinItalic') url("../fonts/Roboto-ThinItalic.ttf") format("truetype");
+  font-family: 'Roboto';
+  src: local('Roboto-Black') url('../fonts/Roboto-Black.ttf') format('truetype'),
+    local('Roboto-BlackItalic') url('../fonts/Roboto-BlackItalic.ttf')
+      format('truetype'),
+    local('Roboto-Bold') url('../fonts/Roboto-Bold.ttf') format('truetype'),
+    local('Roboto-BoldItalic') url('../fonts/Roboto-BoldItalic.ttf')
+      format('truetype'),
+    local('Roboto-Light') url('../fonts/Roboto-Light.ttf') format('truetype'),
+    local('Roboto-LightItalic') url('../fonts/Roboto-LightItalic.ttf')
+      format('truetype'),
+    local('Roboto-Medium') url('../fonts/Roboto-Medium.ttf') format('truetype'),
+    local('Roboto-MediumItalic') url('../fonts/Roboto-MediumItalic.ttf')
+      format('truetype'),
+    local('Roboto-Regular') url('../fonts/Roboto-Regular.ttf')
+      format('truetype'),
+    local('Roboto-Thin') url('../fonts/Roboto-Thin.ttf') format('truetype'),
+    local('Roboto-ThinItalic') url('../fonts/Roboto-ThinItalic.ttf')
+      format('truetype');
 }
 
-
-
-
-
-
 body {
-  font-family: 'Roboto'
+  font-family: 'Roboto';
+  margin: 0;
 }

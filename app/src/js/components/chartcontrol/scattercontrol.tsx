@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef, useStyles } from 'react';
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sqlload';
 import { Scatter } from '../charts/scatter';
-import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from '../viewwrapper';
 import { ControlsWrapper } from '../controlswrapper';
 import { ControlsContent } from '../controlscontent';
@@ -35,11 +34,44 @@ const ScatterControl = props => {
 
   const [reverseColor, setReverseColor] = useState(false);
   const [colorfunc, setColorfunc] = useState('interpolateViridis');
-  const [plotdims, setPlotdims] = useState({ width: 50, height: 50 });
-  const plotContainer = useRef(null);
+
   const [activeTab, setActiveTab] = useState('tab-series');
 
+  const plotContainer = useRef(null);
+  const controlsVisibleHeight = 275;
+  const controlsHiddenHeight = 50;
+  const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
+
   const domainPad = 0.05;
+
+  const toggleHideControlsTabs = () => {
+    if (controlsVisible) {
+      setControlsVisible(false);
+      setControlsHeight(controlsHiddenHeight);
+    } else {
+      setControlsVisible(true);
+      setControlsHeight(controlsVisibleHeight);
+    }
+  };
+
+  const handleTabChange = tag => {
+    if (tag == activeTab) {
+      toggleHideControlsTabs();
+    } else {
+      setControlsVisible(true);
+      setControlsHeight(controlsVisibleHeight);
+      setActiveTab(tag);
+    }
+  };
+
+  useEffect(() => {
+    setPlotDims({
+      width: props.dims.width,
+      height: Math.max(props.dims.height - controlsHeight - 20, 50)
+    });
+  }, [props.dims, controlsHeight]);
 
   const getMaxMin = series => {
     const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
@@ -50,20 +82,6 @@ const ScatterControl = props => {
     max = max + pad;
     return [min, max];
   };
-
-  useEffect(() => {
-    function handleResize() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(
-        () => setPlotdims(getBBSize(plotContainer)),
-        250
-      );
-    }
-    let resizeTimer;
-    window.addEventListener('resize', handleResize);
-    setPlotdims(getBBSize(plotContainer));
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const handleXSeriesSelect = (e, v) => {
     setIsLoadingX(true);
@@ -117,9 +135,6 @@ const ScatterControl = props => {
       setReverseColor(false);
     }
   };
-  const handleTabChange = tag => {
-    setActiveTab(tag);
-  };
 
   return (
     <>
@@ -128,7 +143,7 @@ const ScatterControl = props => {
         isLoading={isLoadingX || isLoadingY || isLoadingZ ? true : false}
       >
         <Scatter
-          plotdims={plotdims}
+          plotdims={plotDims}
           files={props.files}
           units={props.units}
           colorfunc={colorfunc}
@@ -145,8 +160,11 @@ const ScatterControl = props => {
         />
       </ViewWrapper>
       <ControlsWrapper
+        height={controlsHeight}
         activetab={activeTab}
         tabChangeCallback={handleTabChange}
+        isVisible={controlsVisible}
+        toggleHideCallback={toggleHideControlsTabs}
       >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <SeriesSelect

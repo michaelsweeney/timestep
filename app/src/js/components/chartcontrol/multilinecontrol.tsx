@@ -5,7 +5,6 @@ import { getSeries } from '../sqlload';
 import { MultiLineLegend } from './multilinelegend';
 import { ColorCategorySelect } from '../colorcategoryselect';
 import { MultiLine } from '../charts/multiline';
-import { getBBSize } from '../plotdimensions';
 import { ViewWrapper } from '../viewwrapper';
 import { ControlsWrapper } from '../controlswrapper';
 import { ControlsContent } from '../controlscontent';
@@ -16,23 +15,41 @@ const MultiLineControl = props => {
   const [seriesArray, setSeriesArray] = useState([]);
   const [colorScheme, setColorScheme] = useState('schemeCategory10');
   const [seriesConfig, setSeriesConfig] = useState([]);
-  const [plotdims, setPlotdims] = useState({ width: 50, height: 50 });
   const [activeTab, setActiveTab] = useState('tab-series');
+
   const plotContainer = useRef(null);
+  const controlsVisibleHeight = 275;
+  const controlsHiddenHeight = 50;
+  const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
+
+  const toggleHideControlsTabs = () => {
+    if (controlsVisible) {
+      setControlsVisible(false);
+      setControlsHeight(controlsHiddenHeight);
+    } else {
+      setControlsVisible(true);
+      setControlsHeight(controlsVisibleHeight);
+    }
+  };
+
+  const handleTabChange = tag => {
+    if (tag == activeTab) {
+      toggleHideControlsTabs();
+    } else {
+      setControlsVisible(true);
+      setControlsHeight(controlsVisibleHeight);
+      setActiveTab(tag);
+    }
+  };
 
   useEffect(() => {
-    function handleResize() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(
-        () => setPlotdims(getBBSize(plotContainer)),
-        250
-      );
-    }
-    let resizeTimer;
-    window.addEventListener('resize', handleResize);
-    setPlotdims(getBBSize(plotContainer));
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    setPlotDims({
+      width: props.dims.width,
+      height: Math.max(props.dims.height - controlsHeight - 20, 50)
+    });
+  }, [props.dims, controlsHeight]);
 
   const handleColorCategoryChange = e => {
     setColorScheme(e);
@@ -71,16 +88,11 @@ const MultiLineControl = props => {
       d.forEach(a => arrayClone.push(a));
       setSeriesArray(arrayClone);
       setIsLoading(false);
-      // setActiveTab('tab-legend');
     });
   };
 
   const handleLegendChange = v => {
     setSeriesConfig(v);
-  };
-
-  const handleTabChange = tag => {
-    setActiveTab(tag);
   };
 
   const handleSelectClose = () => {
@@ -92,16 +104,18 @@ const MultiLineControl = props => {
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <MultiLine
           files={props.files}
-          plotdims={plotdims}
+          plotdims={plotDims}
           seriesConfig={seriesConfig}
           units={props.units}
           seriesArray={seriesArray}
         />
       </ViewWrapper>
-
       <ControlsWrapper
+        height={controlsHeight}
         activetab={activeTab}
         tabChangeCallback={handleTabChange}
+        isVisible={controlsVisible}
+        toggleHideCallback={toggleHideControlsTabs}
       >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <MultiSeries

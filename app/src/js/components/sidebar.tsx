@@ -9,25 +9,35 @@ import { Logo } from './logo';
 import { InfoContainer } from './infocontainer';
 
 import { makeStyles } from '@material-ui/core/styles';
-import { LineBreak } from './linebreak';
 
 const useStyles = makeStyles(
   {
     root: {
       paddingRight: 5,
-      position: 'absolute',
+      display: 'inline-block',
       borderRight: '2px solid rgba(0,0,0,0.3)',
-      height: '98vh',
+      height: '100%',
       width: 175,
       textAlign: 'center',
       boxSizing: 'border-box',
       overflow: 'hidden'
     },
     topContainer: {
-      height: 'calc(100% - 50px)'
+      height: 'calc(100% - 50px)',
+      overflow: 'hidden'
     },
     bottomContainer: {
-      // height: '75px'
+      backgroundColor: 'white'
+    },
+    lineBreak: {
+      display: 'inline-block',
+      position: 'relative',
+      width: '150px',
+      paddingLeft: '20px',
+      paddingRight: '80px',
+      marginTop: '15px',
+      borderTop: '2px solid rgba(0,0,0,0.15)',
+      boxSizing: 'border-box'
     }
   },
   {
@@ -41,13 +51,12 @@ const Sidebar = props => {
     <div className={classes.root}>
       <div className={classes.topContainer}>
         <Logo></Logo>
-        {/* <LineBreak /> */}
         <FileHandler fileCallback={props.fileCallback} />
         <FileList fileInfo={props.fileInfo} />
-        <LineBreak />
+        <div className={classes.lineBreak} />
         <UnitRadio unitCallback={props.unitCallback} />
         <TimeStepSelect timeStepCallback={props.timeStepCallback} />
-        <LineBreak />
+        <div className={classes.lineBreak} />
         <ViewSelector activeViewCallback={props.activeViewCallback} />
       </div>
       <div className={classes.bottomContainer}>
