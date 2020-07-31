@@ -6,6 +6,7 @@ import { formatDomain, formatDate } from '../numformat';
 import { D3Container } from './d3container';
 import { idealSplit } from '../textformat';
 import { scatterdims } from './chartdimensions';
+import { EmptyContainer } from './emptycontainer';
 
 const Scatter = props => {
   const container = useRef(null);
@@ -481,7 +482,11 @@ const Scatter = props => {
       .attr('class', 'brush')
       .call(brush);
   };
-  return <D3Container refcontainer={container}></D3Container>;
+  if (xseries.length == 0 && yseries.length == 0 && zseries.length == 0) {
+    return <EmptyContainer plotdims={props.plotdims} />;
+  } else {
+    return <D3Container refcontainer={container}></D3Container>;
+  }
 };
 
 export { Scatter };

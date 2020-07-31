@@ -4,7 +4,7 @@ import * as d3 from 'd3';
 import { formatDate, formatDomain } from '../numformat';
 import { D3Container } from './d3container';
 import { heatmapdims } from './chartdimensions';
-
+import { EmptyContainer } from './emptycontainer';
 const Heatmap = props => {
   const container = useRef(null);
   const {
@@ -351,7 +351,11 @@ const Heatmap = props => {
       .style('fill', `url(#${gradientid})`);
   };
 
-  return <D3Container refcontainer={container}></D3Container>;
+  if (series.length == 0) {
+    return <EmptyContainer plotdims={props.plotdims} />;
+  } else {
+    return <D3Container refcontainer={container}></D3Container>;
+  }
 };
 
 export { Heatmap };

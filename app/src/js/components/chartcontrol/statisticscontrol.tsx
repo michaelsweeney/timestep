@@ -16,7 +16,7 @@ const StatisticsControl = props => {
   const [activeTab, setActiveTab] = useState('tab-series');
 
   const plotContainer = useRef(null);
-  const controlsVisibleHeight = 200;
+  const controlsVisibleHeight = 150;
   const controlsHiddenHeight = 50;
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);
@@ -88,6 +88,7 @@ const StatisticsControl = props => {
         />
       </ViewWrapper>
       <ControlsWrapper
+        disableCollapse={true}
         height={controlsHeight}
         activetab={activeTab}
         tabChangeCallback={handleTabChange}

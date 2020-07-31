@@ -26,12 +26,12 @@ const useStyles = makeStyles(
     },
     tab: {
       '&:hover': {
-        color: 'rgba(0, 0, 0, 0.75) !important'
+        // color: 'rgba(63, 81, 181,0.75) !important'
       }
     },
     tabinactive: {
       '&:hover': {
-        color: 'rgba(0, 0, 0, 0.75) !important'
+        color: 'rgba(63, 81, 181,0.75) !important'
       }
     }
   },

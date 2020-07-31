@@ -15,7 +15,7 @@ const useStyles = makeStyles(
     root: {
       paddingRight: 5,
       display: 'inline-block',
-      borderRight: '2px solid rgba(0,0,0,0.3)',
+      borderRight: '1px solid rgba(0,0,0,0.3)',
       height: '100%',
       width: 175,
       textAlign: 'center',
@@ -36,7 +36,7 @@ const useStyles = makeStyles(
       paddingLeft: '20px',
       paddingRight: '80px',
       marginTop: '15px',
-      borderTop: '2px solid rgba(0,0,0,0.15)',
+      borderTop: '1px solid rgba(0,0,0,0.15)',
       boxSizing: 'border-box'
     }
   },

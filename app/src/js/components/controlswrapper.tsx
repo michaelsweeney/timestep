@@ -16,7 +16,7 @@ const useStyles = makeStyles(
       marginTop: 10,
       paddingTop: 10,
       height: props => (props.height ? props.height : 100),
-      borderTop: '2px solid rgba(0,0,0,0.3)'
+      borderTop: '1px solid rgba(0,0,0,0.3)'
     },
     tabs: { display: 'inline-block' },
     tab: {},
@@ -28,7 +28,7 @@ const useStyles = makeStyles(
     tabinactive: {
       color: 'rgba(0, 0, 0, 0.54) !important',
       '&:hover': {
-        color: 'rgba(0, 0, 0, 0.75) !important'
+        color: 'rgba(63, 81, 181,0.75) !important'
       }
     },
     indicatoractive: {},
@@ -102,13 +102,17 @@ const ControlsWrapper = props => {
             })}
           </Tabs>
         </div>
-        <Button
-          disableRipple={true}
-          color="primary"
-          onClick={() => props.toggleHideCallback()}
-        >
-          {props.isVisible ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
-        </Button>
+        {props.disableCollapse ? (
+          ''
+        ) : (
+          <Button
+            disableRipple={true}
+            color="primary"
+            onClick={() => props.toggleHideCallback()}
+          >
+            {props.isVisible ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+          </Button>
+        )}
       </div>
       <div className={classes.viewcontainer}>
         {childprops.map((t, i) => {

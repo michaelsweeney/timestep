@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { formatDomain, formatDate, formatInt } from '../numformat';
 import { D3Container } from './d3container';
 import { multilinedims } from './chartdimensions';
+import { EmptyContainer } from './emptycontainer';
 
 import * as d3 from 'd3';
 
@@ -588,7 +589,11 @@ const MultiLine = props => {
       .call(zoom);
   };
 
-  return <D3Container refcontainer={container}></D3Container>;
+  if (seriesArray.length == 0) {
+    return <EmptyContainer plotdims={props.plotdims} />;
+  } else {
+    return <D3Container refcontainer={container}></D3Container>;
+  }
 };
 
 export { MultiLine };
