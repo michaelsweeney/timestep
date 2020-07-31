@@ -28,7 +28,7 @@ const ColorCategorySelect = props => {
         native
         style={{ width: 200 }}
         onChange={handleChange}
-        defaultValue="schemeCategory10"
+        defaultValue="schemeTableau10"
         id={`grouped-select-${id}`}
       >
         {Object.keys(colorcategories).map(d => {

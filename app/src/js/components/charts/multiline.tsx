@@ -441,12 +441,12 @@ const MultiLine = props => {
         .attr('x2', xScale(pointarray[0].time));
 
       tooltip
-        .style('left', event.pageX - 100 + 'px')
+        .style('left', event.pageX - 175 + 'px')
         .style('top', event.pageY - 100 + 'px')
         .style('transition', 'left 100ms, top 100ms')
         .style('opacity', 1).html(`
       <div>
-      <div>${formatDate(pointarray[0].time)}</div>
+      <div class='tooltip-time'>${formatDate(pointarray[0].time)}</div>
       ${pointarray
         .map((d, i) => {
           return `

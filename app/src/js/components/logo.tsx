@@ -12,7 +12,14 @@ const useStyles = makeStyles(
       // textAlign: 'left'
     },
     text: {
-      fontSize: '40px'
+      fontSize: '38px',
+      fontWeight: '300'
+    },
+    left: {
+      color: '#3f51b5'
+    },
+    right: {
+      color: '#f50057'
     }
   },
   {
@@ -24,14 +31,10 @@ const Logo = () => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <Typography color="primary" variant="h2">
-        <Typography className={classes.text} variant="span" color="primary">
-          timest
-        </Typography>
-        <Typography className={classes.text} variant="span" color="secondary">
-          ep
-        </Typography>
-      </Typography>
+      <div className={classes.text}>
+        <span className={classes.left}>timest</span>
+        <span className={classes.right}>ep</span>
+      </div>
     </div>
   );
 };

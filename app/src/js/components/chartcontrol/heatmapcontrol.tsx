@@ -93,6 +93,7 @@ const HeatmapControl = props => {
       setReverseColor(false);
     }
   };
+
   return (
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>

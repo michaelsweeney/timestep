@@ -5,12 +5,12 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(
   {
     root: {
-      overflow: 'hidden',
+      overflow: 'hidden'
     },
     spinneractive: {
       visibility: 'visible',
       position: 'absolute',
-      left: '40%',
+      left: '50%',
       top: '25%',
       zIndex: 999
     },
@@ -41,6 +41,7 @@ const useStyles = makeStyles(
 
 const ViewWrapper = props => {
   const classes = useStyles(props);
+
   return (
     <div className={classes.root}>
       <CircularProgress

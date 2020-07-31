@@ -24,9 +24,7 @@ const useStyles = makeStyles(
 
 const CopySave = props => {
   const classes = useStyles();
-
   const { units, files, array, arraytype } = props;
-
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
   const ismulti = files.length > 1 ? true : false;
   const titlekey = ismulti ? 'name_multi' : 'name_single';

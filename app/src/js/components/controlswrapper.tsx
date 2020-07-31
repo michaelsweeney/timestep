@@ -26,7 +26,10 @@ const useStyles = makeStyles(
     },
     tabactive: {},
     tabinactive: {
-      color: 'rgba(0, 0, 0, 0.54) !important'
+      color: 'rgba(0, 0, 0, 0.54) !important',
+      '&:hover': {
+        color: 'rgba(0, 0, 0, 0.75) !important'
+      }
     },
     indicatoractive: {},
     indicatorinactive: {
@@ -80,8 +83,6 @@ const ControlsWrapper = props => {
                 ? classes.indicatoractive
                 : classes.indicatorinactive
             }
-
-            // centered
           >
             {childprops.map((t, i) => {
               return (
@@ -89,7 +90,7 @@ const ControlsWrapper = props => {
                   disableRipple={true}
                   key={i}
                   className={
-                    props.isVisible
+                    activetab == t.tag
                       ? classes.tab + ' ' + classes.tabactive
                       : classes.tab + ' ' + classes.tabinactive
                   }

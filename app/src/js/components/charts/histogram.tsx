@@ -198,8 +198,8 @@ const Histogram = props => {
     function handleMouseover(d) {
       tooltipdiv
         .style('opacity', 1)
-        .style('left', event.pageX - 250 + 'px')
-        .style('top', event.pageY - 100 + 'px')
+        .style('left', event.pageX - 175 + 'px')
+        .style('top', event.pageY - 75 + 'px')
         .style('transition', 'left 100ms, top 100ms')
         .html(() => {
           return `

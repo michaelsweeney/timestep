@@ -48,6 +48,7 @@ const useStyles = makeStyles(
     legendaxisswitch: {
       marginLeft: 10,
       marginRight: 10,
+      width: 20,
       transition: 'opacity 200ms',
       boxSizing: 'border-box',
       borderRadius: 2,
@@ -126,14 +127,6 @@ const MultiLineLegend = props => {
         {seriesState.map((d, i) => {
           return (
             <TableRow key={Math.random()} className={classes.legendrow}>
-              <TableCell>
-                <div
-                  className={classes.legendrect}
-                  style={rectStyle(d)}
-                  onClick={handleVisibleChange}
-                  arraynum={i}
-                ></div>
-              </TableCell>
               <TableCell
                 arraynum={i}
                 onClick={handleYAxisChange}
@@ -142,6 +135,15 @@ const MultiLineLegend = props => {
               >
                 {d.yaxis}
               </TableCell>
+              <TableCell className={classes.legendrect}>
+                <div
+                  className={classes.legendrect}
+                  style={rectStyle(d)}
+                  onClick={handleVisibleChange}
+                  arraynum={i}
+                ></div>
+              </TableCell>
+
               <TableCell
                 style={textStyle(d)}
                 className={classes.legendname}

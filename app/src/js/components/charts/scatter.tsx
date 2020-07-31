@@ -394,8 +394,8 @@ const Scatter = props => {
     function handleMouseover(d) {
       tooltipdiv
         .style('opacity', 1)
-        .style('left', event.pageX - 250 + 'px')
-        .style('top', event.pageY - 150 + 'px')
+        .style('left', event.pageX - 150 + 'px')
+        .style('top', event.pageY - 125 + 'px')
         .style('transition', 'left 100ms, top 100ms')
         .html(() => {
           return `

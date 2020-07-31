@@ -13,14 +13,16 @@ import { CopySave } from '../copysave';
 const MultiLineControl = props => {
   const [isLoading, setIsLoading] = useState(false);
   const [seriesArray, setSeriesArray] = useState([]);
-  const [colorScheme, setColorScheme] = useState('schemeCategory10');
+  const [colorScheme, setColorScheme] = useState('schemeTableau10');
   const [seriesConfig, setSeriesConfig] = useState([]);
   const [activeTab, setActiveTab] = useState('tab-series');
-
   const plotContainer = useRef(null);
-  const controlsVisibleHeight = 275;
+  const getControlsVisibleHeight = () =>
+    200 + Math.max(seriesConfig.length - 3, 0) * 30;
   const controlsHiddenHeight = 50;
-  const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
+  const [controlsHeight, setControlsHeight] = useState(
+    getControlsVisibleHeight()
+  );
   const [controlsVisible, setControlsVisible] = useState(true);
   const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
 
@@ -30,7 +32,7 @@ const MultiLineControl = props => {
       setControlsHeight(controlsHiddenHeight);
     } else {
       setControlsVisible(true);
-      setControlsHeight(controlsVisibleHeight);
+      setControlsHeight(getControlsVisibleHeight());
     }
   };
 
@@ -39,7 +41,7 @@ const MultiLineControl = props => {
       toggleHideControlsTabs();
     } else {
       setControlsVisible(true);
-      setControlsHeight(controlsVisibleHeight);
+      setControlsHeight(getControlsVisibleHeight());
       setActiveTab(tag);
     }
   };
@@ -56,6 +58,7 @@ const MultiLineControl = props => {
   };
 
   const handleSeriesSelect = (e, v) => {
+    console.log(seriesConfig.length);
     let arrayClone = [...seriesArray];
     let selectedkeys = v.map(tag => props.seriesLookupObj[tag]);
     let existingkeys = arrayClone.map(d => d[0].key);
@@ -88,6 +91,7 @@ const MultiLineControl = props => {
       d.forEach(a => arrayClone.push(a));
       setSeriesArray(arrayClone);
       setIsLoading(false);
+      setControlsHeight(getControlsVisibleHeight());
     });
   };
 
@@ -97,6 +101,7 @@ const MultiLineControl = props => {
 
   const handleSelectClose = () => {
     setActiveTab('tab-legend');
+    setControlsHeight(getControlsVisibleHeight());
   };
 
   return (

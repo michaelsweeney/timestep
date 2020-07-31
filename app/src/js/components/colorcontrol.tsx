@@ -22,11 +22,11 @@ const useStyles = makeStyles(
       }
     },
     colorselectcontainer: {
-      marginTop: 20,
+      // marginTop: 10,
       display: 'inline-block'
     },
     colordomaincontainer: {
-      marginTop: 20
+      marginTop: 15
     }
   },
 

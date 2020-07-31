@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Tabs, Tab } from '@material-ui/core';
+import { Tabs, Tab, InputLabel } from '@material-ui/core';
 
 import { DEFAULTCONFIG } from '../defaultconfig';
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,11 +17,22 @@ const useStyles = makeStyles(
       left: '-5px',
       boxSizing: 'border-box'
     },
+    formLabel: {
+      marginTop: '10px',
+      marginBottom: '10px'
+    },
     tabs: {
       // width: 50
     },
     tab: {
-      // maxWidth: 50
+      '&:hover': {
+        color: 'rgba(0, 0, 0, 0.75) !important'
+      }
+    },
+    tabinactive: {
+      '&:hover': {
+        color: 'rgba(0, 0, 0, 0.75) !important'
+      }
     }
   },
 
@@ -39,6 +50,9 @@ const ViewSelector = props => {
 
   return (
     <div className={classes.root}>
+      <div className={classes.formLabel}>
+        <InputLabel>Chart Type</InputLabel>
+      </div>
       <Tabs
         className={classes.tabs}
         value={activeView}
@@ -50,7 +64,7 @@ const ViewSelector = props => {
           (el, i) => {
             return (
               <Tab
-                className={classes.tab}
+                className={activeView == el ? classes.tab : classes.tabinactive}
                 value={el}
                 label={el}
                 key={i}

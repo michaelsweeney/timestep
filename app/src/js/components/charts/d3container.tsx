@@ -20,7 +20,11 @@ const useStyles = makeStyles(
         backgroundColor: 'rgb(43, 42, 42)',
         transition: 'left 100ms, top 100ms',
         borderRadius: 5,
-        padding: 10
+        padding: 10,
+        '& .tooltip-time': {
+          marginBottom: 10,
+          textAlign: 'center'
+        }
       }
     }
   },
