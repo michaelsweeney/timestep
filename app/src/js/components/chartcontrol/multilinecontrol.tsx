@@ -58,7 +58,6 @@ const MultiLineControl = props => {
   };
 
   const handleSeriesSelect = (e, v) => {
-    console.log(seriesConfig.length);
     let arrayClone = [...seriesArray];
     let selectedkeys = v.map(tag => props.seriesLookupObj[tag]);
     let existingkeys = arrayClone.map(d => d[0].key);

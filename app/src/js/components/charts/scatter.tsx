@@ -112,10 +112,26 @@ const Scatter = props => {
       .selectAll('.plotg')
       .data([0])
       .join('g');
+
     plotg
       .attr('class', 'plotg')
       .attr('transform', `translate(${margins.l}, ${margins.t})`)
       .attr('clip-path', `url(#${clipid})`);
+
+    const brush = d3
+      .brush()
+      .extent([
+        [0, 0],
+        [plotwidth, plotheight]
+      ])
+      .on('end', brushended);
+
+    plotg
+      .selectAll('.brush')
+      .data([0])
+      .join('g')
+      .attr('class', 'brush')
+      .call(brush);
 
     /* SCALES */
 
@@ -392,7 +408,10 @@ const Scatter = props => {
       .attr('class', 'tooltip')
       .style('opacity', 0);
 
+    console.log(tooltipdiv);
+
     function handleMouseover(d) {
+      console.log(d);
       tooltipdiv
         .style('opacity', 1)
         .style('left', event.pageX - 150 + 'px')
@@ -400,7 +419,7 @@ const Scatter = props => {
         .style('transition', 'left 100ms, top 100ms')
         .html(() => {
           return `
-          <div>${formatDate(d.time)}</div>
+          <div class='tooltip-time'>${formatDate(d.time)}</div>
           <div>x: ${xAxisFormat(d.x)} ${xunits}</div>
           <div>y: ${yAxisFormat(d.y)} ${yunits}</div>
           <div>color: ${clrAxisFormat(d.z)} ${zunits}</div>
@@ -410,6 +429,7 @@ const Scatter = props => {
     }
 
     function handleMouseout(d) {
+      console.log(d);
       tooltipdiv.style('opacity', 0).style('z-index', -1);
     }
 
@@ -430,14 +450,6 @@ const Scatter = props => {
       .attr('height', plotheight)
       .attr('x', 0)
       .attr('y', 0);
-
-    const brush = d3
-      .brush()
-      .extent([
-        [0, 0],
-        [plotwidth, plotheight]
-      ])
-      .on('end', brushended);
 
     let idleTimeout;
     let idleDelay = 350;
@@ -475,12 +487,6 @@ const Scatter = props => {
         .attr('cx', d => xScale(d.x))
         .attr('cy', d => yScale(d.y));
     }
-    plotg
-      .selectAll('.brush')
-      .data([0])
-      .join('g')
-      .attr('class', 'brush')
-      .call(brush);
   };
   if (xseries.length == 0 && yseries.length == 0 && zseries.length == 0) {
     return <EmptyContainer plotdims={props.plotdims} />;
