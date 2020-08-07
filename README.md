@@ -1,1 +1,1 @@
-Documentation and download Link: <https://michaelsweeney.github.io/timestep>
+Documentation and download link: <https://michaelsweeney.github.io/timestep>
