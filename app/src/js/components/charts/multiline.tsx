@@ -357,7 +357,8 @@ const MultiLine = props => {
       .data(seriesArray)
       .join('circle')
       .attr('class', 'marker-circle')
-      .attr('r', 3);
+      .attr('r', 3)
+      .style('opacity', 0);
 
     const tooltip = d3
       .select(container.current)

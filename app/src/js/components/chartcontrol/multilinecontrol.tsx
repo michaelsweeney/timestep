@@ -101,7 +101,7 @@ const MultiLineControl = props => {
   };
 
   const handleSelectClose = () => {
-    setActiveTab('tab-legend');
+    // setActiveTab('tab-legend');
     setControlsHeight(getControlsVisibleHeight());
   };
 

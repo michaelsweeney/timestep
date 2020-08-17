@@ -1,11 +1,11 @@
 const DEFAULTCONFIG = {
-  isDev: true,
+  isDev: false,
   defaultFiles: [
     // '/Users/michaelsweeney/Documents/energyplus files/example/output-5ZoneDetailedIceStorage/5ZoneDetailedIceStorageout.sql',
     '/Users/michaelsweeney/Documents/energyplus files/sim1.sql'
     // '/Users/michaelsweeney/Documents/energyplus files/sim2.sql',
   ],
-  disableFilePopup: true,
+  disableFilePopup: false,
   defaultView: 'MultiLine',
   defaultStep: 'Hourly'
 };

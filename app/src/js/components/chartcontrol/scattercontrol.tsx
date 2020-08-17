@@ -46,6 +46,7 @@ const ScatterControl = props => {
 
   const domainPad = 0.05;
 
+
   const toggleHideControlsTabs = () => {
     if (controlsVisible) {
       setControlsVisible(false);
@@ -66,6 +67,8 @@ const ScatterControl = props => {
     }
   };
 
+
+  
   useEffect(() => {
     setPlotDims({
       width: props.dims.width,
