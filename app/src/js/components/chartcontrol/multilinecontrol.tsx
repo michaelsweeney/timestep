@@ -16,6 +16,8 @@ const MultiLineControl = props => {
   const [colorScheme, setColorScheme] = useState('schemeTableau10');
   const [seriesConfig, setSeriesConfig] = useState([]);
   const [activeTab, setActiveTab] = useState('tab-series');
+  const [zoomDomain, setZoomDomain] = useState([]);
+
   const plotContainer = useRef(null);
   const getControlsVisibleHeight = () =>
     200 + Math.max(seriesConfig.length - 3, 0) * 30;
@@ -103,10 +105,16 @@ const MultiLineControl = props => {
     setControlsHeight(getControlsVisibleHeight());
   };
 
+  const handleZoomChange = domain => {
+    setZoomDomain(domain);
+  };
+
   return (
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <MultiLine
+          zoomCallback={handleZoomChange}
+          zoomDomain={zoomDomain}
           files={props.files}
           plotdims={plotDims}
           seriesConfig={seriesConfig}

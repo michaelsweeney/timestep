@@ -8,12 +8,8 @@ import * as d3 from 'd3';
 
 const MultiLine = props => {
   const container = useRef(null);
-  let { seriesArray, seriesConfig, units } = props;
+  let { seriesArray, seriesConfig, units, zoomCallback, zoomDomain } = props;
   const { width, height } = props.plotdims;
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [zoomDomain, setZoomDomain] = useState({
-    x: []
-  });
 
   const ytoppad = 0.05;
 
@@ -126,19 +122,16 @@ const MultiLine = props => {
 
     let times = [];
     seriesArray.forEach(s => s.forEach(d => times.push(d.time)));
-    let xdomain = d3.extent(times);
+
+    let xdomain = zoomDomain.length == 0 ? d3.extent(times) : zoomDomain;
 
     const xScale = d3.scaleTime().range([0, plotwidth]);
     const contextXScale = d3
       .scaleTime()
       .range([0, plotwidth])
-      .domain(xdomain);
+      .domain(d3.extent(times));
 
-    if (!isZoomed) {
-      xScale.domain(xdomain);
-    } else {
-      xScale.domain(zoomDomain.x);
-    }
+    xScale.domain(xdomain);
 
     const yScale1 = d3
       .scaleLinear()
@@ -364,7 +357,7 @@ const MultiLine = props => {
       .data(seriesArray)
       .join('circle')
       .attr('class', 'marker-circle')
-      .attr('r', 4);
+      .attr('r', 3);
 
     const tooltip = d3
       .select(container.current)
@@ -380,7 +373,7 @@ const MultiLine = props => {
       tooltip.style('opacity', 0);
     }
     function showHover() {
-      markers.style('opacity', 0);
+      markers.style('opacity', 1);
       xline.style('opacity', 0);
       tooltip.style('opacity', 0);
     }
@@ -530,7 +523,8 @@ const MultiLine = props => {
     function brushed() {
       if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return; // ignore brush-by-zoom
       var s = d3.event.selection || contextXScale.range();
-      xScale.domain(s.map(contextXScale.invert, contextXScale));
+      let xdomain = s.map(contextXScale.invert, contextXScale);
+      xScale.domain(xdomain);
       plotg.selectAll('.series-line').attr('d', (d, i) => {
         if (seriesConfig[i].yaxis == 'Y1' && seriesConfig[i].visible) {
           return lineY1(d);
@@ -546,12 +540,15 @@ const MultiLine = props => {
           zoom.transform,
           d3.zoomIdentity.scale(plotwidth / (s[1] - s[0])).translate(-s[0], 0)
         );
+
+      zoomCallback(xdomain);
     }
 
     function zoomed() {
       if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') return; // ignore zoom-by-brush
       var t = d3.event.transform;
-      xScale.domain(t.rescaleX(contextXScale).domain());
+      let xdomain = t.rescaleX(contextXScale).domain();
+      xScale.domain(xdomain);
       plotg.selectAll('.series-line').attr('d', (d, i) => {
         if (seriesConfig[i].yaxis == 'Y1' && seriesConfig[i].visible) {
           return lineY1(d);
@@ -564,6 +561,8 @@ const MultiLine = props => {
       contextg
         .select('.brush')
         .call(brush.move, xScale.range().map(t.invertX, t));
+
+      zoomCallback(xdomain);
     }
 
     contextg
