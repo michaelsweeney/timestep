@@ -54,8 +54,11 @@ const Sidebar = props => {
         <FileHandler fileCallback={props.fileCallback} />
         <FileList fileInfo={props.fileInfo} />
         <div className={classes.lineBreak} />
-        <UnitRadio unitCallback={props.unitCallback} />
-        <TimeStepSelect timeStepCallback={props.timeStepCallback} />
+        <UnitRadio units={props.units} unitCallback={props.unitCallback} />
+        <TimeStepSelect
+          step={props.timestepType}
+          timestepTypeCallback={props.timestepTypeCallback}
+        />
         <div className={classes.lineBreak} />
         <ViewSelector activeViewCallback={props.activeViewCallback} />
       </div>
@@ -66,4 +69,4 @@ const Sidebar = props => {
   );
 };
 
-export { Sidebar };
+export default Sidebar;

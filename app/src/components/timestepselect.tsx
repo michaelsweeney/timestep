@@ -10,18 +10,6 @@ const useStyles = makeStyles(
       display: 'inlineBlock',
       margin: 10
     }
-    // select: {
-    //   textAlign: 'center',
-    //   left: '0px',
-    //   '& svg': {
-    //     position: 'relative',
-    //     left: 5
-    //   },
-    //   '& div': {
-    //     textAlign: 'center',
-    //     paddingRight: '0 !important'
-    //   }
-    // }
   },
   {
     name: 'timestep-select'
@@ -29,17 +17,17 @@ const useStyles = makeStyles(
 );
 
 const TimeStepSelect = props => {
-  const classes = useStyles();
-  const [value, setValue] = useState(DEFAULTCONFIG.defaultStep);
+  const { step } = props;
 
+  const classes = useStyles();
   const handleChange = e => {
-    setValue(e.target.value);
-    props.timeStepCallback(e.target.value);
+    let newvalue = e.target.value;
+    props.timestepTypeCallback(newvalue);
   };
   return (
     <div className={classes.root}>
       <InputLabel id="label">Interval</InputLabel>
-      <Select onChange={handleChange} id="select" value={value}>
+      <Select onChange={handleChange} id="select" value={step}>
         <MenuItem disableRipple={true} value="HVAC Timestep">
           HVAC Timestep
         </MenuItem>
@@ -62,4 +50,5 @@ const TimeStepSelect = props => {
     </div>
   );
 };
+
 export { TimeStepSelect };

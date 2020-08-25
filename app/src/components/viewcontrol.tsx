@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { connect } from 'react-redux';
+import * as Actions from '../actions';
+import { bindActionCreators } from 'redux';
 
 import { HeatmapControl } from './chartcontrol/heatmapcontrol';
 import { HistogramControl } from './chartcontrol/histogramcontrol';
@@ -27,9 +30,13 @@ const useStyles = makeStyles(
 );
 
 const ViewControl = props => {
-  const { units, files, timestepType, seriesLookupObj, seriesOptions } = props;
+  const { files, timestepType } = props;
+  const { availableSeries } = props.session;
 
   const classes = useStyles();
+
+  const seriesOptions = availableSeries.arrays[timestepType] || [];
+  const seriesLookupObj = availableSeries.mapped[timestepType] || {};
 
   const [containerDims, setContainerDims] = useState({
     width: 700,
@@ -67,7 +74,7 @@ const ViewControl = props => {
 
   const propobj = {
     seriesOptions: seriesOptions,
-    units: units,
+    units: props.session.units,
     files: files,
     dims: containerDims,
     timestepType: timestepType,
@@ -89,4 +96,16 @@ const ViewControl = props => {
   );
 };
 
-export { ViewControl };
+function mapStateToProps(state) {
+  return {
+    ...state
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: bindActionCreators(Actions, dispatch)
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ViewControl);

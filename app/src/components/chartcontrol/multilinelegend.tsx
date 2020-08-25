@@ -7,6 +7,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TableBody,
   TableRow,
   Table
 } from '@material-ui/core';
@@ -124,36 +125,38 @@ const MultiLineLegend = props => {
   return (
     <TableContainer className={classes.root}>
       <Table>
-        {seriesState.map((d, i) => {
-          return (
-            <TableRow key={Math.random()} className={classes.legendrow}>
-              <TableCell
-                arraynum={i}
-                onClick={handleYAxisChange}
-                style={axisStyle(d)}
-                className={classes.legendaxisswitch}
-              >
-                {d.yaxis}
-              </TableCell>
-              <TableCell className={classes.legendrect}>
-                <div
-                  className={classes.legendrect}
-                  style={rectStyle(d)}
-                  onClick={handleVisibleChange}
+        <TableBody>
+          {seriesState.map((d, i) => {
+            return (
+              <TableRow key={Math.random()} className={classes.legendrow}>
+                <TableCell
                   arraynum={i}
-                ></div>
-              </TableCell>
+                  onClick={handleYAxisChange}
+                  style={axisStyle(d)}
+                  className={classes.legendaxisswitch}
+                >
+                  {d.yaxis}
+                </TableCell>
+                <TableCell className={classes.legendrect}>
+                  <div
+                    className={classes.legendrect}
+                    style={rectStyle(d)}
+                    onClick={handleVisibleChange}
+                    arraynum={i}
+                  ></div>
+                </TableCell>
 
-              <TableCell
-                style={textStyle(d)}
-                className={classes.legendname}
-                arraynum={i}
-              >
-                {d.name}
-              </TableCell>
-            </TableRow>
-          );
-        })}
+                <TableCell
+                  style={textStyle(d)}
+                  className={classes.legendname}
+                  arraynum={i}
+                >
+                  {d.name}
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
       </Table>
     </TableContainer>
   );

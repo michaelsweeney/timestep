@@ -1,34 +1,6 @@
 import fs from 'fs';
 import sqlite3 from 'sqlite3';
 
-async function getFileSummary(sqlfiles) {
-  dbProto(); // establish async loadfiles
-  let filearray = [];
-
-  for (let i = 0; i < sqlfiles.length; i++) {
-    let sqlfile = sqlfiles[i];
-    let bndexists = fs.existsSync(sqlfile.replace('.sql', '.bnd'))
-      ? true
-      : false;
-    let db = new sqlite3.Database(sqlfile);
-    let query = "SELECT * FROM 'Simulations'";
-    let result = await db.allAsync(query);
-    let reports = await db.allAsync(
-      "SELECT ReportDataDictionaryIndex from 'ReportDataDictionary'"
-    );
-    let fileobj = {
-      filename: sqlfile,
-      bndexists: bndexists,
-      timesteps: result[0].NumTimestepsPerHour,
-      timestamp: result[0].TimeStamp,
-      version: result[0].EnergyPlusVersion,
-      numreports: reports.length
-    };
-    filearray.push(fileobj);
-  }
-  return filearray;
-}
-
 async function loadAllSeries(sqlfiles, timestep) {
   dbProto(); // establish async loadfiles
   checkArray(sqlfiles); // error handling for sql files of same name
@@ -535,4 +507,92 @@ const unitconvert = {
   W_W: 1
 };
 
-export { loadAvailSeries, loadAllSeries, getSeries, getFileSummary };
+async function getFileSummary(sqlfiles) {
+  dbProto(); // establish async loadfiles
+  let filearray = [];
+
+  for (let i = 0; i < sqlfiles.length; i++) {
+    let sqlfile = sqlfiles[i];
+    let bndexists = fs.existsSync(sqlfile.replace('.sql', '.bnd'))
+      ? true
+      : false;
+    let db = new sqlite3.Database(sqlfile);
+    let query = "SELECT * FROM 'Simulations'";
+    let result = await db.allAsync(query);
+    let reports = await db.allAsync(
+      "SELECT ReportDataDictionaryIndex from 'ReportDataDictionary'"
+    );
+    let fileobj = {
+      filename: sqlfile,
+      bndexists: bndexists,
+      timesteps: result[0].NumTimestepsPerHour,
+      timestamp: result[0].TimeStamp,
+      version: result[0].EnergyPlusVersion,
+      numreports: reports.length
+    };
+    filearray.push(fileobj);
+  }
+
+  return filearray;
+}
+
+async function getSeriesOptions(config) {
+  let { files, units } = config;
+
+  let timesteps = [
+    'HVAC Timestep',
+    'Zone Timestep',
+    'Hourly',
+    'Daily',
+    'Monthly',
+    'Run Period'
+  ];
+
+  let compiled = {
+    arrays: {},
+    mapped: {}
+  };
+
+  timesteps.forEach(step => {
+    loadAllSeries(files, step).then(d => {
+      if (units == 'ip') {
+        let _keyobj = {};
+        let seriesarray = d.map(e =>
+          files.length > 1 ? e.name_ip_multi : e.name_ip_single
+        );
+        let keys = d.map(e => e.key);
+        for (let i = 0; i < keys.length; i++) {
+          let currentKey = seriesarray[i];
+          let currentVal = keys[i];
+          _keyobj[currentKey] = currentVal;
+        }
+        compiled.arrays[step] = seriesarray;
+        compiled.mapped[step] = _keyobj;
+      }
+      if (units == 'si') {
+        let keyobj = {};
+        let seriesarray = d.map(e =>
+          files.length > 1 ? e.name_si_multi : e.name_si_single
+        );
+        let keys = d.map(e => e.key);
+        for (let i = 0; i < keys.length; i++) {
+          let currentKey = seriesarray[i];
+          let currentVal = keys[i];
+          keyobj[currentKey] = currentVal;
+        }
+        compiled.arrays[step] = seriesarray;
+        compiled.mapped[step] = keyobj;
+      }
+    });
+  });
+
+  return compiled;
+}
+
+export {
+  loadAvailSeries,
+  loadAllSeries,
+  getSeries,
+  getFileSummary,
+  getSeriesOptions
+};

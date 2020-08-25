@@ -13,6 +13,10 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import installExtension, {
+  REDUX_DEVTOOLS,
+  REACT_DEVELOPER_TOOLS
+} from 'electron-devtools-installer';
 
 export default class AppUpdater {
   constructor() {
@@ -37,12 +41,11 @@ if (
 }
 
 const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS'];
+  const extensions = [REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS];
 
   return Promise.all(
-    extensions.map(name => installer.default(installer[name], forceDownload))
+    extensions.map(name => installExtension(name, forceDownload))
   ).catch(console.log);
 };
 

@@ -1,4 +1,0 @@
-non native modules should be yarn added in './app
-
-yarn dev: run dev mode electron
-yarn start: run prod mode

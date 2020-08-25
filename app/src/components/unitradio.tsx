@@ -14,19 +14,19 @@ const useStyles = makeStyles(
     },
     radio: { padding: 6 }
   },
-
   {
     name: 'unit-radio'
   }
 );
 
 const UnitRadio = props => {
+  const { units } = props;
+
   const handleChange = () => {
-    let newunits = selectedValue == 'ip' ? 'si' : 'ip';
-    setSelectedValue(newunits);
+    let newunits = units == 'ip' ? 'si' : 'ip';
     props.unitCallback(newunits);
   };
-  const [selectedValue, setSelectedValue] = useState('si');
+
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -36,7 +36,7 @@ const UnitRadio = props => {
         className={classes.radio}
         disableRipple={true}
         color="primary"
-        checked={selectedValue === 'si'}
+        checked={units === 'si'}
         onChange={handleChange}
         value="si"
         name="radio-button-demo"
@@ -46,7 +46,7 @@ const UnitRadio = props => {
         className={classes.radio}
         disableRipple={true}
         color="primary"
-        checked={selectedValue === 'ip'}
+        checked={units === 'ip'}
         onChange={handleChange}
         value="ip"
         name="radio-button-demo"
@@ -56,4 +56,5 @@ const UnitRadio = props => {
     </div>
   );
 };
+
 export { UnitRadio };

@@ -1,13 +1,13 @@
 {
   "name": "timestep",
   "productName": "timestep",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "SQL-based Timeseries Viewer for EnergyPlus",
   "main": "./main.prod.js",
   "author": {
     "name": "Michael Sweeney",
     "email": "timestepvis@gmail.com",
-    "url": "https://michaelsweeney.github.io/timestep"
+    "url": "https://timestep.herokuapp.com"
   },
   "scripts": {
     "electron-rebuild": "node -r ../internals/scripts/BabelRegister.js ../internals/scripts/ElectronRebuild.js",
