@@ -1,11 +1,17 @@
 // session level actions
-
-export function changeAvailableSeries(series) {
+export function setContainerDims(dims) {
   return {
-    type: 'CHANGE_AVAILABLE_SERIES',
-    payload: series
+    type: 'SET_CONTAINER_DIMS',
+    payload: dims
   };
 }
+
+// export function changeAvailableSeries(series) {
+//   return {
+//     type: 'CHANGE_AVAILABLE_SERIES',
+//     payload: series
+//   };
+// }
 
 export function changeFileInfo(info) {
   return {
@@ -35,7 +41,7 @@ export function changeView(view) {
   };
 }
 
-// view level actions
+// view level actions - all need to have viewID for future multiple view support
 
 export function changeViewType(viewType, viewID) {
   return {
@@ -49,6 +55,22 @@ export function changeTimestepType(timestepType, viewID) {
   return {
     type: 'CHANGE_TIMESTEP_TYPE',
     payload: timestepType,
+    viewID: viewID
+  };
+}
+
+export function changeSelectedSeries(selection, viewID) {
+  return {
+    type: 'CHANGE_SELECTED_SERIES',
+    payload: selection,
+    viewID: viewID
+  };
+}
+
+export function setSeriesOptions(options, viewID) {
+  return {
+    type: 'SET_SERIES_OPTIONS',
+    payload: options,
     viewID: viewID
   };
 }

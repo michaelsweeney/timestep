@@ -3,7 +3,9 @@ const initialState = {
     viewID: 1,
     label: 'View 1',
     timestepType: 'Hourly',
-    viewType: 'Heatmap'
+    viewType: 'Heatmap',
+    seriesOptions: [],
+    selectedSeries: []
   }
 };
 
@@ -26,6 +28,22 @@ export default function viewReducer(state = initialState, action) {
         }
       };
 
+    case 'CHANGE_SELECTED_SERIES':
+      return {
+        ...state,
+        [action.viewID]: {
+          ...state[action.viewID],
+          selectedSeries: action.payload
+        }
+      };
+    case 'SET_SERIES_OPTIONS':
+      return {
+        ...state,
+        [action.viewID]: {
+          ...state[action.viewID],
+          seriesOptions: action.payload
+        }
+      };
     default:
       return state;
   }

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Radio, InputLabel } from '@material-ui/core';
-
+import connect from '../connect';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(
@@ -22,12 +22,13 @@ const useStyles = makeStyles(
 const UnitRadio = props => {
   const { units } = props;
 
+  const classes = useStyles();
+
   const handleChange = () => {
     let newunits = units == 'ip' ? 'si' : 'ip';
-    props.unitCallback(newunits);
+    props.actions.changeUnits(newunits);
   };
 
-  const classes = useStyles();
   return (
     <div className={classes.root}>
       <InputLabel>Units</InputLabel>
@@ -57,4 +58,11 @@ const UnitRadio = props => {
   );
 };
 
-export { UnitRadio };
+const mappedState = state => {
+  return {
+    files: state.session.files,
+    units: state.session.units
+  };
+};
+
+export default connect(mappedState)(UnitRadio);

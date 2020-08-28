@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
+import connect from '../../connect';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
-import { getSeries } from '../sqlload';
+import { getSeries } from '../sql';
+
 import { Heatmap } from '../charts/heatmap';
 
 import { ViewWrapper } from '../viewwrapper';
@@ -28,7 +30,6 @@ const HeatmapControl = props => {
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
-
   const toggleHideControlsTabs = () => {
     if (controlsVisible) {
       setControlsVisible(false);
@@ -93,7 +94,6 @@ const HeatmapControl = props => {
       setReverseColor(false);
     }
   };
-
   return (
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
@@ -142,4 +142,10 @@ const HeatmapControl = props => {
   );
 };
 
-export { HeatmapControl };
+const mapStateToProps = state => {
+  return {
+    ...state
+  };
+};
+
+export default connect(mapStateToProps)(HeatmapControl);

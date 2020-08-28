@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useStyles } from 'react';
+import connect from '../../connect';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
-import { getSeries } from '../sqlload';
+import { getSeries } from '../sql';
 import { Scatter } from '../charts/scatter';
 import { ViewWrapper } from '../viewwrapper';
 import { ControlsWrapper } from '../controlswrapper';
@@ -46,7 +47,6 @@ const ScatterControl = props => {
 
   const domainPad = 0.05;
 
-
   const toggleHideControlsTabs = () => {
     if (controlsVisible) {
       setControlsVisible(false);
@@ -67,8 +67,6 @@ const ScatterControl = props => {
     }
   };
 
-
-  
   useEffect(() => {
     setPlotDims({
       width: props.dims.width,
@@ -209,4 +207,10 @@ const ScatterControl = props => {
   );
 };
 
-export { ScatterControl };
+const mapStateToProps = state => {
+  return {
+    ...state
+  };
+};
+
+export default connect(mapStateToProps)(ScatterControl);

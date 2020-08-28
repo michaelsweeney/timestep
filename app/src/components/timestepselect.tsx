@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Select, InputLabel, MenuItem } from '@material-ui/core';
 
-import { DEFAULTCONFIG } from '../defaultconfig';
 import { makeStyles } from '@material-ui/core/styles';
+
+import connect from '../connect';
 
 const useStyles = makeStyles(
   {
@@ -17,17 +18,18 @@ const useStyles = makeStyles(
 );
 
 const TimeStepSelect = props => {
-  const { step } = props;
+  const tempViewID = 1;
+
+  const { timestepType } = props.views[tempViewID];
 
   const classes = useStyles();
-  const handleChange = e => {
-    let newvalue = e.target.value;
-    props.timestepTypeCallback(newvalue);
+  const handleChange = v => {
+    props.actions.changeTimestepType(v.target.value, tempViewID);
   };
   return (
     <div className={classes.root}>
       <InputLabel id="label">Interval</InputLabel>
-      <Select onChange={handleChange} id="select" value={step}>
+      <Select onChange={handleChange} id="select" value={timestepType}>
         <MenuItem disableRipple={true} value="HVAC Timestep">
           HVAC Timestep
         </MenuItem>
@@ -51,4 +53,10 @@ const TimeStepSelect = props => {
   );
 };
 
-export { TimeStepSelect };
+const mappedState = state => {
+  return {
+    views: state.views
+  };
+};
+
+export default connect(mappedState)(TimeStepSelect);

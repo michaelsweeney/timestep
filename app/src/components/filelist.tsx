@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { DEFAULTCONFIG } from '../defaultconfig';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import {
   Button,
@@ -68,14 +67,6 @@ function FileList(props) {
   };
 
   const open = Boolean(anchorEl);
-
-  useEffect(() => {
-    if (!DEFAULTCONFIG.isDev || !DEFAULTCONFIG.disableFilePopup) {
-      if (fileInfo.length > 0) {
-        setAnchorEl(true);
-      }
-    }
-  }, [fileInfo]);
 
   return (
     <div className={classes.root}>

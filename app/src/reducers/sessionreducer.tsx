@@ -2,28 +2,19 @@ const initialState = {
   units: 'si',
   files: [],
   fileInfo: [],
-  availableSeries: {
-    arrays: {
-      'HVAC Timestep': [],
-      'Zone Timestep': [],
-      Hourly: [],
-      Daily: [],
-      Monthly: [],
-      'Run Period': []
-    },
-    mapped: {
-      'HVAC Timestep': [],
-      'Zone Timestep': [],
-      Hourly: [],
-      Daily: [],
-      Monthly: [],
-      'Run Period': []
-    }
+  containerDims: {
+    width: 700,
+    height: 500
   }
 };
 
 export default function sessionReducer(state = initialState, action) {
   switch (action.type) {
+    case 'SET_CONTAINER_DIMS':
+      return {
+        ...state,
+        containerDims: action.payload
+      };
     case 'CHANGE_FILES':
       return {
         ...state,
@@ -39,12 +30,6 @@ export default function sessionReducer(state = initialState, action) {
       return {
         ...state,
         fileInfo: action.payload
-      };
-
-    case 'CHANGE_AVAILABLE_SERIES':
-      return {
-        ...state,
-        availableSeries: action.payload
       };
 
     default:

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import { Tabs, Tab, InputLabel } from '@material-ui/core';
 
-import { DEFAULTCONFIG } from '../defaultconfig';
 import { makeStyles } from '@material-ui/core/styles';
+import connect from '../connect';
 
 const useStyles = makeStyles(
   {
@@ -41,11 +41,13 @@ const useStyles = makeStyles(
 
 const ViewSelector = props => {
   const classes = useStyles();
-  const [activeView, setActiveView] = useState(DEFAULTCONFIG.defaultView);
 
-  const handleViewChange = e => {
-    setActiveView(e);
-    props.activeViewCallback(e);
+  const tempViewID = 1;
+
+  const activeView = props.views[tempViewID].viewType;
+
+  const handleViewChange = el => {
+    props.actions.changeViewType(el, tempViewID);
   };
 
   return (
@@ -79,4 +81,10 @@ const ViewSelector = props => {
   );
 };
 
-export { ViewSelector };
+const mapStateToProps = state => {
+  return {
+    views: state.views
+  };
+};
+
+export default connect(mapStateToProps)(ViewSelector);

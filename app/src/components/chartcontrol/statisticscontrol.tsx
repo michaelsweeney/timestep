@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
+import connect from '../../connect';
 
 import MultiSeries from '../multiseries'; // can't destructure for some reason
-import { getSeries } from '../sqlload';
+import { getSeries } from '../sql';
 import { Statistics } from '../charts/statistics';
 import { ViewWrapper } from '../viewwrapper';
 import { ControlsWrapper } from '../controlswrapper';
@@ -114,4 +115,10 @@ const StatisticsControl = props => {
   );
 };
 
-export { StatisticsControl };
+const mapStateToProps = state => {
+  return {
+    ...state
+  };
+};
+
+export default connect(mapStateToProps)(StatisticsControl);

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { remote } from 'electron';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import connect from '../connect';
 
 const useStyles = makeStyles(
   {
@@ -32,8 +33,8 @@ const FileHandler = props => {
 
   const [isActive, setIsActive] = useState('inactive');
 
-  const handleFileChange = files => {
-    props.fileCallback(files);
+  const handleFileChange = f => {
+    props.actions.changeFiles(f);
   };
 
   const openDialog = () => {
@@ -82,7 +83,7 @@ const FileHandler = props => {
       handleFileChange(files);
       setIsActive('inactive');
     } else {
-      alert('file loading error: only SQL files allowed');
+      alert('file loading error: only valid SQLite files allowed');
       setIsActive('inactive');
     }
   };
@@ -105,4 +106,11 @@ const FileHandler = props => {
   );
 };
 
-export { FileHandler };
+const mappedState = state => {
+  return {
+    files: state.session.files,
+    units: state.session.units
+  };
+};
+
+export default connect(mappedState)(FileHandler);

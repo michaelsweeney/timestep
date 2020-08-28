@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import connect from '../../connect';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
-import { getSeries } from '../sqlload';
+import { getSeries } from '../sql';
 import { Histogram } from '../charts/histogram';
 
 import { ViewWrapper } from '../viewwrapper';
@@ -62,7 +63,7 @@ const HistogramControl = props => {
   const handleSeriesSelect = (e, v) => {
     setIsLoading(true);
 
-    getSeries(props.seriesLookupObj[v], props.units).then(d => {
+    getSeries(props.seriesLookupObj[v]).then(d => {
       setSeries(d);
       const getMaxMin = series => {
         const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
@@ -138,4 +139,10 @@ const HistogramControl = props => {
   );
 };
 
-export { HistogramControl };
+const mapStateToProps = state => {
+  return {
+    ...state
+  };
+};
+
+export default connect(mapStateToProps)(HistogramControl);

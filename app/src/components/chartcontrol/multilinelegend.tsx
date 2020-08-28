@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import connect from '../../connect';
 
 import * as d3 from 'd3';
 
@@ -162,4 +163,10 @@ const MultiLineLegend = props => {
   );
 };
 
-export { MultiLineLegend };
+const mapStateToProps = state => {
+  return {
+    ...state
+  };
+};
+
+export default connect(mapStateToProps)(MultiLineLegend);

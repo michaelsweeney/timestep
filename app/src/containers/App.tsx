@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
+import connect from '../connect';
 import { makeStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
-import * as Actions from '../actions';
-import { bindActionCreators } from 'redux';
-
-import { getSeriesOptions, getFileSummary } from '../components/sqlload';
-
 import Sidebar from '../components/sidebar';
 import ViewControl from '../components/viewcontrol';
-import { DEFAULTCONFIG } from '../defaultconfig';
 import '../css/app.global.css';
+import { getAllSeries, getFileSummary, getSeries } from '../components/sql';
 
 import {
   StylesProvider,
@@ -41,80 +36,51 @@ const useStyles = makeStyles(
 const App = props => {
   const classes = useStyles();
 
-  const viewID = 1; // used as a dummy until future IDs are available for multiple charts.
+  const viewID = 1; // used as a dummy until future IDs are implemented for multiple charts.
 
-  const handleFileChange = f => {
-    props.actions.changeFiles(f);
+  const { files } = props.session;
 
-    getSeriesOptions({
-      files: f,
-      units: props.data.session.units
-    }).then(res => {
-      props.actions.changeAvailableSeries(res);
-    });
-
-    getFileSummary(f).then(res => {
-      props.actions.changeFileInfo(res);
-    });
-  };
-
-  const handleTimestepChange = v => {
-    props.actions.changeTimestepType(v, viewID);
-  };
-
-  const handleUnitChange = u => {
-    props.actions.changeUnits(u);
-    getSeriesOptions({
-      files: props.data.session.units,
-      units: u
-    }).then(res => {
-      props.actions.changeAvailableSeries(res);
-    });
-  };
-
-  const handleActiveViewChange = f => {
-    props.actions.changeViewType(f, viewID);
-  };
-
+  /* programmatic ui - testing only */
   useEffect(() => {
-    if (DEFAULTCONFIG.isDev) {
-      handleFileChange(DEFAULTCONFIG.defaultFiles);
-    }
+    let tempfiles = [
+      '/Users/michaelsweeney/Documents/energyplus files/sim1.sql',
+      '/Users/michaelsweeney/Documents/energyplus files/sim2.sql'
+    ];
+    props.actions.changeFiles(tempfiles);
   }, []);
+
+  /* end programmatic ui - testing only */
+
+  // update available series on unit or  switch
+  useEffect(() => {
+    // props.actions.changeFiles(files);
+    // getAllSeries(files).then(res => {
+    // props.actions.changeAvailableSeries(res);
+    // });
+
+    getFileSummary(files).then(b => {
+      props.actions.changeFileInfo(b);
+    });
+  }, [files]);
 
   return (
     <StylesProvider generateClassName={generateClassName}>
       <div className={classes.root}>
         <Sidebar
           views={['MultiLine', 'Heatmap', 'Scatter', 'Histogram', 'Statistics']}
-          fileInfo={props.data.session.fileInfo}
-          fileCallback={handleFileChange}
-          timestepType={props.data.views[viewID].timestepType}
-          timestepTypeCallback={handleTimestepChange}
-          units={props.data.session.units}
-          unitCallback={handleUnitChange}
-          activeViewCallback={handleActiveViewChange}
+          fileInfo={props.session.fileInfo}
+          timestepType={props.views[viewID].timestepType}
+          units={props.session.units}
         ></Sidebar>
-        <ViewControl
-          key={props.data.key}
-          files={props.data.session.files}
-          timestepType={props.data.views[viewID].timestepType}
-          activeView={props.data.views[viewID].viewType}
-        />
+        <ViewControl />
       </div>
     </StylesProvider>
   );
 };
 
-function mapStateToProps(state) {
+const mapStateToProps = state => {
   return {
-    data: { ...state }
+    ...state
   };
-}
-function mapDispatchToProps(dispatch) {
-  return {
-    actions: bindActionCreators(Actions, dispatch)
-  };
-}
-
-export default hot(connect(mapStateToProps, mapDispatchToProps)(App));
+};
+export default hot(connect(mapStateToProps)(App));

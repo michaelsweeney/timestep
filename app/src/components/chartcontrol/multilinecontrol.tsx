@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
+import connect from '../../connect';
 
 import MultiSeries from '../multiseries'; // can't destructure for some reason
-import { getSeries } from '../sqlload';
-import { MultiLineLegend } from './multilinelegend';
+import { getSeries } from '../sql';
+
+import MultiLineLegend from './multilinelegend';
 import { ColorCategorySelect } from '../colorcategoryselect';
 import { MultiLine } from '../charts/multiline';
 import { ViewWrapper } from '../viewwrapper';
@@ -165,4 +167,10 @@ const MultiLineControl = props => {
   );
 };
 
-export { MultiLineControl };
+const mapStateToProps = state => {
+  return {
+    ...state
+  };
+};
+
+export default connect(mapStateToProps)(MultiLineControl);

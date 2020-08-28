@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { FileList } from './filelist';
-import { FileHandler } from './filehandler';
-import { UnitRadio } from './unitradio';
-import { TimeStepSelect } from './timestepselect';
-import { ViewSelector } from './viewselector';
+import FileHandler from './filehandler';
+import UnitRadio from './unitradio';
+import TimeStepSelect from './timestepselect';
+import ViewSelector from './viewselector';
 import { Logo } from './logo';
 import { InfoContainer } from './infocontainer';
 
@@ -51,16 +51,13 @@ const Sidebar = props => {
     <div className={classes.root}>
       <div className={classes.topContainer}>
         <Logo></Logo>
-        <FileHandler fileCallback={props.fileCallback} />
+        <FileHandler />
         <FileList fileInfo={props.fileInfo} />
         <div className={classes.lineBreak} />
-        <UnitRadio units={props.units} unitCallback={props.unitCallback} />
-        <TimeStepSelect
-          step={props.timestepType}
-          timestepTypeCallback={props.timestepTypeCallback}
-        />
+        <UnitRadio />
+        <TimeStepSelect />
         <div className={classes.lineBreak} />
-        <ViewSelector activeViewCallback={props.activeViewCallback} />
+        <ViewSelector />
       </div>
       <div className={classes.bottomContainer}>
         <InfoContainer />
