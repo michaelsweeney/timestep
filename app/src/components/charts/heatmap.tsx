@@ -4,7 +4,8 @@ import * as d3 from 'd3';
 import { formatDate, formatDomain } from '../numformat';
 import { D3Container } from './d3container';
 import { heatmapdims } from './chartdimensions';
-import { EmptyContainer } from './emptycontainer';
+import { NoSelectionContainer } from './noselectioncontainer';
+
 const Heatmap = props => {
   const container = useRef(null);
   const {
@@ -352,7 +353,7 @@ const Heatmap = props => {
   };
 
   if (series.length == 0) {
-    return <EmptyContainer plotdims={props.plotdims} />;
+    return <NoSelectionContainer plotdims={props.plotdims} />;
   } else {
     return <D3Container refcontainer={container}></D3Container>;
   }

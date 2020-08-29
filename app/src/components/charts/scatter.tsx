@@ -6,7 +6,8 @@ import { formatDomain, formatDate } from '../numformat';
 import { D3Container } from './d3container';
 import { idealSplit } from '../textformat';
 import { scatterdims } from './chartdimensions';
-import { EmptyContainer } from './emptycontainer';
+import { NoSelectionContainer } from './noselectioncontainer';
+import { getSeriesKeys } from '../formatseries';
 
 const Scatter = props => {
   const container = useRef(null);
@@ -37,27 +38,19 @@ const Scatter = props => {
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
   const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
 
-  let plot_title = '';
-  let x_label = '-';
-  let y_label = '-';
-  let z_label = '-';
+  const seriesKeys = getSeriesKeys(units, files);
 
-  if (files.length > 1) {
-    x_label = xseries[0] ? xseries[0].name_multi : '-';
-    y_label = yseries[0] ? yseries[0].name_multi : '-';
-    z_label = zseries[0] ? zseries[0].name_multi : '-';
-  }
+  let x_label_array = idealSplit(
+    xseries[0] ? xseries[0][seriesKeys.name] : '-'
+  );
+  let y_label_array = idealSplit(
+    yseries[0] ? xseries[0][seriesKeys.name] : '-'
+  );
+  let z_label_array = idealSplit(
+    zseries[0] ? xseries[0][seriesKeys.name] : '-'
+  );
 
-  if (files.length == 1) {
-    x_label = xseries[0] ? xseries[0].name_single : '-';
-    y_label = yseries[0] ? yseries[0].name_single : '-';
-    z_label = zseries[0] ? zseries[0].name_single : '-';
-  }
-
-  let x_label_array = idealSplit(x_label);
-  let y_label_array = idealSplit(y_label);
-  let z_label_array = idealSplit(z_label);
-
+  const plot_title = '';
   useEffect(() => {
     createChart();
   }, [
@@ -486,7 +479,7 @@ const Scatter = props => {
     }
   };
   if (xseries.length == 0 && yseries.length == 0 && zseries.length == 0) {
-    return <EmptyContainer plotdims={props.plotdims} />;
+    return <NoSelectionContainer plotdims={props.plotdims} />;
   } else {
     return <D3Container refcontainer={container}></D3Container>;
   }

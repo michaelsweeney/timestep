@@ -15,7 +15,16 @@ import { CopySave } from '../copysave';
 
 const HeatmapControl = props => {
   const [isLoading, setIsLoading] = useState(false);
-  const [series, setSeries] = useState([]);
+
+  const plotContainer = useRef(null);
+
+  const { viewID } = props;
+  const { containerDims, files, units } = props.session;
+  const { seriesOptions } = props.views[viewID];
+  const { selectedSeries } = props.views[viewID];
+  const optionArray = Object.keys(seriesOptions);
+
+  // local state
   const [minRange, setMinRange] = useState(0);
   const [maxRange, setMaxRange] = useState(0);
   const [minData, setMinData] = useState(0);
@@ -24,12 +33,13 @@ const HeatmapControl = props => {
   const [colorfunc, setColorfunc] = useState('interpolateViridis');
   const [activeTab, setActiveTab] = useState('tab-series');
 
-  const plotContainer = useRef(null);
   const controlsVisibleHeight = 200;
   const controlsHiddenHeight = 50;
+
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
+
   const toggleHideControlsTabs = () => {
     if (controlsVisible) {
       setControlsVisible(false);
@@ -52,15 +62,15 @@ const HeatmapControl = props => {
 
   useEffect(() => {
     setPlotDims({
-      width: props.dims.width,
-      height: Math.max(props.dims.height - controlsHeight - 20, 50)
+      width: containerDims.width,
+      height: Math.max(containerDims.height - controlsHeight - 20, 50)
     });
-  }, [props.dims, controlsHeight]);
+  }, [containerDims, controlsHeight]);
 
   const handleSeriesSelect = (e, v) => {
     setIsLoading(true);
-    getSeries(props.seriesLookupObj[v], props.units).then(d => {
-      setSeries(d);
+    getSeries(seriesOptions[v]).then(d => {
+      props.actions.changeSelectedSeries(d, viewID);
 
       const getMaxMin = series => {
         const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
@@ -94,14 +104,15 @@ const HeatmapControl = props => {
       setReverseColor(false);
     }
   };
+  console.log(selectedSeries);
   return (
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <Heatmap
           plotdims={plotDims}
-          files={props.files}
-          series={series}
-          units={props.units}
+          files={files}
+          series={selectedSeries}
+          units={units}
           colorfunc={colorfunc}
           minrange={minRange}
           maxrange={maxRange}
@@ -118,7 +129,7 @@ const HeatmapControl = props => {
         <ControlsContent tag="tab-series" tabname="Series Select">
           <SeriesSelect
             seriesCallback={handleSeriesSelect}
-            series={props.seriesOptions}
+            series={optionArray}
           />
         </ControlsContent>
         <ControlsContent tag="tab-options" tabname="Options">
@@ -131,10 +142,10 @@ const HeatmapControl = props => {
         </ControlsContent>
         <ControlsContent tag="tab-export" tabname="Export">
           <CopySave
-            array={series}
+            array={selectedSeries}
             arraytype="single"
-            units={props.units}
-            files={props.files}
+            units={units}
+            files={files}
           ></CopySave>
         </ControlsContent>
       </ControlsWrapper>

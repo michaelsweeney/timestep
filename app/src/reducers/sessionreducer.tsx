@@ -2,6 +2,7 @@ const initialState = {
   units: 'si',
   files: [],
   fileInfo: [],
+  activeViewID: 1,
   containerDims: {
     width: 700,
     height: 500
@@ -10,6 +11,12 @@ const initialState = {
 
 export default function sessionReducer(state = initialState, action) {
   switch (action.type) {
+    case 'SET_ACTIVE_VIEW':
+      return {
+        ...state,
+        activeViewID: action.payload
+      };
+
     case 'SET_CONTAINER_DIMS':
       return {
         ...state,

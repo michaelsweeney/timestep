@@ -1,13 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography } from '@material-ui/core';
 const useStyles = makeStyles(
   {
     inner: {
       textAlign: 'center',
-      // height: '100%',
-      // marginTop: 20,
-      // marginBottom: 40,
       paddingTop: '20%',
       color: 'rgba(0,0,0,0.8) !important',
       boxSizing: 'border-box'
@@ -28,7 +24,7 @@ const useStyles = makeStyles(
   { name: `empty-container` }
 );
 
-const EmptyContainer = props => {
+const NoSelectionContainer = props => {
   const { width, height } = props.plotdims;
   const classes = useStyles({ width: width, height: height });
 
@@ -45,4 +41,4 @@ const EmptyContainer = props => {
   );
 };
 
-export { EmptyContainer };
+export { NoSelectionContainer };

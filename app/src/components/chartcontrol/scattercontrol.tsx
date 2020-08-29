@@ -16,18 +16,28 @@ const ScatterControl = props => {
   const [isLoadingY, setIsLoadingY] = useState(false);
   const [isLoadingZ, setIsLoadingZ] = useState(false);
 
+  const plotContainer = useRef(null);
+
+  const { viewID } = props;
+  const { containerDims, files, units } = props.session;
+  const { seriesOptions } = props.views[viewID];
+  const { selectedSeries } = props.views[viewID];
+
+  const xSeries = selectedSeries.X || [];
+  const ySeries = selectedSeries.Y || [];
+  const zSeries = selectedSeries.Z || [];
+
+  const optionArray = Object.keys(seriesOptions);
+
   // x state
-  const [xSeries, setXSeries] = useState([]);
   const [xMinRange, setXMinRange] = useState(0);
   const [xMaxRange, setXMaxRange] = useState(1);
 
   // y state
-  const [ySeries, setYSeries] = useState([]);
   const [yMinRange, setYMinRange] = useState(0);
   const [yMaxRange, setYMaxRange] = useState(1);
 
   // z state
-  const [zSeries, setZSeries] = useState([]);
   const [zMinRange, setZMinRange] = useState(0);
   const [zMaxRange, setZMaxRange] = useState(1);
   const [zMinData, setZMinData] = useState(0);
@@ -38,7 +48,6 @@ const ScatterControl = props => {
 
   const [activeTab, setActiveTab] = useState('tab-series');
 
-  const plotContainer = useRef(null);
   const controlsVisibleHeight = 275;
   const controlsHiddenHeight = 50;
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
@@ -69,10 +78,10 @@ const ScatterControl = props => {
 
   useEffect(() => {
     setPlotDims({
-      width: props.dims.width,
-      height: Math.max(props.dims.height - controlsHeight - 20, 50)
+      width: containerDims.width,
+      height: Math.max(containerDims.height - controlsHeight - 20, 50)
     });
-  }, [props.dims, controlsHeight]);
+  }, [containerDims, controlsHeight]);
 
   const getMaxMin = series => {
     const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
@@ -86,8 +95,15 @@ const ScatterControl = props => {
 
   const handleXSeriesSelect = (e, v) => {
     setIsLoadingX(true);
-    getSeries(props.seriesLookupObj[v], props.units).then(d => {
-      setXSeries(d);
+    getSeries(seriesOptions[v]).then(d => {
+      props.actions.changeSelectedSeries(
+        {
+          X: d,
+          Y: ySeries,
+          Z: zSeries
+        },
+        viewID
+      );
       let [min, max] = getMaxMin(d);
       setXMinRange(min);
       setXMaxRange(max);
@@ -97,8 +113,15 @@ const ScatterControl = props => {
 
   const handleYSeriesSelect = (e, v) => {
     setIsLoadingY(true);
-    getSeries(props.seriesLookupObj[v], props.units).then(d => {
-      setYSeries(d);
+    getSeries(seriesOptions[v]).then(d => {
+      props.actions.changeSelectedSeries(
+        {
+          X: xSeries,
+          Y: d,
+          Z: zSeries
+        },
+        viewID
+      );
       let [min, max] = getMaxMin(d);
       setYMinRange(min);
       setYMaxRange(max);
@@ -109,8 +132,15 @@ const ScatterControl = props => {
   const handleZSeriesSelect = (e, v) => {
     setIsLoadingZ(true);
 
-    getSeries(props.seriesLookupObj[v], props.units).then(d => {
-      setZSeries(d);
+    getSeries(seriesOptions[v]).then(d => {
+      props.actions.changeSelectedSeries(
+        {
+          X: xSeries,
+          Y: ySeries,
+          Z: d
+        },
+        viewID
+      );
       let [min, max] = getMaxMin(d);
       setZMinRange(min);
       setZMaxRange(max);
@@ -145,8 +175,8 @@ const ScatterControl = props => {
       >
         <Scatter
           plotdims={plotDims}
-          files={props.files}
-          units={props.units}
+          files={files}
+          units={units}
           colorfunc={colorfunc}
           reversecolor={reverseColor}
           xseries={xSeries}
@@ -170,17 +200,17 @@ const ScatterControl = props => {
         <ControlsContent tag="tab-series" tabname="Series Select">
           <SeriesSelect
             seriesCallback={handleXSeriesSelect}
-            series={props.seriesOptions}
+            series={optionArray}
             title={'Select X Series'}
           />
           <SeriesSelect
             seriesCallback={handleYSeriesSelect}
-            series={props.seriesOptions}
+            series={optionArray}
             title={'Select Y Series'}
           />
           <SeriesSelect
             seriesCallback={handleZSeriesSelect}
-            series={props.seriesOptions}
+            series={optionArray}
             title={'Select Color Series'}
           />
         </ControlsContent>
@@ -198,8 +228,8 @@ const ScatterControl = props => {
           <CopySave
             array={[xSeries, ySeries, zSeries]}
             arraytype="scatter"
-            units={props.units}
-            files={props.files}
+            units={units}
+            files={files}
           ></CopySave>
         </ControlsContent>
       </ControlsWrapper>

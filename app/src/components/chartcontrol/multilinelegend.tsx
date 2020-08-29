@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import connect from '../../connect';
-
+import { getSeriesKeys } from '../formatseries';
 import * as d3 from 'd3';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -69,14 +69,21 @@ const useStyles = makeStyles(
 
 const MultiLineLegend = props => {
   const classes = useStyles();
-  const { seriesArray, units, colorScheme } = props;
+  const { seriesArray, units, colorScheme, files } = props;
   const [seriesState, setSeriesState] = useState([]);
+
+  const { name } = getSeriesKeys(units, files);
+
+  console.log(name);
+  console.log(seriesArray);
+  // console.log(seriesArray[0][0]);
+  // console.log(seriesArray[0][0][name]);
 
   useEffect(() => {
     let stateCopy = [];
     seriesArray.forEach((d, i) => {
       stateCopy.push({
-        name: props.files.length > 1 ? d[0].name_multi : d[0].name_single,
+        name: d[0][name],
         key: d[0].key,
         color: d3[colorScheme][i],
         yaxis: 'Y1',

@@ -2,14 +2,24 @@ import React, { useState, useEffect, useRef } from 'react';
 import { formatDomain, formatDate, formatInt } from '../numformat';
 import { D3Container } from './d3container';
 import { multilinedims } from './chartdimensions';
-import { EmptyContainer } from './emptycontainer';
+import { NoSelectionContainer } from './noselectioncontainer';
+import { getSeriesKeys } from '../formatseries';
 
 import * as d3 from 'd3';
 
 const MultiLine = props => {
   const container = useRef(null);
-  let { seriesArray, seriesConfig, units, zoomCallback, zoomDomain } = props;
+  let {
+    seriesArray,
+    seriesConfig,
+    units,
+    files,
+    zoomCallback,
+    zoomDomain
+  } = props;
   const { width, height } = props.plotdims;
+
+  const seriesKeys = getSeriesKeys(units, files);
 
   const ytoppad = 0.05;
 
@@ -27,9 +37,6 @@ const MultiLine = props => {
       active: false
     }
   };
-
-  const valkey = units == 'ip' ? 'value_ip' : 'value_si';
-  const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
 
   const { labelmargins, margins, contextmargins } = multilinedims;
 
@@ -75,10 +82,10 @@ const MultiLine = props => {
         seriesArray[i] != undefined &&
         c.visible === true
       ) {
-        seriesArray[i].forEach(d => y1vals.push(d[valkey]));
-        let unit = seriesArray[i][0][unitkey];
+        seriesArray[i].forEach(d => y1vals.push(d[seriesKeys.value]));
+        let unit = seriesArray[i][0][seriesKeys.units];
         if (!y1units.includes(unit)) {
-          y1units.push(seriesArray[i][0][unitkey]);
+          y1units.push(seriesArray[i][0][seriesKeys.units]);
         }
       }
       if (
@@ -86,10 +93,10 @@ const MultiLine = props => {
         seriesArray[i] != undefined &&
         c.visible === true
       ) {
-        seriesArray[i].forEach(d => y2vals.push(d[valkey]));
-        let unit = seriesArray[i][0][unitkey];
+        seriesArray[i].forEach(d => y2vals.push(d[seriesKeys.value]));
+        let unit = seriesArray[i][0][seriesKeys.units];
         if (!y2units.includes(unit)) {
-          y2units.push(seriesArray[i][0][unitkey]);
+          y2units.push(seriesArray[i][0][seriesKeys.units]);
         }
       }
     });
@@ -121,6 +128,8 @@ const MultiLine = props => {
     svg.attr('width', width).attr('height', height);
 
     let times = [];
+
+    console.log(seriesArray);
     seriesArray.forEach(s => s.forEach(d => times.push(d.time)));
 
     let xdomain = zoomDomain.length == 0 ? d3.extent(times) : zoomDomain;
@@ -228,12 +237,12 @@ const MultiLine = props => {
     const lineY1 = d3
       .line()
       .x(d => xScale(d.time))
-      .y(d => yScale1(d[valkey]));
+      .y(d => yScale1(d[seriesKeys.value]));
 
     const lineY2 = d3
       .line()
       .x(d => xScale(d.time))
-      .y(d => yScale2(d[valkey]));
+      .y(d => yScale2(d[seriesKeys.value]));
 
     if (seriesConfig.length == seriesArray.length && seriesConfig.length > 0) {
       plotg
@@ -410,12 +419,12 @@ const MultiLine = props => {
           .attr('cx', () => xScale(point.time))
           .attr('cy', () => {
             if (seriesConfig[i].yaxis == 'Y1' && seriesConfig[i].visible) {
-              return yScale1(point[valkey]);
+              return yScale1(point[seriesKeys.value]);
             } else if (
               seriesConfig[i].yaxis == 'Y2' &&
               seriesConfig[i].visible
             ) {
-              return yScale2(point[valkey]);
+              return yScale2(point[seriesKeys.value]);
             }
           })
           .style('fill', () => seriesConfig[i].color)
@@ -459,9 +468,9 @@ const MultiLine = props => {
           border-radius: 2px;
           "
           ></div>
-          <div style='display: inline-block'>${formatInt(d[valkey]) +
+          <div style='display: inline-block'>${formatInt(d[seriesKeys.value]) +
             ' ' +
-            d[unitkey]}</div>
+            d[seriesKeys.units]}</div>
         </div>
         `;
         })
@@ -590,7 +599,7 @@ const MultiLine = props => {
   };
 
   if (seriesArray.length == 0) {
-    return <EmptyContainer plotdims={props.plotdims} />;
+    return <NoSelectionContainer plotdims={props.plotdims} />;
   } else {
     return <D3Container refcontainer={container}></D3Container>;
   }

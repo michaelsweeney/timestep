@@ -3,7 +3,7 @@ const initialState = {
     viewID: 1,
     label: 'View 1',
     timestepType: 'Hourly',
-    viewType: 'Heatmap',
+    viewType: 'MultiLine',
     seriesOptions: [],
     selectedSeries: []
   }

@@ -47,11 +47,11 @@ async function getSeries(filetag) {
     let time = new Date(
       year + '-' + row.Month + '-' + row.Day + ' ' + row.Hour + ':' + row.Minute
     );
-    data.name_single_ip = long_name_single_ip;
-    data.name_multi_ip = long_name_multi_ip;
+    data.name_ip_single = long_name_single_ip;
+    data.name_ip_multi = long_name_multi_ip;
 
-    data.name_single_si = long_name_single_si;
-    data.name_multi_si = long_name_multi_si;
+    data.name_si_single = long_name_single_si;
+    data.name_si_multi = long_name_multi_si;
 
     data.value_si = row.Value;
     data.time = time;

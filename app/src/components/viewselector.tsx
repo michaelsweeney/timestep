@@ -44,9 +44,10 @@ const ViewSelector = props => {
 
   const tempViewID = 1;
 
-  const activeView = props.views[tempViewID].viewType;
+  const activeViewType = props.views[tempViewID].viewType;
 
   const handleViewChange = el => {
+    props.actions.changeSelectedSeries([], tempViewID);
     props.actions.changeViewType(el, tempViewID);
   };
 
@@ -57,7 +58,7 @@ const ViewSelector = props => {
       </div>
       <Tabs
         className={classes.tabs}
-        value={activeView}
+        value={activeViewType}
         indicatorColor="primary"
         textColor="primary"
         orientation="vertical"
@@ -66,7 +67,9 @@ const ViewSelector = props => {
           (el, i) => {
             return (
               <Tab
-                className={activeView == el ? classes.tab : classes.tabinactive}
+                className={
+                  activeViewType == el ? classes.tab : classes.tabinactive
+                }
                 value={el}
                 label={el}
                 key={i}

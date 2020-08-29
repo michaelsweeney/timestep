@@ -13,7 +13,15 @@ import { CopySave } from '../copysave';
 
 const HistogramControl = props => {
   const [isLoading, setIsLoading] = useState(false);
-  const [series, setSeries] = useState([]);
+
+  const plotContainer = useRef(null);
+
+  const { viewID } = props;
+  const { containerDims, files, units } = props.session;
+  const { seriesOptions } = props.views[viewID];
+  const { selectedSeries } = props.views[viewID];
+  const optionArray = Object.keys(seriesOptions);
+
   const [minRange, setMinRange] = useState(0);
   const [maxRange, setMaxRange] = useState(0);
   const [minData, setMinData] = useState(0);
@@ -22,7 +30,6 @@ const HistogramControl = props => {
 
   const [activeTab, setActiveTab] = useState('tab-series');
 
-  const plotContainer = useRef(null);
   const controlsVisibleHeight = 200;
   const controlsHiddenHeight = 50;
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
@@ -55,16 +62,16 @@ const HistogramControl = props => {
 
   useEffect(() => {
     setPlotDims({
-      width: props.dims.width,
-      height: Math.max(props.dims.height - controlsHeight - 20, 50)
+      width: containerDims.width,
+      height: Math.max(containerDims.height - controlsHeight - 20, 50)
     });
   }, [props.dims, controlsHeight]);
 
   const handleSeriesSelect = (e, v) => {
     setIsLoading(true);
 
-    getSeries(props.seriesLookupObj[v]).then(d => {
-      setSeries(d);
+    getSeries(seriesOptions[v]).then(d => {
+      props.actions.changeSelectedSeries(d, viewID);
       const getMaxMin = series => {
         const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
         let min = Math.min(...series.map(d => d[valkey]));
@@ -95,10 +102,10 @@ const HistogramControl = props => {
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <Histogram
-          files={props.files}
+          files={files}
           plotdims={plotDims}
-          series={series}
-          units={props.units}
+          series={selectedSeries}
+          units={units}
           binmin={minRange}
           binmax={maxRange}
           numbins={numBins}
@@ -115,7 +122,7 @@ const HistogramControl = props => {
         <ControlsContent tag="tab-series" tabname="Series Select">
           <SeriesSelect
             seriesCallback={handleSeriesSelect}
-            series={props.seriesOptions}
+            series={optionArray}
           />
         </ControlsContent>
         <ControlsContent tag="tab-options" tabname="Options">
@@ -128,10 +135,10 @@ const HistogramControl = props => {
         </ControlsContent>
         <ControlsContent tag="tab-export" tabname="Export">
           <CopySave
-            array={series}
+            array={selectedSeries}
             arraytype="single"
-            units={props.units}
-            files={props.files}
+            units={units}
+            files={files}
           ></CopySave>
         </ControlsContent>
       </ControlsWrapper>

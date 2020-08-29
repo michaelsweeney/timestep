@@ -1,17 +1,18 @@
 // session level actions
+
+export function setActiveView(id) {
+  return {
+    type: 'SET_CONTAINER_DIMS',
+    payload: id
+  };
+}
+
 export function setContainerDims(dims) {
   return {
     type: 'SET_CONTAINER_DIMS',
     payload: dims
   };
 }
-
-// export function changeAvailableSeries(series) {
-//   return {
-//     type: 'CHANGE_AVAILABLE_SERIES',
-//     payload: series
-//   };
-// }
 
 export function changeFileInfo(info) {
   return {

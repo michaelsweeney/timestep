@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FileList } from './filelist';
+import FileList from './filelist';
 import FileHandler from './filehandler';
 import UnitRadio from './unitradio';
 import TimeStepSelect from './timestepselect';
@@ -52,7 +52,7 @@ const Sidebar = props => {
       <div className={classes.topContainer}>
         <Logo></Logo>
         <FileHandler />
-        <FileList fileInfo={props.fileInfo} />
+        <FileList />
         <div className={classes.lineBreak} />
         <UnitRadio />
         <TimeStepSelect />

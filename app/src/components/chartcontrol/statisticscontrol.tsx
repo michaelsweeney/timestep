@@ -13,15 +13,20 @@ import { CopySave } from '../copysave';
 const StatisticsControl = props => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const [seriesArray, setSeriesArray] = useState([]);
-  const [activeTab, setActiveTab] = useState('tab-series');
-
   const plotContainer = useRef(null);
+
+  const { viewID } = props;
+  const { containerDims, files, units } = props.session;
+  const { seriesOptions } = props.views[viewID];
+  const { selectedSeries } = props.views[viewID];
+  const optionArray = Object.keys(seriesOptions);
+
   const controlsVisibleHeight = 150;
   const controlsHiddenHeight = 50;
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);
   const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
+  const [activeTab, setActiveTab] = useState('tab-series');
 
   const toggleHideControlsTabs = () => {
     if (controlsVisible) {
@@ -45,14 +50,14 @@ const StatisticsControl = props => {
 
   useEffect(() => {
     setPlotDims({
-      width: props.dims.width,
-      height: Math.max(props.dims.height - controlsHeight - 20, 50)
+      width: containerDims.width,
+      height: Math.max(containerDims.height - controlsHeight - 20, 50)
     });
-  }, [props.dims, controlsHeight]);
+  }, [containerDims, controlsHeight]);
 
   const handleSeriesSelect = (e, v) => {
-    let arrayClone = [...seriesArray];
-    let newkeys = v.map(tag => props.seriesLookupObj[tag]);
+    let arrayClone = [...selectedSeries];
+    let newkeys = v.map(tag => seriesOptions[tag]);
     let existingkeys = arrayClone.map(d => d[0].key);
 
     let toremove = [];
@@ -64,15 +69,15 @@ const StatisticsControl = props => {
 
     arrayClone = arrayClone.filter(d => !toremove.includes(d[0].key));
     if (toremove.length >= 1) {
-      setSeriesArray(arrayClone);
+      props.actions.changeSelectedSeries(arrayClone, viewID);
     }
 
     newkeys.forEach(key => {
       if (!existingkeys.includes(key)) {
         setIsLoading(true);
-        getSeries(key, props.units).then(d => {
-          arrayClone.push(d);
-          setSeriesArray(arrayClone);
+        getSeries(key).then(d => {
+          let newarray = [...arrayClone, d];
+          props.actions.changeSelectedSeries(newarray, viewID);
           setIsLoading(false);
         });
       }
@@ -82,11 +87,7 @@ const StatisticsControl = props => {
   return (
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
-        <Statistics
-          units={props.units}
-          seriesArray={seriesArray}
-          files={props.files}
-        />
+        <Statistics units={units} seriesArray={selectedSeries} files={files} />
       </ViewWrapper>
       <ControlsWrapper
         disableCollapse={true}
@@ -99,15 +100,15 @@ const StatisticsControl = props => {
         <ControlsContent tag="tab-series" tabname="Series Select">
           <MultiSeries
             seriesCallback={handleSeriesSelect}
-            series={props.seriesOptions}
+            series={optionArray}
           />
         </ControlsContent>
         <ControlsContent tag="tab-export" tabname="Export">
           <CopySave
-            array={seriesArray}
+            array={selectedSeries}
             arraytype="multi"
-            units={props.units}
-            files={props.files}
+            units={units}
+            files={files}
           ></CopySave>
         </ControlsContent>
       </ControlsWrapper>

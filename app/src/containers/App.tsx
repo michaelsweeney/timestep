@@ -3,9 +3,9 @@ import { hot } from 'react-hot-loader/root';
 import connect from '../connect';
 import { makeStyles } from '@material-ui/core/styles';
 import Sidebar from '../components/sidebar';
-import ViewControl from '../components/viewcontrol';
+import Views from '../components/views';
 import '../css/app.global.css';
-import { getAllSeries, getFileSummary, getSeries } from '../components/sql';
+import { getFileSummary } from '../components/sql';
 
 import {
   StylesProvider,
@@ -50,14 +50,7 @@ const App = props => {
   }, []);
 
   /* end programmatic ui - testing only */
-
-  // update available series on unit or  switch
   useEffect(() => {
-    // props.actions.changeFiles(files);
-    // getAllSeries(files).then(res => {
-    // props.actions.changeAvailableSeries(res);
-    // });
-
     getFileSummary(files).then(b => {
       props.actions.changeFileInfo(b);
     });
@@ -66,13 +59,8 @@ const App = props => {
   return (
     <StylesProvider generateClassName={generateClassName}>
       <div className={classes.root}>
-        <Sidebar
-          views={['MultiLine', 'Heatmap', 'Scatter', 'Histogram', 'Statistics']}
-          fileInfo={props.session.fileInfo}
-          timestepType={props.views[viewID].timestepType}
-          units={props.session.units}
-        ></Sidebar>
-        <ViewControl />
+        <Sidebar />
+        <Views />
       </div>
     </StylesProvider>
   );

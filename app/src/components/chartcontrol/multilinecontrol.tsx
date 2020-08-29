@@ -14,13 +14,20 @@ import { CopySave } from '../copysave';
 
 const MultiLineControl = props => {
   const [isLoading, setIsLoading] = useState(false);
-  const [seriesArray, setSeriesArray] = useState([]);
+
+  const plotContainer = useRef(null);
+
+  const { viewID } = props;
+  const { containerDims, files, units } = props.session;
+  const { seriesOptions } = props.views[viewID];
+  const { selectedSeries } = props.views[viewID];
+  const optionArray = Object.keys(seriesOptions);
+
   const [colorScheme, setColorScheme] = useState('schemeTableau10');
   const [seriesConfig, setSeriesConfig] = useState([]);
   const [activeTab, setActiveTab] = useState('tab-series');
   const [zoomDomain, setZoomDomain] = useState([]);
 
-  const plotContainer = useRef(null);
   const getControlsVisibleHeight = () =>
     200 + Math.max(seriesConfig.length - 3, 0) * 30;
   const controlsHiddenHeight = 50;
@@ -52,49 +59,41 @@ const MultiLineControl = props => {
 
   useEffect(() => {
     setPlotDims({
-      width: props.dims.width,
-      height: Math.max(props.dims.height - controlsHeight - 20, 50)
+      width: containerDims.width,
+      height: Math.max(containerDims.height - controlsHeight - 20, 50)
     });
-  }, [props.dims, controlsHeight]);
+  }, [containerDims, controlsHeight]);
 
   const handleColorCategoryChange = e => {
     setColorScheme(e);
   };
 
   const handleSeriesSelect = (e, v) => {
-    let arrayClone = [...seriesArray];
-    let selectedkeys = v.map(tag => props.seriesLookupObj[tag]);
+    let arrayClone = [...selectedSeries];
+    let newkeys = v.map(tag => seriesOptions[tag]);
     let existingkeys = arrayClone.map(d => d[0].key);
 
     let toremove = [];
     existingkeys.forEach(existkey => {
-      if (!selectedkeys.includes(existkey)) {
+      if (!newkeys.includes(existkey)) {
         toremove.push(existkey);
       }
     });
 
     arrayClone = arrayClone.filter(d => !toremove.includes(d[0].key));
     if (toremove.length >= 1) {
-      setSeriesArray(arrayClone);
+      props.actions.changeSelectedSeries(arrayClone, viewID);
     }
 
-    let promises = [];
-    let newkeys = [];
-
-    selectedkeys.forEach(key => {
+    newkeys.forEach(key => {
       if (!existingkeys.includes(key)) {
         setIsLoading(true);
-        newkeys.push(key);
-        promises.push(getSeries(key, props.units));
+        getSeries(key).then(d => {
+          let newarray = [...arrayClone, d];
+          props.actions.changeSelectedSeries(newarray, viewID);
+          setIsLoading(false);
+        });
       }
-    });
-
-    setIsLoading(true);
-    Promise.all(promises).then(d => {
-      d.forEach(a => arrayClone.push(a));
-      setSeriesArray(arrayClone);
-      setIsLoading(false);
-      setControlsHeight(getControlsVisibleHeight());
     });
   };
 
@@ -117,11 +116,11 @@ const MultiLineControl = props => {
         <MultiLine
           zoomCallback={handleZoomChange}
           zoomDomain={zoomDomain}
-          files={props.files}
+          files={files}
           plotdims={plotDims}
           seriesConfig={seriesConfig}
-          units={props.units}
-          seriesArray={seriesArray}
+          units={units}
+          seriesArray={selectedSeries}
         />
       </ViewWrapper>
       <ControlsWrapper
@@ -135,17 +134,17 @@ const MultiLineControl = props => {
           <MultiSeries
             dispatchClose={handleSelectClose}
             seriesCallback={handleSeriesSelect}
-            series={props.seriesOptions}
+            series={optionArray}
           />
         </ControlsContent>
 
         <ControlsContent tag="tab-legend" tabname="Legend">
           <MultiLineLegend
-            files={props.files}
+            files={files}
             legendCallback={handleLegendChange}
-            seriesArray={seriesArray}
+            seriesArray={selectedSeries}
             colorScheme={colorScheme}
-            units={props.units}
+            units={units}
           />
         </ControlsContent>
         <ControlsContent tag="tab-options" tabname="Options">
@@ -156,10 +155,10 @@ const MultiLineControl = props => {
 
         <ControlsContent tag="tab-export" tabname="Export">
           <CopySave
-            array={seriesArray}
+            array={selectedSeries}
             arraytype="multi"
-            units={props.units}
-            files={props.files}
+            units={units}
+            files={files}
           ></CopySave>
         </ControlsContent>
       </ControlsWrapper>

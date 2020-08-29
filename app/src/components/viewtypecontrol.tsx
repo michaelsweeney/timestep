@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import connect from '../connect';
 
-import * as sizeof from 'object-sizeof';
-
 import HeatmapControl from './chartcontrol/heatmapcontrol';
 import HistogramControl from './chartcontrol/histogramcontrol';
 import MultiLineControl from './chartcontrol/multilinecontrol';
@@ -14,7 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { LandingPage } from './landingpage';
 
 import { getAllSeries } from './sql';
-
+import { getSeriesLookupObj } from './formatseries';
 const useStyles = makeStyles(
   {
     root: {
@@ -32,60 +30,24 @@ const useStyles = makeStyles(
   { name: 'view-container' }
 );
 
-const parseAllSeries = config => {
-  const { array, units, timestepType, files } = config;
-  const filtered = array.filter(f => {
-    return f.ReportingFrequency == timestepType;
-  });
-  const seriesLookupObj = {};
-
-  filtered.forEach(o => {
-    let key = o.key;
-    let name;
-    if (units == 'ip') {
-      if (files.length > 1) {
-        name = o.name_ip_multi;
-      } else if (files.length == 1) {
-        name = o.name_ip_single;
-      } else console.warn('files length parsing error', files.length, files);
-    }
-    if (units == 'si') {
-      if (files.length > 1) {
-        name = o.name_si_multi;
-      } else if (files.length == 1) {
-        name = o.name_si_single;
-      } else console.warn('files length parsing error', files.length, files);
-    }
-    seriesLookupObj[name] = key;
-  });
-  return seriesLookupObj;
-};
-
-const ViewControl = props => {
+const ViewTypeControl = props => {
   const classes = useStyles();
   const container = useRef(null);
-  const tempViewID = 1;
-  const { files, units, containerDims } = props.session;
-  const { timestepType, viewType, seriesOptions } = props.views[tempViewID];
+  const { viewID } = props;
+  const { files, units } = props.session;
+  const { timestepType, viewType } = props.views[viewID];
 
   useEffect(() => {
     getAllSeries(files).then(ar => {
-      let parsed = parseAllSeries({
+      let parsed = getSeriesLookupObj({
         array: ar,
         units: units,
         files: files,
         timestepType: timestepType
       });
-      console.log(parsed);
-      props.actions.setSeriesOptions(parsed, tempViewID);
+      props.actions.setSeriesOptions(parsed, viewID);
     });
   }, [files, units, timestepType]);
-
-  const optionArray = Object.keys(seriesOptions);
-
-  console.log('redux session size: ', sizeof(props.session) / 1e6, ' MB');
-
-  console.log('redux view size: ', sizeof(props.views) / 1e6);
 
   const getContainerDims = node => {
     return {
@@ -115,12 +77,7 @@ const ViewControl = props => {
   });
 
   const propobj = {
-    seriesOptions: optionArray,
-    seriesLookupObj: seriesOptions,
-    units: units,
-    files: files,
-    dims: containerDims,
-    timestepType: timestepType
+    viewID: viewID
   };
 
   const viewobj = {
@@ -143,4 +100,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(ViewControl);
+export default connect(mapStateToProps)(ViewTypeControl);

@@ -3,7 +3,7 @@ import { formatDomain } from '../numformat';
 import * as d3 from 'd3';
 import { D3Container } from './d3container';
 import { histogramdims } from './chartdimensions';
-import { EmptyContainer } from './emptycontainer';
+import { NoSelectionContainer } from './noselectioncontainer';
 
 const Histogram = props => {
   const container = useRef(null);
@@ -219,7 +219,7 @@ const Histogram = props => {
   };
 
   if (series.length == 0) {
-    return <EmptyContainer plotdims={props.plotdims} />;
+    return <NoSelectionContainer plotdims={props.plotdims} />;
   } else {
     return <D3Container refcontainer={container}></D3Container>;
   }

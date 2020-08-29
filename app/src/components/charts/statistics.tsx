@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { getSeriesKeys } from '../formatseries';
 
 import {
   Table,
@@ -33,16 +34,17 @@ const useStyles = makeStyles((theme: Theme) =>
 const Statistics = props => {
   const container = useRef(null);
   const classes = useStyles();
-  let { seriesArray, units } = props;
+  let { seriesArray, units, files } = props;
 
-  const valkey = units == 'ip' ? 'value_ip' : 'value_si';
-  const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
+  console.log(seriesArray);
+
+  const seriesKeys = getSeriesKeys(units, files);
 
   let statsarray = [];
   seriesArray.forEach(s => {
-    let darray = s.map(d => d[valkey]);
+    let darray = s.map(d => d[seriesKeys.value]);
     statsarray.push({
-      name: props.files.length > 1 ? s[0].name_multi : s[0].name_single,
+      name: s[0][seriesKeys.name],
       sum: d3.sum(darray),
       max: d3.max(darray),
       min: d3.min(darray),
