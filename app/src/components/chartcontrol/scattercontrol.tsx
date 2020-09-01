@@ -23,9 +23,13 @@ const ScatterControl = props => {
   const { seriesOptions } = props.views[viewID];
   const { selectedSeries } = props.views[viewID];
 
-  const xSeries = selectedSeries.X || [];
-  const ySeries = selectedSeries.Y || [];
-  const zSeries = selectedSeries.Z || [];
+  const selectedXSeries = selectedSeries.X || [];
+  const selectedYSeries = selectedSeries.Y || [];
+  const selectedZSeries = selectedSeries.Z || [];
+
+  const [xSeriesData, setXSeriesData] = useState([]);
+  const [ySeriesData, setYSeriesData] = useState([]);
+  const [zSeriesData, setZSeriesData] = useState([]);
 
   const optionArray = Object.keys(seriesOptions);
 
@@ -93,61 +97,81 @@ const ScatterControl = props => {
     return [min, max];
   };
 
+  // x series handler
+  useEffect(() => {
+    if (selectedXSeries.length != 0) {
+      setIsLoadingX(true);
+      getSeries(selectedXSeries).then(d => {
+        setXSeriesData(d);
+        let [min, max] = getMaxMin(d);
+        setXMinRange(min);
+        setXMaxRange(max);
+        setIsLoadingX(false);
+      });
+    }
+  }, [selectedXSeries]);
+
   const handleXSeriesSelect = (e, v) => {
-    setIsLoadingX(true);
-    getSeries(seriesOptions[v]).then(d => {
-      props.actions.changeSelectedSeries(
-        {
-          X: d,
-          Y: ySeries,
-          Z: zSeries
-        },
-        viewID
-      );
-      let [min, max] = getMaxMin(d);
-      setXMinRange(min);
-      setXMaxRange(max);
-      setIsLoadingX(false);
-    });
+    props.actions.changeSelectedSeries(
+      {
+        X: seriesOptions[v],
+        Y: selectedYSeries,
+        Z: selectedZSeries
+      },
+      viewID
+    );
   };
+
+  // y series handler
+  useEffect(() => {
+    if (selectedYSeries.length != 0) {
+      setIsLoadingY(true);
+      getSeries(selectedSeries.Y).then(d => {
+        setYSeriesData(d);
+        let [min, max] = getMaxMin(d);
+        setYMinRange(min);
+        setYMaxRange(max);
+        setIsLoadingY(false);
+      });
+    }
+  }, [selectedYSeries]);
 
   const handleYSeriesSelect = (e, v) => {
-    setIsLoadingY(true);
-    getSeries(seriesOptions[v]).then(d => {
-      props.actions.changeSelectedSeries(
-        {
-          X: xSeries,
-          Y: d,
-          Z: zSeries
-        },
-        viewID
-      );
-      let [min, max] = getMaxMin(d);
-      setYMinRange(min);
-      setYMaxRange(max);
-      setIsLoadingY(false);
-    });
+    props.actions.changeSelectedSeries(
+      {
+        X: selectedXSeries,
+        Y: seriesOptions[v],
+        Z: selectedZSeries
+      },
+      viewID
+    );
   };
 
-  const handleZSeriesSelect = (e, v) => {
-    setIsLoadingZ(true);
+  // z series handler
+  useEffect(() => {
+    if (selectedZSeries.length != 0) {
+      setIsLoadingZ(true);
+      getSeries(selectedZSeries).then(d => {
+        setZSeriesData(d);
+        let [min, max] = getMaxMin(d);
+        setZMinRange(min);
+        setZMaxRange(max);
+        setZMinData(min);
+        setZMaxData(max);
+        setIsLoadingZ(false);
+      });
+    }
+  }, [selectedZSeries]);
 
-    getSeries(seriesOptions[v]).then(d => {
-      props.actions.changeSelectedSeries(
-        {
-          X: xSeries,
-          Y: ySeries,
-          Z: d
-        },
-        viewID
-      );
-      let [min, max] = getMaxMin(d);
-      setZMinRange(min);
-      setZMaxRange(max);
-      setZMinData(min);
-      setZMaxData(max);
-      setIsLoadingZ(false);
-    });
+  const handleZSeriesSelect = (e, v) => {
+    props.actions.changeSelectedSeries(
+      {
+        X: selectedXSeries,
+        Y: selectedYSeries,
+        Z: seriesOptions[v]
+      },
+      viewID
+    );
   };
 
   const handleColorRangeChange = v => {
@@ -179,13 +203,13 @@ const ScatterControl = props => {
           units={units}
           colorfunc={colorfunc}
           reversecolor={reverseColor}
-          xseries={xSeries}
+          xseries={xSeriesData}
           xminrange={xMinRange}
           xmaxrange={xMaxRange}
-          yseries={ySeries}
+          yseries={ySeriesData}
           yminrange={yMinRange}
           ymaxrange={yMaxRange}
-          zseries={zSeries}
+          zseries={zSeriesData}
           zminrange={zMinRange}
           zmaxrange={zMaxRange}
         />
@@ -226,7 +250,7 @@ const ScatterControl = props => {
 
         <ControlsContent tag="tab-export" tabname="Export">
           <CopySave
-            array={[xSeries, ySeries, zSeries]}
+            array={[xSeriesData, ySeriesData, zSeriesData]}
             arraytype="scatter"
             units={units}
             files={files}

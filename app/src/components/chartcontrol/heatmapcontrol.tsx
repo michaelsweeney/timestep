@@ -25,6 +25,9 @@ const HeatmapControl = props => {
   const optionArray = Object.keys(seriesOptions);
 
   // local state
+
+  const [seriesData, setSeriesData] = useState([]);
+
   const [minRange, setMinRange] = useState(0);
   const [maxRange, setMaxRange] = useState(0);
   const [minData, setMinData] = useState(0);
@@ -67,25 +70,30 @@ const HeatmapControl = props => {
     });
   }, [containerDims, controlsHeight]);
 
+  useEffect(() => {
+    if (selectedSeries.length != 0) {
+      setIsLoading(true);
+      getSeries(selectedSeries).then(d => {
+        console.log(d);
+        setSeriesData(d);
+        const getMaxMin = series => {
+          const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
+          let min = Math.min(...series.map(d => d[valkey]));
+          let max = Math.max(...series.map(d => d[valkey]));
+          return [min, max];
+        };
+        let [min, max] = getMaxMin(d);
+        setMinRange(min);
+        setMaxRange(max);
+        setMinData(min);
+        setMaxData(max);
+        setIsLoading(false);
+      });
+    }
+  }, [selectedSeries]);
+
   const handleSeriesSelect = (e, v) => {
-    setIsLoading(true);
-    getSeries(seriesOptions[v]).then(d => {
-      props.actions.changeSelectedSeries(d, viewID);
-
-      const getMaxMin = series => {
-        const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
-        let min = Math.min(...series.map(d => d[valkey]));
-        let max = Math.max(...series.map(d => d[valkey]));
-        return [min, max];
-      };
-      let [min, max] = getMaxMin(d);
-
-      setMinRange(min);
-      setMaxRange(max);
-      setMinData(min);
-      setMaxData(max);
-      setIsLoading(false);
-    });
+    props.actions.changeSelectedSeries(seriesOptions[v], viewID);
   };
 
   const handleRangeChange = v => {
@@ -104,14 +112,13 @@ const HeatmapControl = props => {
       setReverseColor(false);
     }
   };
-  console.log(selectedSeries);
   return (
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <Heatmap
           plotdims={plotDims}
           files={files}
-          series={selectedSeries}
+          series={seriesData}
           units={units}
           colorfunc={colorfunc}
           minrange={minRange}

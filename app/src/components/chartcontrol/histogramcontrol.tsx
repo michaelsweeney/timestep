@@ -22,6 +22,8 @@ const HistogramControl = props => {
   const { selectedSeries } = props.views[viewID];
   const optionArray = Object.keys(seriesOptions);
 
+  const [seriesData, setSeriesData] = useState([]);
+
   const [minRange, setMinRange] = useState(0);
   const [maxRange, setMaxRange] = useState(0);
   const [minData, setMinData] = useState(0);
@@ -68,24 +70,29 @@ const HistogramControl = props => {
   }, [props.dims, controlsHeight]);
 
   const handleSeriesSelect = (e, v) => {
-    setIsLoading(true);
-
-    getSeries(seriesOptions[v]).then(d => {
-      props.actions.changeSelectedSeries(d, viewID);
-      const getMaxMin = series => {
-        const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
-        let min = Math.min(...series.map(d => d[valkey]));
-        let max = Math.max(...series.map(d => d[valkey]));
-        return [min, max];
-      };
-      let [min, max] = getMaxMin(d);
-      setMinRange(min);
-      setMaxRange(max);
-      setMinData(min);
-      setMaxData(max);
-      setIsLoading(false);
-    });
+    props.actions.changeSelectedSeries(seriesOptions[v], viewID);
   };
+  useEffect(() => {
+    if (selectedSeries.length != 0) {
+      setIsLoading(true);
+
+      getSeries(selectedSeries).then(d => {
+        setSeriesData(d);
+        const getMaxMin = series => {
+          const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
+          let min = Math.min(...series.map(d => d[valkey]));
+          let max = Math.max(...series.map(d => d[valkey]));
+          return [min, max];
+        };
+        let [min, max] = getMaxMin(d);
+        setMinRange(min);
+        setMaxRange(max);
+        setMinData(min);
+        setMaxData(max);
+        setIsLoading(false);
+      });
+    }
+  }, [selectedSeries]);
 
   let numbins = 10;
 
@@ -104,7 +111,7 @@ const HistogramControl = props => {
         <Histogram
           files={files}
           plotdims={plotDims}
-          series={selectedSeries}
+          series={seriesData}
           units={units}
           binmin={minRange}
           binmax={maxRange}

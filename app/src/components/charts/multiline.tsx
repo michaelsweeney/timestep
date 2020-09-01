@@ -130,6 +130,7 @@ const MultiLine = props => {
     let times = [];
 
     console.log(seriesArray);
+
     seriesArray.forEach(s => s.forEach(d => times.push(d.time)));
 
     let xdomain = zoomDomain.length == 0 ? d3.extent(times) : zoomDomain;

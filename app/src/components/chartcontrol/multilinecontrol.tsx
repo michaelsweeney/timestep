@@ -18,6 +18,8 @@ const MultiLineControl = props => {
   const plotContainer = useRef(null);
 
   const { viewID } = props;
+  const [seriesData, setSeriesData] = useState([]);
+
   const { containerDims, files, units } = props.session;
   const { seriesOptions } = props.views[viewID];
   const { selectedSeries } = props.views[viewID];
@@ -69,8 +71,13 @@ const MultiLineControl = props => {
   };
 
   const handleSeriesSelect = (e, v) => {
-    let arrayClone = [...selectedSeries];
-    let newkeys = v.map(tag => seriesOptions[tag]);
+    let keys = v.map(d => seriesOptions[d]);
+    props.actions.changeSelectedSeries(keys, viewID);
+  };
+
+  useEffect(() => {
+    let arrayClone = [...seriesData];
+    let newkeys = selectedSeries;
     let existingkeys = arrayClone.map(d => d[0].key);
 
     let toremove = [];
@@ -80,22 +87,22 @@ const MultiLineControl = props => {
       }
     });
 
-    arrayClone = arrayClone.filter(d => !toremove.includes(d[0].key));
-    if (toremove.length >= 1) {
-      props.actions.changeSelectedSeries(arrayClone, viewID);
+    if (toremove.length > 0) {
+      arrayClone = arrayClone.filter(d => !toremove.includes(d[0].key));
+      setSeriesData(arrayClone);
+    } else {
+      newkeys.forEach(key => {
+        if (!existingkeys.includes(key)) {
+          setIsLoading(true);
+          getSeries(key).then(d => {
+            let newarray = [...arrayClone, d];
+            setSeriesData(newarray);
+            setIsLoading(false);
+          });
+        }
+      });
     }
-
-    newkeys.forEach(key => {
-      if (!existingkeys.includes(key)) {
-        setIsLoading(true);
-        getSeries(key).then(d => {
-          let newarray = [...arrayClone, d];
-          props.actions.changeSelectedSeries(newarray, viewID);
-          setIsLoading(false);
-        });
-      }
-    });
-  };
+  }, [selectedSeries]);
 
   const handleLegendChange = v => {
     setSeriesConfig(v);
@@ -120,7 +127,7 @@ const MultiLineControl = props => {
           plotdims={plotDims}
           seriesConfig={seriesConfig}
           units={units}
-          seriesArray={selectedSeries}
+          seriesArray={seriesData}
         />
       </ViewWrapper>
       <ControlsWrapper
@@ -142,7 +149,7 @@ const MultiLineControl = props => {
           <MultiLineLegend
             files={files}
             legendCallback={handleLegendChange}
-            seriesArray={selectedSeries}
+            seriesArray={seriesData}
             colorScheme={colorScheme}
             units={units}
           />

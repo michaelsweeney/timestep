@@ -47,12 +47,14 @@ const useStyles = makeStyles(
 
 const Sidebar = props => {
   const classes = useStyles();
+
   return (
     <div className={classes.root}>
       <div className={classes.topContainer}>
         <Logo></Logo>
         <FileHandler />
         <FileList />
+        <button onClick={props.handleTestLoad}>Test Load</button>
         <div className={classes.lineBreak} />
         <UnitRadio />
         <TimeStepSelect />

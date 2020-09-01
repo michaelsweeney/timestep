@@ -16,6 +16,8 @@ const StatisticsControl = props => {
   const plotContainer = useRef(null);
 
   const { viewID } = props;
+  const [seriesData, setSeriesData] = useState([]);
+
   const { containerDims, files, units } = props.session;
   const { seriesOptions } = props.views[viewID];
   const { selectedSeries } = props.views[viewID];
@@ -56,8 +58,13 @@ const StatisticsControl = props => {
   }, [containerDims, controlsHeight]);
 
   const handleSeriesSelect = (e, v) => {
-    let arrayClone = [...selectedSeries];
-    let newkeys = v.map(tag => seriesOptions[tag]);
+    let keys = v.map(d => seriesOptions[d]);
+    props.actions.changeSelectedSeries(keys, viewID);
+  };
+
+  useEffect(() => {
+    let arrayClone = [...seriesData];
+    let newkeys = selectedSeries;
     let existingkeys = arrayClone.map(d => d[0].key);
 
     let toremove = [];
@@ -67,27 +74,27 @@ const StatisticsControl = props => {
       }
     });
 
-    arrayClone = arrayClone.filter(d => !toremove.includes(d[0].key));
-    if (toremove.length >= 1) {
-      props.actions.changeSelectedSeries(arrayClone, viewID);
+    if (toremove.length > 0) {
+      arrayClone = arrayClone.filter(d => !toremove.includes(d[0].key));
+      setSeriesData(arrayClone);
+    } else {
+      newkeys.forEach(key => {
+        if (!existingkeys.includes(key)) {
+          setIsLoading(true);
+          getSeries(key).then(d => {
+            let newarray = [...arrayClone, d];
+            setSeriesData(newarray);
+            setIsLoading(false);
+          });
+        }
+      });
     }
-
-    newkeys.forEach(key => {
-      if (!existingkeys.includes(key)) {
-        setIsLoading(true);
-        getSeries(key).then(d => {
-          let newarray = [...arrayClone, d];
-          props.actions.changeSelectedSeries(newarray, viewID);
-          setIsLoading(false);
-        });
-      }
-    });
-  };
+  }, [selectedSeries]);
 
   return (
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
-        <Statistics units={units} seriesArray={selectedSeries} files={files} />
+        <Statistics units={units} seriesArray={seriesData} files={files} />
       </ViewWrapper>
       <ControlsWrapper
         disableCollapse={true}
@@ -105,7 +112,7 @@ const StatisticsControl = props => {
         </ControlsContent>
         <ControlsContent tag="tab-export" tabname="Export">
           <CopySave
-            array={selectedSeries}
+            array={seriesData}
             arraytype="multi"
             units={units}
             files={files}

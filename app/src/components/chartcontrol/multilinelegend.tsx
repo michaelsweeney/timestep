@@ -73,9 +73,6 @@ const MultiLineLegend = props => {
   const [seriesState, setSeriesState] = useState([]);
 
   const { name } = getSeriesKeys(units, files);
-
-  console.log(name);
-  console.log(seriesArray);
   // console.log(seriesArray[0][0]);
   // console.log(seriesArray[0][0][name]);
 

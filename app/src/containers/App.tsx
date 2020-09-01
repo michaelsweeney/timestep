@@ -56,10 +56,26 @@ const App = props => {
     });
   }, [files]);
 
+  const handleTestLoad = () => {
+    let p = {
+      files: ['/Users/michaelsweeney/Documents/energyplus files/sim1.sql'],
+      view: 1,
+      viewType: 'Heatmap',
+      units: 'ip',
+      key: '/Users/michaelsweeney/Documents/energyplus files/sim1.sql,6'
+    };
+    console.log(p);
+    props.actions.changeFiles(p.files);
+    props.actions.changeUnits(p.units);
+    props.actions.changeViewType(p.viewType, p.view);
+    props.actions.changeSelectedSeries(p.key, p.view);
+  };
+
   return (
     <StylesProvider generateClassName={generateClassName}>
       <div className={classes.root}>
-        <Sidebar />
+        <Sidebar handleTestLoad={handleTestLoad} />
+
         <Views />
       </div>
     </StylesProvider>

@@ -44,10 +44,10 @@ const Scatter = props => {
     xseries[0] ? xseries[0][seriesKeys.name] : '-'
   );
   let y_label_array = idealSplit(
-    yseries[0] ? xseries[0][seriesKeys.name] : '-'
+    yseries[0] ? yseries[0][seriesKeys.name] : '-'
   );
   let z_label_array = idealSplit(
-    zseries[0] ? xseries[0][seriesKeys.name] : '-'
+    zseries[0] ? zseries[0][seriesKeys.name] : '-'
   );
 
   const plot_title = '';
@@ -419,7 +419,6 @@ const Scatter = props => {
     }
 
     function handleMouseout(d) {
-      console.log(d);
       tooltipdiv.style('opacity', 0).style('z-index', -1);
     }
 

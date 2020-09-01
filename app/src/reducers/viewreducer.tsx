@@ -3,7 +3,7 @@ const initialState = {
     viewID: 1,
     label: 'View 1',
     timestepType: 'Hourly',
-    viewType: 'MultiLine',
+    viewType: 'Statistics',
     seriesOptions: [],
     selectedSeries: []
   }

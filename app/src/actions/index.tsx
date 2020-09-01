@@ -60,10 +60,10 @@ export function changeTimestepType(timestepType, viewID) {
   };
 }
 
-export function changeSelectedSeries(selection, viewID) {
+export function changeSelectedSeries(key, viewID) {
   return {
     type: 'CHANGE_SELECTED_SERIES',
-    payload: selection,
+    payload: key,
     viewID: viewID
   };
 }

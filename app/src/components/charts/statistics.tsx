@@ -36,8 +36,6 @@ const Statistics = props => {
   const classes = useStyles();
   let { seriesArray, units, files } = props;
 
-  console.log(seriesArray);
-
   const seriesKeys = getSeriesKeys(units, files);
 
   let statsarray = [];
