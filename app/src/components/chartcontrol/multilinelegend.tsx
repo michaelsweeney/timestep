@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import connect from '../../connect';
+import connect from '../../store/connect';
 import { getSeriesKeys } from '../formatseries';
-import * as d3 from 'd3';
-
+import colorscale from '../colorscaleindex';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   TableCell,
@@ -70,19 +69,19 @@ const useStyles = makeStyles(
 const MultiLineLegend = props => {
   const classes = useStyles();
   const { seriesArray, units, colorScheme, files } = props;
+
   const [seriesState, setSeriesState] = useState([]);
 
   const { name } = getSeriesKeys(units, files);
   // console.log(seriesArray[0][0]);
   // console.log(seriesArray[0][0][name]);
-
   useEffect(() => {
     let stateCopy = [];
     seriesArray.forEach((d, i) => {
       stateCopy.push({
         name: d[0][name],
         key: d[0].key,
-        color: d3[colorScheme][i],
+        color: colorscale[colorScheme][i],
         yaxis: 'Y1',
         visible: true,
         highlighted: false

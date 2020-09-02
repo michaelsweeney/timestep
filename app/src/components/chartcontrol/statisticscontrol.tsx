@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import connect from '../../connect';
+import connect from '../../store/connect';
 
 import MultiSeries from '../multiseries'; // can't destructure for some reason
 import { getSeries } from '../sql';
@@ -20,7 +20,7 @@ const StatisticsControl = props => {
 
   const { containerDims, files, units } = props.session;
   const { seriesOptions } = props.views[viewID];
-  const { selectedSeries } = props.views[viewID];
+  const { selectedSeries, selectedSeriesLabel } = props.views[viewID];
   const optionArray = Object.keys(seriesOptions);
 
   const controlsVisibleHeight = 150;
@@ -60,6 +60,7 @@ const StatisticsControl = props => {
   const handleSeriesSelect = (e, v) => {
     let keys = v.map(d => seriesOptions[d]);
     props.actions.changeSelectedSeries(keys, viewID);
+    props.actions.changeSelectedSeriesLabel(v, viewID);
   };
 
   useEffect(() => {
@@ -106,6 +107,7 @@ const StatisticsControl = props => {
       >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <MultiSeries
+            value={selectedSeriesLabel}
             seriesCallback={handleSeriesSelect}
             series={optionArray}
           />

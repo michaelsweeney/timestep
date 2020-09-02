@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import { getSeriesKeys } from '../formatseries';
 
@@ -12,7 +12,7 @@ import {
   Paper
 } from '@material-ui/core';
 
-import * as d3 from 'd3';
+import { sum, max, min, mean, median, deviation } from 'd3';
 
 import { formatTabular } from '../numformat';
 
@@ -43,12 +43,12 @@ const Statistics = props => {
     let darray = s.map(d => d[seriesKeys.value]);
     statsarray.push({
       name: s[0][seriesKeys.name],
-      sum: d3.sum(darray),
-      max: d3.max(darray),
-      min: d3.min(darray),
-      mean: d3.mean(darray),
-      median: d3.median(darray),
-      stdev: d3.deviation(darray)
+      sum: sum(darray),
+      max: max(darray),
+      min: min(darray),
+      mean: mean(darray),
+      median: median(darray),
+      stdev: deviation(darray)
     });
   });
 

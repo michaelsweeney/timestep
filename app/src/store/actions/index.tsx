@@ -68,6 +68,14 @@ export function changeSelectedSeries(key, viewID) {
   };
 }
 
+export function changeSelectedSeriesLabel(key, viewID) {
+  return {
+    type: 'CHANGE_SELECTED_SERIES_LABEL',
+    payload: key,
+    viewID: viewID
+  };
+}
+
 export function setSeriesOptions(options, viewID) {
   return {
     type: 'SET_SERIES_OPTIONS',

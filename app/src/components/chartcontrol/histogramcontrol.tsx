@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import connect from '../../connect';
+import connect from '../../store/connect';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sql';
@@ -19,7 +19,7 @@ const HistogramControl = props => {
   const { viewID } = props;
   const { containerDims, files, units } = props.session;
   const { seriesOptions } = props.views[viewID];
-  const { selectedSeries } = props.views[viewID];
+  const { selectedSeries, selectedSeriesLabel } = props.views[viewID];
   const optionArray = Object.keys(seriesOptions);
 
   const [seriesData, setSeriesData] = useState([]);
@@ -70,6 +70,7 @@ const HistogramControl = props => {
   }, [props.dims, controlsHeight]);
 
   const handleSeriesSelect = (e, v) => {
+    props.actions.changeSelectedSeriesLabel(v, viewID);
     props.actions.changeSelectedSeries(seriesOptions[v], viewID);
   };
   useEffect(() => {
@@ -128,6 +129,7 @@ const HistogramControl = props => {
       >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <SeriesSelect
+            value={selectedSeriesLabel}
             seriesCallback={handleSeriesSelect}
             series={optionArray}
           />

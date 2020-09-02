@@ -1,6 +1,6 @@
 import React from 'react';
 import { Radio, InputLabel } from '@material-ui/core';
-import connect from '../connect';
+import connect from '../store/connect';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(

@@ -3,7 +3,7 @@ import { Select, InputLabel, MenuItem } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
 
-import connect from '../connect';
+import connect from '../store/connect';
 
 const useStyles = makeStyles(
   {

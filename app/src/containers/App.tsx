@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
-import connect from '../connect';
+import connect from '../store/connect';
 import { makeStyles } from '@material-ui/core/styles';
 import Sidebar from '../components/sidebar';
 import Views from '../components/views';
@@ -60,22 +60,54 @@ const App = props => {
     let p = {
       files: ['/Users/michaelsweeney/Documents/energyplus files/sim1.sql'],
       view: 1,
-      viewType: 'Heatmap',
-      units: 'ip',
-      key: '/Users/michaelsweeney/Documents/energyplus files/sim1.sql,6'
+      viewType: 'Scatter',
+      timestepType: 'Hourly',
+      units: 'si',
+      // key: '/Users/michaelsweeney/Documents/energyplus files/sim1.sql,6',
+      // label: 'Environment: Site Outdoor Air Drybulb Temperature (F) - Hourly'
+      key: {
+        X: '/Users/michaelsweeney/Documents/energyplus files/sim1.sql,26',
+        Y: '/Users/michaelsweeney/Documents/energyplus files/sim1.sql,26',
+        Z: '/Users/michaelsweeney/Documents/energyplus files/sim1.sql,18'
+      },
+      label: {
+        X:
+          'sim1, Environment: Site Diffuse Solar Radiation Rate per Area (W/m2) - Hourly',
+        Y:
+          'sim1, Environment: Site Diffuse Solar Radiation Rate per Area (W/m2) - Hourly',
+        Z: 'sim1, Environment: Site Wind Speed (m/s) - Hourly'
+      }
     };
-    console.log(p);
+
+    // multiline
+    p = {
+      files: ['/Users/michaelsweeney/Documents/energyplus files/sim1.sql'],
+      view: 1,
+      viewType: 'MultiLine',
+      timestepType: 'Hourly',
+      units: 'si',
+      key: [
+        '/Users/michaelsweeney/Documents/energyplus files/sim1.sql,6',
+        '/Users/michaelsweeney/Documents/energyplus files/sim1.sql,10'
+      ],
+      label: [
+        'Environment: Site Outdoor Air Drybulb Temperature (C) - Hourly',
+        'Environment: Site Outdoor Air Dewpoint Temperature (C) - Hourly'
+      ]
+    };
+
     props.actions.changeFiles(p.files);
     props.actions.changeUnits(p.units);
+    props.actions.changeTimestepType(p.timestepType, p.view);
     props.actions.changeViewType(p.viewType, p.view);
     props.actions.changeSelectedSeries(p.key, p.view);
+    props.actions.changeSelectedSeriesLabel(p.label, p.view);
   };
 
   return (
     <StylesProvider generateClassName={generateClassName}>
       <div className={classes.root}>
         <Sidebar handleTestLoad={handleTestLoad} />
-
         <Views />
       </div>
     </StylesProvider>

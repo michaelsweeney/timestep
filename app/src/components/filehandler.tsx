@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { remote } from 'electron';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import connect from '../connect';
+import connect from '../store/connect';
 
 const useStyles = makeStyles(
   {

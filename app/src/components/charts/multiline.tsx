@@ -5,7 +5,23 @@ import { multilinedims } from './chartdimensions';
 import { NoSelectionContainer } from './noselectioncontainer';
 import { getSeriesKeys } from '../formatseries';
 
-import * as d3 from 'd3';
+import {
+  scaleLinear,
+  select,
+  selectAll,
+  axisLeft,
+  axisBottom,
+  axisRight,
+  extent,
+  scaleTime,
+  bisector,
+  mouse,
+  event,
+  zoomIdentity,
+  line,
+  brushX,
+  zoom
+} from 'd3';
 
 const MultiLine = props => {
   const container = useRef(null);
@@ -102,15 +118,15 @@ const MultiLine = props => {
     });
 
     yconfig.y1 = {
-      min: d3.extent(y1vals)[0],
-      max: d3.extent(y1vals)[1],
+      min: extent(y1vals)[0],
+      max: extent(y1vals)[1],
       units: y1units,
       active: yconfig.y1.active
     };
 
     yconfig.y2 = {
-      min: d3.extent(y2vals)[0],
-      max: d3.extent(y2vals)[1],
+      min: extent(y2vals)[0],
+      max: extent(y2vals)[1],
       units: y2units,
       active: yconfig.y2.active
     };
@@ -119,8 +135,7 @@ const MultiLine = props => {
   const createChart = () => {
     let clipid = Math.floor(Math.random() * 1e6) + '-clip';
 
-    const svg = d3
-      .select(container.current)
+    const svg = select(container.current)
       .selectAll('svg')
       .data([0])
       .join('svg');
@@ -129,37 +144,32 @@ const MultiLine = props => {
 
     let times = [];
 
-    console.log(seriesArray);
-
     seriesArray.forEach(s => s.forEach(d => times.push(d.time)));
 
-    let xdomain = zoomDomain.length == 0 ? d3.extent(times) : zoomDomain;
+    let xdomain = zoomDomain.length == 0 ? extent(times) : zoomDomain;
 
-    const xScale = d3.scaleTime().range([0, plotwidth]);
-    const contextXScale = d3
-      .scaleTime()
+    const xScale = scaleTime().range([0, plotwidth]);
+    const contextXScale = scaleTime()
       .range([0, plotwidth])
-      .domain(d3.extent(times));
+      .domain(extent(times));
 
     xScale.domain(xdomain);
 
-    const yScale1 = d3
-      .scaleLinear()
+    const yScale1 = scaleLinear()
       .range([plotheight, 0])
       .domain([yconfig.y1.min, yconfig.y1.max * (1 + ytoppad)]);
 
-    const yScale2 = d3
-      .scaleLinear()
+    const yScale2 = scaleLinear()
       .range([plotheight, 0])
       .domain([yconfig.y2.min, yconfig.y2.max * (1 + ytoppad)]);
 
     const yAxis1Format = formatDomain([yconfig.y1.min, yconfig.y1.max]);
     const yAxis2Format = formatDomain([yconfig.y2.min, yconfig.y2.max]);
 
-    const xAxis = d3.axisBottom(xScale);
-    const contextXAxis = d3.axisBottom(contextXScale);
-    const yAxis1 = d3.axisLeft(yScale1).tickFormat(yAxis1Format);
-    const yAxis2 = d3.axisRight(yScale2).tickFormat(yAxis2Format);
+    const xAxis = axisBottom(xScale);
+    const contextXAxis = axisBottom(contextXScale);
+    const yAxis1 = axisLeft(yScale1).tickFormat(yAxis1Format);
+    const yAxis2 = axisRight(yScale2).tickFormat(yAxis2Format);
 
     const defs = svg
       .selectAll('defs')
@@ -235,13 +245,11 @@ const MultiLine = props => {
       svg.selectAll('.yaxis2g').remove();
     }
 
-    const lineY1 = d3
-      .line()
+    const lineY1 = line()
       .x(d => xScale(d.time))
       .y(d => yScale1(d[seriesKeys.value]));
 
-    const lineY2 = d3
-      .line()
+    const lineY2 = line()
       .x(d => xScale(d.time))
       .y(d => yScale2(d[seriesKeys.value]));
 
@@ -370,8 +378,7 @@ const MultiLine = props => {
       .attr('r', 3)
       .style('opacity', 0);
 
-    const tooltip = d3
-      .select(container.current)
+    const tooltip = select(container.current)
       .selectAll('.tooltip')
       .data(seriesArray)
       .join('div')
@@ -396,9 +403,9 @@ const MultiLine = props => {
     }
 
     function mouseMove(e) {
-      let xpos = xScale.invert(d3.mouse(this)[0]);
+      let xpos = xScale.invert(mouse(this)[0]);
 
-      let bisectDate = d3.bisector(function(d) {
+      let bisectDate = bisector(function(d) {
         return d.time;
       }).left;
 
@@ -414,7 +421,7 @@ const MultiLine = props => {
 
         let point = deltaleft < deltaright ? pointleft : pointright;
 
-        let marker = d3.select(markers.nodes()[i]);
+        let marker = select(markers.nodes()[i]);
         pointarray.push(d[idx]);
         marker
           .attr('cx', () => xScale(point.time))
@@ -503,16 +510,14 @@ const MultiLine = props => {
       .attr('x', 0)
       .attr('y', 0);
 
-    const brush = d3
-      .brushX()
+    const brush = brushX()
       .extent([
         [0, 0],
         [contextwidth, contextheight]
       ])
       .on('brush end', brushed);
 
-    const zoom = d3
-      .zoom()
+    const zoomFunc = zoom()
       .scaleExtent([1, Infinity])
       .translateExtent([
         [0, 0],
@@ -532,8 +537,8 @@ const MultiLine = props => {
     }
 
     function brushed() {
-      if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'zoom') return; // ignore brush-by-zoom
-      var s = d3.event.selection || contextXScale.range();
+      if (event.sourceEvent && event.sourceEvent.type === 'zoom') return; // ignore brush-by-zoom
+      var s = event.selection || contextXScale.range();
       let xdomain = s.map(contextXScale.invert, contextXScale);
       xScale.domain(xdomain);
       plotg.selectAll('.series-line').attr('d', (d, i) => {
@@ -548,16 +553,16 @@ const MultiLine = props => {
       hoverg
         .select('.hover-rect')
         .call(
-          zoom.transform,
-          d3.zoomIdentity.scale(plotwidth / (s[1] - s[0])).translate(-s[0], 0)
+          zoomFunc.transform,
+          zoomIdentity.scale(plotwidth / (s[1] - s[0])).translate(-s[0], 0)
         );
 
       zoomCallback(xdomain);
     }
 
     function zoomed() {
-      if (d3.event.sourceEvent && d3.event.sourceEvent.type === 'brush') return; // ignore zoom-by-brush
-      var t = d3.event.transform;
+      if (event.sourceEvent && event.sourceEvent.type === 'brush') return; // ignore zoom-by-brush
+      var t = event.transform;
       let xdomain = t.rescaleX(contextXScale).domain();
       xScale.domain(xdomain);
       plotg.selectAll('.series-line').attr('d', (d, i) => {
@@ -596,7 +601,7 @@ const MultiLine = props => {
       .on('mousemove', mouseMove)
       .on('mouseout', mouseOut)
       .on('mouseover', mouseOver)
-      .call(zoom);
+      .call(zoomFunc);
   };
 
   if (seriesArray.length == 0) {

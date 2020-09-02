@@ -1,7 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import * as d3 from 'd3';
+import {
+  scaleLinear,
+  select,
+  selectAll,
+  axisLeft,
+  axisBottom,
+  axisRight,
+  event,
+  brush
+} from 'd3';
 
+import colorscale from '../colorscaleindex';
 import { formatDomain, formatDate } from '../numformat';
 import { D3Container } from './d3container';
 import { idealSplit } from '../textformat';
@@ -71,7 +81,7 @@ const Scatter = props => {
   ]);
 
   const createColorScale = () => {
-    const colorScale = d3.scaleLinear().range([0, 1]);
+    const colorScale = scaleLinear().range([0, 1]);
     if (!reversecolor) {
       colorScale.domain([zminrange, zmaxrange]);
     } else {
@@ -93,8 +103,7 @@ const Scatter = props => {
     const plotwidth = width - margins.l - margins.r;
     const plotheight = height - margins.t - margins.b;
 
-    const svg = d3
-      .select(container.current)
+    const svg = select(container.current)
       .selectAll('svg')
       .data([0])
       .join('svg');
@@ -111,8 +120,7 @@ const Scatter = props => {
       .attr('transform', `translate(${margins.l}, ${margins.t})`)
       .attr('clip-path', `url(#${clipid})`);
 
-    const brush = d3
-      .brush()
+    const brushFunc = brush()
       .extent([
         [0, 0],
         [plotwidth, plotheight]
@@ -124,13 +132,13 @@ const Scatter = props => {
       .data([0])
       .join('g')
       .attr('class', 'brush')
-      .call(brush);
+      .call(brushFunc);
 
     /* SCALES */
 
-    const xScale = d3.scaleLinear().range([0, plotwidth]);
+    const xScale = scaleLinear().range([0, plotwidth]);
 
-    const yScale = d3.scaleLinear().range([plotheight, 0]);
+    const yScale = scaleLinear().range([plotheight, 0]);
     if (!isZoomed) {
       xScale.domain([xminrange, xmaxrange]);
       yScale.domain([yminrange, ymaxrange]);
@@ -140,7 +148,7 @@ const Scatter = props => {
     }
 
     const colorScale = createColorScale();
-    const colorFunc = d3[colorfunc];
+    const colorFunc = colorscale[colorfunc];
 
     /* HANDLE DATA */
 
@@ -205,7 +213,7 @@ const Scatter = props => {
     const yAxisFormat = formatDomain([yminrange, ymaxrange]);
     const clrAxisFormat = formatDomain([zminrange, zmaxrange]);
 
-    const xAxis = d3.axisBottom(xScale).tickFormat(xAxisFormat);
+    const xAxis = axisBottom(xScale).tickFormat(xAxisFormat);
 
     const xaxisg = svg
       .selectAll('.xaxisg')
@@ -215,7 +223,7 @@ const Scatter = props => {
       .attr('transform', `translate(${margins.l},${plotheight + margins.t})`)
       .call(xAxis);
 
-    const yAxis = d3.axisLeft(yScale).tickFormat(yAxisFormat);
+    const yAxis = axisLeft(yScale).tickFormat(yAxisFormat);
     const yaxisg = svg
       .selectAll('.yaxisg')
       .data([0])
@@ -320,13 +328,11 @@ const Scatter = props => {
       .attr('class', 'color-gradient');
 
     const colorlegendheight = plotheight / 1.5;
-    const colorlegendscale = d3
-      .scaleLinear()
+    const colorlegendscale = scaleLinear()
       .range([colorlegendheight, 0])
       .domain([zminrange, zmaxrange]);
 
-    const colorLegendAxis = d3
-      .axisRight()
+    const colorLegendAxis = axisRight()
       .scale(colorlegendscale)
       .ticks(5)
       .tickFormat(clrAxisFormat);
@@ -393,8 +399,7 @@ const Scatter = props => {
 
     /* TOOLTIP */
 
-    let tooltipdiv = d3
-      .select(container.current)
+    let tooltipdiv = select(container.current)
       .selectAll('.tooltip')
       .data([0])
       .join('div')
@@ -448,7 +453,7 @@ const Scatter = props => {
     }
 
     function brushended() {
-      let s = d3.event.selection;
+      let s = event.selection;
       if (!s) {
         if (!idleTimeout) return (idleTimeout = setTimeout(idled, idleDelay));
         xScale.domain([xminrange, xmaxrange]);
@@ -464,7 +469,7 @@ const Scatter = props => {
           x: xzoom,
           y: yzoom
         });
-        plotg.select('.brush').call(brush.move, null);
+        plotg.select('.brush').call(brushFunc.move, null);
       }
       zoom();
     }

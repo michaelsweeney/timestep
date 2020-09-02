@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import * as d3 from 'd3';
+import {
+  scaleLinear,
+  select,
+  selectAll,
+  axisLeft,
+  axisBottom,
+  axisRight
+} from 'd3';
+
+import colorscale from '../colorscaleindex';
+
 import { formatDate, formatDomain } from '../numformat';
 import { D3Container } from './d3container';
 import { heatmapdims } from './chartdimensions';
@@ -33,7 +43,7 @@ const Heatmap = props => {
 
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
   const unitkey = units == 'ip' ? 'units_ip' : 'units_si';
-  const colorFunc = d3[colorfunc];
+  const colorFunc = colorscale[colorfunc];
 
   useEffect(() => {
     createChart();
@@ -44,7 +54,7 @@ const Heatmap = props => {
   }, [colorfunc, reversecolor, minrange, maxrange]);
 
   const createColorScale = () => {
-    const colorScale = d3.scaleLinear().range([0, 1]);
+    const colorScale = scaleLinear().range([0, 1]);
     if (!reversecolor) {
       colorScale.domain([minrange, maxrange]);
     } else {
@@ -64,20 +74,17 @@ const Heatmap = props => {
     const rectwidth = plotwidth / 365;
     const rectheight = plotheight / 23;
 
-    const xScale = d3
-      .scaleLinear()
+    const xScale = scaleLinear()
       .domain([0, 365])
       .range([0, plotwidth]);
 
-    const yScale = d3
-      .scaleLinear()
+    const yScale = scaleLinear()
       .domain([0, 24])
       .range([0, plotheight]);
 
     const colorScale = createColorScale();
 
-    const svg = d3
-      .select(container.current)
+    const svg = select(container.current)
       .selectAll('svg')
       .data([0])
       .join('svg');
@@ -138,12 +145,11 @@ const Heatmap = props => {
     });
     const formatMonth = d => monthobj[d];
 
-    const xAxis = d3
-      .axisBottom(xScale)
+    const xAxis = axisBottom(xScale)
       .ticks(11)
       .tickFormat(formatMonth);
 
-    const yAxis = d3.axisLeft(yScale).ticks(24);
+    const yAxis = axisLeft(yScale).ticks(24);
     const xaxisg = svg
       .selectAll('.x-axis-g')
       .data([0])
@@ -239,8 +245,7 @@ const Heatmap = props => {
       .text(() => title);
 
     /* TOOLTIP */
-    let tooltipdiv = d3
-      .select(container.current)
+    let tooltipdiv = select(container.current)
       .selectAll('.tooltip')
       .data([0])
       .join('div')
@@ -278,13 +283,11 @@ const Heatmap = props => {
       .attr('class', 'color-gradient');
 
     const colorlegendheight = plotheight / 1.5;
-    const colorlegendscale = d3
-      .scaleLinear()
+    const colorlegendscale = scaleLinear()
       .range([colorlegendheight, 0])
       .domain([minrange, maxrange]);
 
-    const colorLegendAxis = d3
-      .axisRight()
+    const colorLegendAxis = axisRight()
       .scale(colorlegendscale)
       .ticks(5)
       .tickFormat(clrAxisFormat);

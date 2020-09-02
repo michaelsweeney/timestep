@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { formatDomain } from '../numformat';
-import * as d3 from 'd3';
+import {
+  scaleLinear,
+  select,
+  selectAll,
+  axisLeft,
+  axisBottom,
+  axisRight,
+  histogram,
+  max
+} from 'd3';
+
 import { D3Container } from './d3container';
 import { histogramdims } from './chartdimensions';
 import { NoSelectionContainer } from './noselectioncontainer';
@@ -39,8 +49,7 @@ const Histogram = props => {
     const plotheight = height - margins.t - margins.b;
 
     /* SVG SETUP */
-    const svg = d3
-      .select(container.current)
+    const svg = select(container.current)
       .selectAll('svg')
       .data([0])
       .join('svg');
@@ -57,22 +66,20 @@ const Histogram = props => {
       .on('mouseout', handleMouseout);
 
     /* SCALES */
-    const xScale = d3
-      .scaleLinear()
+    const xScale = scaleLinear()
       .range([0, plotwidth])
       .domain([binmin, binmax]);
 
-    const yScale = d3.scaleLinear().range([plotheight, 0]);
+    const yScale = scaleLinear().range([plotheight, 0]);
 
-    const histogram = d3
-      .histogram()
+    const makeHistogram = histogram()
       .value(d => d[valkey])
       .domain(xScale.domain())
       .thresholds(xScale.ticks(numbins));
 
-    const bins = histogram(series);
+    const bins = makeHistogram(series);
 
-    const ymax = d3.max(bins.map(d => d.length));
+    const ymax = max(bins.map(d => d.length));
 
     yScale.domain([0, ymax]);
 
@@ -90,19 +97,18 @@ const Histogram = props => {
       .attr('width', d => Math.abs(xScale(d.x1) - xScale(d.x0)) * 0.95)
       .attr('height', d => plotheight - yScale(d.length))
       .on('mouseover', (d, i, nodes) => {
-        d3.select(nodes[i]).style('opacity', 0.8);
+        select(nodes[i]).style('opacity', 0.8);
         handleMouseover(d);
       })
       .on('mouseout', (d, i, nodes) => {
-        d3.select(nodes[i]).style('opacity', 1.0);
+        select(nodes[i]).style('opacity', 1.0);
       });
 
     /* AXES */
 
     const xDomainFunc = formatDomain([binmin, binmax]);
 
-    const xAxis = d3
-      .axisBottom(xScale)
+    const xAxis = axisBottom(xScale)
       .ticks(numbins)
       .tickFormat(xDomainFunc);
 
@@ -114,7 +120,7 @@ const Histogram = props => {
       .attr('transform', `translate(${margins.l} ,  ${margins.t + plotheight})`)
       .call(xAxis);
 
-    const yAxis = d3.axisLeft(yScale);
+    const yAxis = axisLeft(yScale);
 
     const yAxis_container = svg
       .selectAll('.yaxisg')
@@ -188,8 +194,7 @@ const Histogram = props => {
       .text(title);
 
     /* TOOLTIP */
-    let tooltipdiv = d3
-      .select(container.current)
+    let tooltipdiv = select(container.current)
       .selectAll('.tooltip')
       .data([0])
       .join('div')

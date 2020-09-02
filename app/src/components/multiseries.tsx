@@ -120,6 +120,7 @@ export default function MultiSeries(props) {
   return (
     <div className={classes.root}>
       <Autocomplete
+        value={props.value ? props.value : []}
         onClose={() => {
           if (props.dispatchClose) {
             props.dispatchClose();

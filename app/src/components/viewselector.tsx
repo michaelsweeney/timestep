@@ -3,7 +3,7 @@ import React from 'react';
 import { Tabs, Tab, InputLabel } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
-import connect from '../connect';
+import connect from '../store/connect';
 
 const useStyles = makeStyles(
   {
@@ -48,6 +48,7 @@ const ViewSelector = props => {
 
   const handleViewChange = el => {
     props.actions.changeSelectedSeries([], tempViewID);
+    props.actions.changeSelectedSeriesLabel(null, tempViewID);
     props.actions.changeViewType(el, tempViewID);
   };
 

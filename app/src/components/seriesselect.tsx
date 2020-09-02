@@ -129,6 +129,7 @@ export default function SeriesSelect(props) {
         ListboxComponent={ListboxComponent}
         renderGroup={renderGroup}
         options={options}
+        value={props.value}
         renderInput={params => (
           <TextField
             {...params}

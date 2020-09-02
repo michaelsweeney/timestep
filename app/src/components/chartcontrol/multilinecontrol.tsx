@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import connect from '../../connect';
+import connect from '../../store/connect';
 
 import MultiSeries from '../multiseries'; // can't destructure for some reason
 import { getSeries } from '../sql';
@@ -22,7 +22,7 @@ const MultiLineControl = props => {
 
   const { containerDims, files, units } = props.session;
   const { seriesOptions } = props.views[viewID];
-  const { selectedSeries } = props.views[viewID];
+  const { selectedSeries, selectedSeriesLabel } = props.views[viewID];
   const optionArray = Object.keys(seriesOptions);
 
   const [colorScheme, setColorScheme] = useState('schemeTableau10');
@@ -73,6 +73,7 @@ const MultiLineControl = props => {
   const handleSeriesSelect = (e, v) => {
     let keys = v.map(d => seriesOptions[d]);
     props.actions.changeSelectedSeries(keys, viewID);
+    props.actions.changeSelectedSeriesLabel(v, viewID);
   };
 
   useEffect(() => {
@@ -139,6 +140,7 @@ const MultiLineControl = props => {
       >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <MultiSeries
+            value={selectedSeriesLabel}
             dispatchClose={handleSelectClose}
             seriesCallback={handleSeriesSelect}
             series={optionArray}

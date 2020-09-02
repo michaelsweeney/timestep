@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import connect from '../connect';
+import connect from '../store/connect';
+
 import {
   Button,
   Table,

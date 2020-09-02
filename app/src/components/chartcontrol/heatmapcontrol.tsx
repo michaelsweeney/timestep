@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import connect from '../../connect';
+import connect from '../../store/connect';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sql';
@@ -21,7 +21,7 @@ const HeatmapControl = props => {
   const { viewID } = props;
   const { containerDims, files, units } = props.session;
   const { seriesOptions } = props.views[viewID];
-  const { selectedSeries } = props.views[viewID];
+  const { selectedSeries, selectedSeriesLabel } = props.views[viewID];
   const optionArray = Object.keys(seriesOptions);
 
   // local state
@@ -74,10 +74,9 @@ const HeatmapControl = props => {
     if (selectedSeries.length != 0) {
       setIsLoading(true);
       getSeries(selectedSeries).then(d => {
-        console.log(d);
         setSeriesData(d);
         const getMaxMin = series => {
-          const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
+          const valkey = units == 'ip' ? 'value_ip' : 'value_si';
           let min = Math.min(...series.map(d => d[valkey]));
           let max = Math.max(...series.map(d => d[valkey]));
           return [min, max];
@@ -93,6 +92,7 @@ const HeatmapControl = props => {
   }, [selectedSeries]);
 
   const handleSeriesSelect = (e, v) => {
+    props.actions.changeSelectedSeriesLabel(v, viewID);
     props.actions.changeSelectedSeries(seriesOptions[v], viewID);
   };
 
@@ -135,6 +135,7 @@ const HeatmapControl = props => {
       >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <SeriesSelect
+            value={selectedSeriesLabel}
             seriesCallback={handleSeriesSelect}
             series={optionArray}
           />

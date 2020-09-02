@@ -3,9 +3,10 @@ const initialState = {
     viewID: 1,
     label: 'View 1',
     timestepType: 'Hourly',
-    viewType: 'Statistics',
+    viewType: 'Heatmap',
     seriesOptions: [],
-    selectedSeries: []
+    selectedSeries: [],
+    selectedSeriesLabel: null
   }
 };
 
@@ -34,6 +35,14 @@ export default function viewReducer(state = initialState, action) {
         [action.viewID]: {
           ...state[action.viewID],
           selectedSeries: action.payload
+        }
+      };
+    case 'CHANGE_SELECTED_SERIES_LABEL':
+      return {
+        ...state,
+        [action.viewID]: {
+          ...state[action.viewID],
+          selectedSeriesLabel: action.payload
         }
       };
     case 'SET_SERIES_OPTIONS':

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import connect from '../connect';
+import connect from '../store/connect';
 import ViewTypeControl from './viewtypecontrol';
 
 const Views = props => {

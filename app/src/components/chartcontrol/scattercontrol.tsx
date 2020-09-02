@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useStyles } from 'react';
-import connect from '../../connect';
+import connect from '../../store/connect';
 
 import SeriesSelect from '../seriesselect'; // can't destructure for some reason
 import { getSeries } from '../sql';
@@ -21,11 +21,21 @@ const ScatterControl = props => {
   const { viewID } = props;
   const { containerDims, files, units } = props.session;
   const { seriesOptions } = props.views[viewID];
-  const { selectedSeries } = props.views[viewID];
+  const { selectedSeries, selectedSeriesLabel } = props.views[viewID];
 
   const selectedXSeries = selectedSeries.X || [];
   const selectedYSeries = selectedSeries.Y || [];
   const selectedZSeries = selectedSeries.Z || [];
+
+  const selectedXSeriesLabel = selectedSeriesLabel
+    ? selectedSeriesLabel.X
+    : null;
+  const selectedYSeriesLabel = selectedSeriesLabel
+    ? selectedSeriesLabel.Y
+    : null;
+  const selectedZSeriesLabel = selectedSeriesLabel
+    ? selectedSeriesLabel.Z
+    : null;
 
   const [xSeriesData, setXSeriesData] = useState([]);
   const [ySeriesData, setYSeriesData] = useState([]);
@@ -120,6 +130,14 @@ const ScatterControl = props => {
       },
       viewID
     );
+    props.actions.changeSelectedSeriesLabel(
+      {
+        X: v,
+        Y: selectedYSeriesLabel,
+        Z: selectedZSeriesLabel
+      },
+      viewID
+    );
   };
 
   // y series handler
@@ -142,6 +160,14 @@ const ScatterControl = props => {
         X: selectedXSeries,
         Y: seriesOptions[v],
         Z: selectedZSeries
+      },
+      viewID
+    );
+    props.actions.changeSelectedSeriesLabel(
+      {
+        X: selectedXSeriesLabel,
+        Y: v,
+        Z: selectedZSeriesLabel
       },
       viewID
     );
@@ -169,6 +195,14 @@ const ScatterControl = props => {
         X: selectedXSeries,
         Y: selectedYSeries,
         Z: seriesOptions[v]
+      },
+      viewID
+    );
+    props.actions.changeSelectedSeriesLabel(
+      {
+        X: selectedXSeriesLabel,
+        Y: selectedYSeriesLabel,
+        Z: v
       },
       viewID
     );
@@ -223,16 +257,19 @@ const ScatterControl = props => {
       >
         <ControlsContent tag="tab-series" tabname="Series Select">
           <SeriesSelect
+            value={selectedXSeriesLabel}
             seriesCallback={handleXSeriesSelect}
             series={optionArray}
             title={'Select X Series'}
           />
           <SeriesSelect
+            value={selectedYSeriesLabel}
             seriesCallback={handleYSeriesSelect}
             series={optionArray}
             title={'Select Y Series'}
           />
           <SeriesSelect
+            value={selectedZSeriesLabel}
             seriesCallback={handleZSeriesSelect}
             series={optionArray}
             title={'Select Color Series'}
