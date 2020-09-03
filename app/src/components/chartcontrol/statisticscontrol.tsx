@@ -90,7 +90,7 @@ const StatisticsControl = props => {
         }
       });
     }
-  }, [selectedSeries]);
+  }, [selectedSeries, units]);
 
   return (
     <>

@@ -93,7 +93,7 @@ const HistogramControl = props => {
         setIsLoading(false);
       });
     }
-  }, [selectedSeries]);
+  }, [selectedSeries, units]);
 
   let numbins = 10;
 

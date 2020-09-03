@@ -119,7 +119,7 @@ const ScatterControl = props => {
         setIsLoadingX(false);
       });
     }
-  }, [selectedXSeries]);
+  }, [selectedXSeries, units]);
 
   const handleXSeriesSelect = (e, v) => {
     props.actions.changeSelectedSeries(
@@ -152,7 +152,7 @@ const ScatterControl = props => {
         setIsLoadingY(false);
       });
     }
-  }, [selectedYSeries]);
+  }, [selectedYSeries, units]);
 
   const handleYSeriesSelect = (e, v) => {
     props.actions.changeSelectedSeries(
@@ -187,7 +187,7 @@ const ScatterControl = props => {
         setIsLoadingZ(false);
       });
     }
-  }, [selectedZSeries]);
+  }, [selectedZSeries, units]);
 
   const handleZSeriesSelect = (e, v) => {
     props.actions.changeSelectedSeries(

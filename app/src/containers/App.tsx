@@ -96,6 +96,17 @@ const App = props => {
       ]
     };
 
+    // heatmap
+    p = {
+      files: ['/Users/michaelsweeney/Documents/energyplus files/sim1.sql'],
+      view: 1,
+      viewType: 'Heatmap',
+      timestepType: 'Hourly',
+      units: 'ip',
+      key: '/Users/michaelsweeney/Documents/energyplus files/sim1.sql,6',
+      label: 'Environment: Site Outdoor Air Drybulb Temperature (C) - Hourly'
+    };
+
     props.actions.changeFiles(p.files);
     props.actions.changeUnits(p.units);
     props.actions.changeTimestepType(p.timestepType, p.view);

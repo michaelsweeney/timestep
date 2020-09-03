@@ -73,15 +73,21 @@ const HeatmapControl = props => {
   useEffect(() => {
     if (selectedSeries.length != 0) {
       setIsLoading(true);
+      console.log(selectedSeries);
       getSeries(selectedSeries).then(d => {
+        console.log(d);
         setSeriesData(d);
         const getMaxMin = series => {
           const valkey = units == 'ip' ? 'value_ip' : 'value_si';
+          console.log(valkey);
+
           let min = Math.min(...series.map(d => d[valkey]));
           let max = Math.max(...series.map(d => d[valkey]));
           return [min, max];
         };
         let [min, max] = getMaxMin(d);
+
+        console.log(min, max);
         setMinRange(min);
         setMaxRange(max);
         setMinData(min);
@@ -89,7 +95,7 @@ const HeatmapControl = props => {
         setIsLoading(false);
       });
     }
-  }, [selectedSeries]);
+  }, [selectedSeries, units]);
 
   const handleSeriesSelect = (e, v) => {
     props.actions.changeSelectedSeriesLabel(v, viewID);
