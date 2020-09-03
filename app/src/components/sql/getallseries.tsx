@@ -1,12 +1,13 @@
 import fs from 'fs';
 import sqlite3 from 'sqlite3';
-import { dbProto } from './dbproto';
+// import { dbProto } from './dbproto';
 import { unitdict, unitconvert } from './conversions';
 import { checkArray } from './checkarray';
 import { readBnd } from './readbnd';
+import bettersqlite from 'better-sqlite3';
 
 async function getAllSeries(sqlfiles) {
-  dbProto();
+  // dbProto();
   checkArray(sqlfiles);
   let loadedobj = [];
   for (let i = 0; i < sqlfiles.length; i++) {
@@ -20,10 +21,11 @@ async function getAllSeries(sqlfiles) {
       bnd_dict = readBnd(bndfile);
     }
 
-    let db = new sqlite3.Database(sqlfile);
     let query = `SELECT * FROM ReportDataDictionary`;
 
-    let result = await db.allAsync(query);
+    let db = bettersqlite(sqlfile);
+    let result = await db.prepare(query).all();
+
     result.forEach(orig_row => {
       let row = { ...orig_row };
       let key = sqlfile + ',' + row.ReportDataDictionaryIndex;

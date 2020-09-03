@@ -1,9 +1,9 @@
-import sqlite3 from 'sqlite3';
-import { dbProto } from './dbproto';
 import { getSeriesIndex } from './getseriesindex';
 import { unitconvert } from './conversions';
+
+import bettersqlite from 'better-sqlite3';
+
 async function getSeries(filetag) {
-  dbProto(); // establish async loadfiles
   let sqlfile = filetag.split(',')[0];
   let file_short = sqlfile
     .replace(/\\/g, '/')
@@ -20,7 +20,6 @@ async function getSeries(filetag) {
   let long_name_single_si = series_obj.name_si_single;
   let long_name_multi_si = series_obj.name_si_multi;
 
-  let db = new sqlite3.Database(sqlfile);
   let query_year =
     "SELECT ReportData.Value, ReportData.TimeIndex, Time.Year, Time.SimulationDays, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, Time.Interval, Time.DayType FROM 'ReportData' INNER JOIN Time ON ReportData.TimeIndex = Time.TimeIndex WHERE ReportData.ReportDataDictionaryIndex = " +
     idx;
@@ -28,11 +27,14 @@ async function getSeries(filetag) {
     "SELECT ReportData.Value, ReportData.TimeIndex, Time.Month, Time.Day, Time.SimulationDays, Time.Hour, Time.Minute, Time.Dst, Time.Interval, Time.DayType FROM 'ReportData' INNER JOIN Time ON ReportData.TimeIndex = Time.TimeIndex WHERE ReportData.ReportDataDictionaryIndex = " +
     idx;
   let result;
+
+  let db = bettersqlite(sqlfile);
+
   try {
-    result = await db.allAsync(query_year);
+    result = await db.prepare(query_year).all();
   } catch {
     console.log('no year');
-    result = await db.allAsync(query_noyear);
+    result = await db.prepare(query_noyear).all();
   }
 
   let data_array = [];

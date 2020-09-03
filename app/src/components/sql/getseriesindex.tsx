@@ -3,6 +3,7 @@ import sqlite3 from 'sqlite3';
 import { dbProto } from './dbproto';
 import { readBnd } from './readbnd';
 import { unitdict } from './conversions';
+
 async function getSeriesIndex(file, idx) {
   dbProto(); // establish async loadfiles
 
@@ -16,6 +17,9 @@ async function getSeriesIndex(file, idx) {
     bndexists = true;
     bnd_dict = readBnd(bndfile);
   }
+
+  // when using bettersqlite in this module, loading state becomes synchronous
+  // throughout app and spinner doesn't show up. use regular sqlite3 module for now.
 
   let result = await db.allAsync(query);
   let file_short = file

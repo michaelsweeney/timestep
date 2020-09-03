@@ -1,9 +1,10 @@
-import { dbProto } from './dbproto';
+// import { dbProto } from './dbproto';
 import fs from 'fs';
-import sqlite3 from 'sqlite3';
+// import sqlite3 from 'sqlite3';
+import bettersqlite from 'better-sqlite3';
 
 async function getFileSummary(sqlfiles) {
-  dbProto(); // establish async loadfiles
+  // dbProto(); // establish async loadfiles
   let filearray = [];
 
   for (let i = 0; i < sqlfiles.length; i++) {
@@ -11,12 +12,15 @@ async function getFileSummary(sqlfiles) {
     let bndexists = fs.existsSync(sqlfile.replace('.sql', '.bnd'))
       ? true
       : false;
-    let db = new sqlite3.Database(sqlfile);
 
-    let result = await db.allAsync("SELECT * FROM 'Simulations'");
-    let reports = await db.allAsync(
-      "SELECT ReportDataDictionaryIndex from 'ReportDataDictionary'"
-    );
+    let result_query = "SELECT * FROM 'Simulations'";
+    let reports_query =
+      "SELECT ReportDataDictionaryIndex from 'ReportDataDictionary'";
+
+    let db = bettersqlite(sqlfile);
+    let result = await db.prepare(result_query).all();
+    let reports = await db.prepare(reports_query).all();
+
     let fileobj = {
       filename: sqlfile,
       bndexists: bndexists,
