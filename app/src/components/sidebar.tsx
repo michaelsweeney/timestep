@@ -6,6 +6,9 @@ import UnitRadio from './unitradio';
 import TimeStepSelect from './timestepselect';
 import ViewSelector from './viewselector';
 import { Logo } from './logo';
+import SaveSession from './savesession';
+import LoadSession from './loadsession';
+
 import { InfoContainer } from './infocontainer';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -54,7 +57,8 @@ const Sidebar = props => {
         <Logo></Logo>
         <FileHandler />
         <FileList />
-        <button onClick={props.handleTestLoad}>Test Load</button>
+        <SaveSession />
+        <LoadSession />
         <div className={classes.lineBreak} />
         <UnitRadio />
         <TimeStepSelect />
