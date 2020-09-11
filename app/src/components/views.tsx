@@ -1,18 +1,15 @@
 import React from 'react';
 
 import connect from '../store/connect';
-import ViewTypeControl from './viewtypecontrol';
+import ChartTypeControl from './charttypecontrol';
 
 const Views = props => {
-  const { session, views } = props;
-  const { activeViewID } = session;
+  const { activeViewID, views } = props;
 
   const mappedViews = Object.values(views).map(view => {
     return (
-      <ViewTypeControl
-        style={{
-          display: () => (activeViewID == view.viewID ? 'inline-block' : 'none')
-        }}
+      <ChartTypeControl
+        viewActive={activeViewID == view.viewID ? true : false}
         key={view.viewID}
         viewID={view.viewID}
       />
@@ -23,7 +20,8 @@ const Views = props => {
 
 const mapStateToProps = state => {
   return {
-    ...state
+    views: state.views,
+    activeViewID: state.session.activeViewID
   };
 };
 

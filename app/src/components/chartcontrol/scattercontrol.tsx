@@ -12,20 +12,31 @@ import { ColorControl } from '../colorcontrol';
 import { CopySave } from '../copysave';
 
 const ScatterControl = props => {
-  const [isLoadingX, setIsLoadingX] = useState(false);
-  const [isLoadingY, setIsLoadingY] = useState(false);
-  const [isLoadingZ, setIsLoadingZ] = useState(false);
+  // const [isLoadingX, setIsLoadingX] = useState(false);
+  // const [isLoadingY, setIsLoadingY] = useState(false);
+  // const [isLoadingZ, setIsLoadingZ] = useState(false);
 
   const plotContainer = useRef(null);
 
   const { viewID } = props;
   const { containerDims, files, units } = props.session;
-  const { seriesOptions } = props.views[viewID];
-  const { selectedSeries, selectedSeriesLabel } = props.views[viewID];
+  const {
+    seriesOptions,
+    isLoading,
+    loadedObj,
+    selectedSeries,
+    selectedSeriesLabel
+  } = props.view;
 
-  const selectedXSeries = selectedSeries.X || [];
-  const selectedYSeries = selectedSeries.Y || [];
-  const selectedZSeries = selectedSeries.Z || [];
+  const selectedXSeries = selectedSeries.X || null;
+  const selectedYSeries = selectedSeries.Y || null;
+  const selectedZSeries = selectedSeries.Z || null;
+
+  const xSeriesData = loadedObj.X || [];
+  const ySeriesData = loadedObj.Y || [];
+  const zSeriesData = loadedObj.Z || [];
+
+  console.log(xSeriesData, ySeriesData, zSeriesData);
 
   const selectedXSeriesLabel = selectedSeriesLabel
     ? selectedSeriesLabel.X
@@ -36,10 +47,6 @@ const ScatterControl = props => {
   const selectedZSeriesLabel = selectedSeriesLabel
     ? selectedSeriesLabel.Z
     : null;
-
-  const [xSeriesData, setXSeriesData] = useState([]);
-  const [ySeriesData, setYSeriesData] = useState([]);
-  const [zSeriesData, setZSeriesData] = useState([]);
 
   const optionArray = Object.keys(seriesOptions);
 
@@ -66,8 +73,14 @@ const ScatterControl = props => {
   const controlsHiddenHeight = 50;
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
 
+  const minHeight = 200;
+  const minWidth = 200;
+
+  const [plotDims, setPlotDims] = useState({
+    width: minWidth,
+    height: minHeight
+  });
   const domainPad = 0.05;
 
   const toggleHideControlsTabs = () => {
@@ -92,13 +105,13 @@ const ScatterControl = props => {
 
   useEffect(() => {
     setPlotDims({
-      width: containerDims.width,
-      height: Math.max(containerDims.height - controlsHeight - 20, 50)
+      width: Math.max(containerDims.width, minWidth),
+      height: Math.max(containerDims.height - controlsHeight - 20, minHeight)
     });
   }, [containerDims, controlsHeight]);
 
   const getMaxMin = series => {
-    const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
+    const valkey = units == 'ip' ? 'value_ip' : 'value_si';
     let min = Math.min(...series.map(d => d[valkey]));
     let max = Math.max(...series.map(d => d[valkey]));
     let pad = (max - min) * domainPad;
@@ -107,24 +120,11 @@ const ScatterControl = props => {
     return [min, max];
   };
 
-  // x series handler
-  useEffect(() => {
-    if (selectedXSeries.length != 0) {
-      setIsLoadingX(true);
-      getSeries(selectedXSeries).then(d => {
-        setXSeriesData(d);
-        let [min, max] = getMaxMin(d);
-        setXMinRange(min);
-        setXMaxRange(max);
-        setIsLoadingX(false);
-      });
-    }
-  }, [selectedXSeries, units]);
-
   const handleXSeriesSelect = (e, v) => {
+    const xKey = seriesOptions[v];
     props.actions.changeSelectedSeries(
       {
-        X: seriesOptions[v],
+        X: xKey,
         Y: selectedYSeries,
         Z: selectedZSeries
       },
@@ -138,27 +138,22 @@ const ScatterControl = props => {
       },
       viewID
     );
+    props.actions.addKeyToQueue('X', viewID);
+    getSeries(xKey).then(d => {
+      props.actions.addToLoadedArray('X', d, viewID);
+      props.actions.removeKeyFromQueue('X', viewID);
+      let [min, max] = getMaxMin(d);
+      setXMinRange(min);
+      setXMaxRange(max);
+    });
   };
 
-  // y series handler
-  useEffect(() => {
-    if (selectedYSeries.length != 0) {
-      setIsLoadingY(true);
-      getSeries(selectedSeries.Y).then(d => {
-        setYSeriesData(d);
-        let [min, max] = getMaxMin(d);
-        setYMinRange(min);
-        setYMaxRange(max);
-        setIsLoadingY(false);
-      });
-    }
-  }, [selectedYSeries, units]);
-
   const handleYSeriesSelect = (e, v) => {
+    const yKey = seriesOptions[v];
     props.actions.changeSelectedSeries(
       {
         X: selectedXSeries,
-        Y: seriesOptions[v],
+        Y: yKey,
         Z: selectedZSeries
       },
       viewID
@@ -171,30 +166,23 @@ const ScatterControl = props => {
       },
       viewID
     );
+    props.actions.addKeyToQueue('Y', viewID);
+    getSeries(yKey).then(d => {
+      props.actions.addToLoadedArray('Y', d, viewID);
+      props.actions.removeKeyFromQueue('Y', viewID);
+      let [min, max] = getMaxMin(d);
+      setYMinRange(min);
+      setYMaxRange(max);
+    });
   };
 
-  // z series handler
-  useEffect(() => {
-    if (selectedZSeries.length != 0) {
-      setIsLoadingZ(true);
-      getSeries(selectedZSeries).then(d => {
-        setZSeriesData(d);
-        let [min, max] = getMaxMin(d);
-        setZMinRange(min);
-        setZMaxRange(max);
-        setZMinData(min);
-        setZMaxData(max);
-        setIsLoadingZ(false);
-      });
-    }
-  }, [selectedZSeries, units]);
-
   const handleZSeriesSelect = (e, v) => {
+    const zKey = seriesOptions[v];
     props.actions.changeSelectedSeries(
       {
         X: selectedXSeries,
         Y: selectedYSeries,
-        Z: seriesOptions[v]
+        Z: zKey
       },
       viewID
     );
@@ -206,6 +194,14 @@ const ScatterControl = props => {
       },
       viewID
     );
+    props.actions.addKeyToQueue('Z', viewID);
+    getSeries(zKey).then(d => {
+      props.actions.addToLoadedArray('Z', d, viewID);
+      props.actions.removeKeyFromQueue('Z', viewID);
+      let [min, max] = getMaxMin(d);
+      setZMinRange(min);
+      setZMaxRange(max);
+    });
   };
 
   const handleColorRangeChange = v => {
@@ -229,7 +225,7 @@ const ScatterControl = props => {
     <>
       <ViewWrapper
         plotContainer={plotContainer}
-        isLoading={isLoadingX || isLoadingY || isLoadingZ ? true : false}
+        isLoading={isLoading ? true : false}
       >
         <Scatter
           plotdims={plotDims}
@@ -298,9 +294,11 @@ const ScatterControl = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    ...state
+    session: { ...state.session },
+    view: { ...state.views[ownProps.viewID] },
+    actions: { ...state.actions }
   };
 };
 

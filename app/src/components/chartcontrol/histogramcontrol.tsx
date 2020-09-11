@@ -12,17 +12,20 @@ import { BinControl } from '../bincontrol';
 import { CopySave } from '../copysave';
 
 const HistogramControl = props => {
-  const [isLoading, setIsLoading] = useState(false);
-
   const plotContainer = useRef(null);
 
   const { viewID } = props;
   const { containerDims, files, units } = props.session;
-  const { seriesOptions } = props.views[viewID];
-  const { selectedSeries, selectedSeriesLabel } = props.views[viewID];
-  const optionArray = Object.keys(seriesOptions);
+  const {
+    seriesOptions,
+    isLoading,
+    loadedObj,
+    selectedSeries,
+    selectedSeriesLabel
+  } = props.view;
 
-  const [seriesData, setSeriesData] = useState([]);
+  const seriesData = Object.values(loadedObj)[0] || [];
+  const optionArray = Object.keys(seriesOptions);
 
   const [minRange, setMinRange] = useState(0);
   const [maxRange, setMaxRange] = useState(0);
@@ -36,8 +39,14 @@ const HistogramControl = props => {
   const controlsHiddenHeight = 50;
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
-  '';
+
+  const minHeight = 200;
+  const minWidth = 200;
+
+  const [plotDims, setPlotDims] = useState({
+    width: minWidth,
+    height: minHeight
+  });
   const handleControlsHeightChange = height => {
     setControlsHeight(height);
   };
@@ -64,36 +73,43 @@ const HistogramControl = props => {
 
   useEffect(() => {
     setPlotDims({
-      width: containerDims.width,
-      height: Math.max(containerDims.height - controlsHeight - 20, 50)
+      width: Math.max(containerDims.width, minWidth),
+      height: Math.max(containerDims.height - controlsHeight - 20, minHeight)
     });
   }, [props.dims, controlsHeight]);
 
-  const handleSeriesSelect = (e, v) => {
-    props.actions.changeSelectedSeriesLabel(v, viewID);
-    props.actions.changeSelectedSeries(seriesOptions[v], viewID);
+  const getMaxMin = series => {
+    const valkey = units == 'ip' ? 'value_ip' : 'value_si';
+    let min = Math.min(...series.map(d => d[valkey]));
+    let max = Math.max(...series.map(d => d[valkey]));
+    return [min, max];
   };
-  useEffect(() => {
-    if (selectedSeries.length != 0) {
-      setIsLoading(true);
 
-      getSeries(selectedSeries).then(d => {
-        setSeriesData(d);
-        const getMaxMin = series => {
-          const valkey = props.units == 'ip' ? 'value_ip' : 'value_si';
-          let min = Math.min(...series.map(d => d[valkey]));
-          let max = Math.max(...series.map(d => d[valkey]));
-          return [min, max];
-        };
-        let [min, max] = getMaxMin(d);
-        setMinRange(min);
-        setMaxRange(max);
-        setMinData(min);
-        setMaxData(max);
-        setIsLoading(false);
-      });
-    }
-  }, [selectedSeries, units]);
+  const handleSeriesSelect = (e, v) => {
+    const selectedKey = seriesOptions[v];
+
+    props.actions.changeSelectedSeriesLabel(v, viewID);
+    props.actions.changeSelectedSeries(selectedKey, viewID);
+    props.actions.addKeyToQueue(selectedKey, viewID);
+    getSeries(selectedKey).then(d => {
+      props.actions.addToLoadedArray(selectedKey, d, viewID);
+      props.actions.removeKeyFromQueue(selectedKey, viewID);
+
+      let [min, max] = getMaxMin(d);
+      setMinRange(min);
+      setMaxRange(max);
+      setMinData(min);
+      setMaxData(max);
+    });
+  };
+
+  useEffect(() => {
+    let [min, max] = getMaxMin(seriesData);
+    setMinRange(min);
+    setMaxRange(max);
+    setMinData(min);
+    setMaxData(max);
+  }, [units]);
 
   let numbins = 10;
 
@@ -155,9 +171,11 @@ const HistogramControl = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    ...state
+    session: { ...state.session },
+    view: { ...state.views[ownProps.viewID] },
+    actions: { ...state.actions }
   };
 };
 

@@ -51,14 +51,12 @@ const useStyles = makeStyles(
 );
 
 function FileList(props) {
-  const [modalStyle] = React.useState(getModalStyle);
+  const [modalStyle] = useState(getModalStyle);
   const [controlledOpen, setControlledOpen] = useState(false);
   const classes = useStyles();
 
-  const { fileInfo, files } = props;
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
+  const { fileInfo } = props;
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -70,10 +68,10 @@ function FileList(props) {
   };
 
   useEffect(() => {
-    if (files.length > 0) {
+    if (fileInfo.length > 0) {
       setControlledOpen(true);
     }
-  }, [files]);
+  }, [fileInfo]);
 
   const open = Boolean(anchorEl) || controlledOpen;
 
@@ -130,8 +128,7 @@ function FileList(props) {
 
 const mapStateToProps = state => {
   return {
-    fileInfo: state.session.fileInfo,
-    files: state.session.files
+    fileInfo: state.session.fileInfo
   };
 };
 

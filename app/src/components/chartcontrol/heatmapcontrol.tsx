@@ -14,19 +14,22 @@ import { ColorControl } from '../colorcontrol';
 import { CopySave } from '../copysave';
 
 const HeatmapControl = props => {
-  const [isLoading, setIsLoading] = useState(false);
-
   const plotContainer = useRef(null);
 
   const { viewID } = props;
   const { containerDims, files, units } = props.session;
-  const { seriesOptions } = props.views[viewID];
-  const { selectedSeries, selectedSeriesLabel } = props.views[viewID];
+  const {
+    seriesOptions,
+    isLoading,
+    loadedObj,
+    selectedSeries,
+    selectedSeriesLabel
+  } = props.view;
+
+  const seriesData = Object.values(loadedObj)[0] || [];
   const optionArray = Object.keys(seriesOptions);
 
   // local state
-
-  const [seriesData, setSeriesData] = useState([]);
 
   const [minRange, setMinRange] = useState(0);
   const [maxRange, setMaxRange] = useState(0);
@@ -41,7 +44,14 @@ const HeatmapControl = props => {
 
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
+
+  const minHeight = 200;
+  const minWidth = 200;
+
+  const [plotDims, setPlotDims] = useState({
+    width: minWidth,
+    height: minHeight
+  });
 
   const toggleHideControlsTabs = () => {
     if (controlsVisible) {
@@ -65,42 +75,42 @@ const HeatmapControl = props => {
 
   useEffect(() => {
     setPlotDims({
-      width: containerDims.width,
-      height: Math.max(containerDims.height - controlsHeight - 20, 50)
+      width: Math.max(containerDims.width, minWidth),
+      height: Math.max(containerDims.height - controlsHeight - 20, minHeight)
     });
   }, [containerDims, controlsHeight]);
 
-  useEffect(() => {
-    if (selectedSeries.length != 0) {
-      setIsLoading(true);
-      console.log(selectedSeries);
-      getSeries(selectedSeries).then(d => {
-        console.log(d);
-        setSeriesData(d);
-        const getMaxMin = series => {
-          const valkey = units == 'ip' ? 'value_ip' : 'value_si';
-          console.log(valkey);
-
-          let min = Math.min(...series.map(d => d[valkey]));
-          let max = Math.max(...series.map(d => d[valkey]));
-          return [min, max];
-        };
-        let [min, max] = getMaxMin(d);
-
-        console.log(min, max);
-        setMinRange(min);
-        setMaxRange(max);
-        setMinData(min);
-        setMaxData(max);
-        setIsLoading(false);
-      });
-    }
-  }, [selectedSeries, units]);
+  const getMaxMin = series => {
+    const valkey = units == 'ip' ? 'value_ip' : 'value_si';
+    let min = Math.min(...series.map(d => d[valkey]));
+    let max = Math.max(...series.map(d => d[valkey]));
+    return [min, max];
+  };
 
   const handleSeriesSelect = (e, v) => {
+    const selectedKey = seriesOptions[v];
     props.actions.changeSelectedSeriesLabel(v, viewID);
-    props.actions.changeSelectedSeries(seriesOptions[v], viewID);
+    props.actions.changeSelectedSeries(selectedKey, viewID);
+    props.actions.addKeyToQueue(selectedKey, viewID);
+    getSeries(selectedKey).then(d => {
+      props.actions.addToLoadedArray(selectedKey, d, viewID);
+      props.actions.removeKeyFromQueue(selectedKey, viewID);
+
+      let [min, max] = getMaxMin(d);
+      setMinRange(min);
+      setMaxRange(max);
+      setMinData(min);
+      setMaxData(max);
+    });
   };
+
+  useEffect(() => {
+    let [min, max] = getMaxMin(seriesData);
+    setMinRange(min);
+    setMaxRange(max);
+    setMinData(min);
+    setMaxData(max);
+  }, [units]);
 
   const handleRangeChange = v => {
     setMinRange(v[0]);
@@ -167,9 +177,11 @@ const HeatmapControl = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    ...state
+    session: { ...state.session },
+    view: { ...state.views[ownProps.viewID] },
+    actions: { ...state.actions }
   };
 };
 

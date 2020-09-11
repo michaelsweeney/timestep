@@ -27,7 +27,15 @@ const StatisticsControl = props => {
   const controlsHiddenHeight = 50;
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
+
+  const minHeight = 200;
+  const minWidth = 200;
+
+  const [plotDims, setPlotDims] = useState({
+    width: minWidth,
+    height: minHeight
+  });
+
   const [activeTab, setActiveTab] = useState('tab-series');
 
   const toggleHideControlsTabs = () => {

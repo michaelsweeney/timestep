@@ -4,10 +4,11 @@ import FileList from './filelist';
 import FileHandler from './filehandler';
 import UnitRadio from './unitradio';
 import TimeStepSelect from './timestepselect';
-import ViewSelector from './viewselector';
+import ChartTypeSelector from './charttypeselector';
 import { Logo } from './logo';
 import SaveSession from './savesession';
 import LoadSession from './loadsession';
+import ViewSelector from './viewselector';
 
 import { InfoContainer } from './infocontainer';
 
@@ -55,13 +56,13 @@ const Sidebar = props => {
     <div className={classes.root}>
       <div className={classes.topContainer}>
         <Logo></Logo>
+        <div className={classes.lineBreak} />
         <FileHandler />
         <FileList />
         <SaveSession />
         <LoadSession />
         <div className={classes.lineBreak} />
         <UnitRadio />
-        <TimeStepSelect />
         <div className={classes.lineBreak} />
         <ViewSelector />
       </div>

@@ -1,92 +1,90 @@
 import React from 'react';
 
-import { Tabs, Tab, InputLabel } from '@material-ui/core';
-
+import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import connect from '../store/connect';
 
 const useStyles = makeStyles(
   {
     root: {
-      display: 'inline-block',
-      marginLeft: 10,
-      marginRight: 20,
-      marginTop: 10,
-      paddingRight: 5,
-      position: 'relative',
-      left: '-5px',
       boxSizing: 'border-box'
     },
-    formLabel: {
-      marginTop: '10px',
-      marginBottom: '10px'
+
+    tabactive: {
+      display: 'block',
+      color: 'white !important',
+      backgroundColor: '#3f51b5 !important',
+      transition: 'all 250ms !important'
     },
-    tabs: {
-      // width: 50
-    },
-    tab: {
-      '&:hover': {
-        // color: 'rgba(63, 81, 181,0.75) !important'
-      }
-    },
+
     tabinactive: {
-      '&:hover': {
-        color: 'rgba(63, 81, 181,0.75) !important'
-      }
-    }
+      display: 'block',
+      color: '#3f51b5 !important',
+      backgroundColor: 'white !important',
+      transition: 'all 250ms !important'
+    },
+    group: {}
   },
 
-  { name: 'view-selector' }
+  { name: 'view-manager' }
 );
 
 const ViewSelector = props => {
   const classes = useStyles();
 
-  const tempViewID = 1;
+  const { views, activeViewID } = props;
 
-  const activeViewType = props.views[tempViewID].viewType;
+  const handleActiveViewChange = id => {
+    props.actions.setActiveView(id);
+  };
 
-  const handleViewChange = el => {
-    props.actions.changeSelectedSeries([], tempViewID);
-    props.actions.changeSelectedSeriesLabel(null, tempViewID);
-    props.actions.changeViewType(el, tempViewID);
+  const handleAddView = () => {
+    const nextViewID = Math.max(...Object.values(views).map(e => e.viewID)) + 1;
+    props.actions.addView(nextViewID);
+    props.actions.setActiveView(nextViewID);
+  };
+
+  const handleRemoveView = id => {
+    props.actions.removeView(id);
   };
 
   return (
     <div className={classes.root}>
-      <div className={classes.formLabel}>
-        <InputLabel>Chart Type</InputLabel>
-      </div>
-      <Tabs
-        className={classes.tabs}
-        value={activeViewType}
-        indicatorColor="primary"
-        textColor="primary"
-        orientation="vertical"
-      >
-        {['MultiLine', 'Heatmap', 'Scatter', 'Histogram', 'Statistics'].map(
-          (el, i) => {
-            return (
-              <Tab
-                className={
-                  activeViewType == el ? classes.tab : classes.tabinactive
-                }
-                value={el}
-                label={el}
-                key={i}
-                disableRipple={true}
-                onClick={() => handleViewChange(el)}
-              />
-            );
-          }
-        )}
-      </Tabs>
+      {Object.values(views).map((el, i) => {
+        return (
+          <div key={i}>
+            <Button
+              disableRipple={true}
+              className={
+                activeViewID == el.viewID
+                  ? classes.tabactive
+                  : classes.tabinactive
+              }
+              color="primary"
+              value={el.viewID}
+              label={el.viewID}
+            >
+              <span onClick={() => handleActiveViewChange(el.viewID)}>
+                {'View ' + el.viewID}
+              </span>
+              <span onClick={() => handleRemoveView(el.viewID)}>
+                {el.viewID == 1 ? '' : 'X'}
+              </span>
+            </Button>
+          </div>
+        );
+      })}
+      <Button disableRipple={true} onClick={handleAddView}>
+        +
+      </Button>
+      {/* </ButtonGroup> */}
     </div>
   );
 };
 
 const mapStateToProps = state => {
   return {
+    activeViewID: state.session.activeViewID,
     views: state.views
   };
 };

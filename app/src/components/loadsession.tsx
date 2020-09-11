@@ -43,25 +43,32 @@ const LoadSession = props => {
       let loadobj = JSON.parse(data);
 
       const { activeViewID, files, units } = loadobj.session;
+      const { views } = loadobj;
 
-      console.log(loadobj);
-
-      const {
-        timestepType,
-        selectedSeries,
-        selectedSeriesLabel,
-        viewType
-      } = loadobj.views[activeViewID];
-
+      // remove all views first
+      props.actions.removeAllViews();
       props.actions.changeFiles(files);
       props.actions.changeUnits(units);
-      props.actions.changeTimestepType(timestepType, activeViewID);
-      props.actions.changeViewType(viewType, activeViewID);
-      props.actions.changeSelectedSeries(selectedSeries, activeViewID);
-      props.actions.changeSelectedSeriesLabel(
-        selectedSeriesLabel,
-        activeViewID
-      );
+
+      //
+
+      Object.values(views).forEach(view => {
+        let {
+          viewID,
+          timestepType,
+          selectedSeries,
+          selectedSeriesLabel,
+          chartType
+        } = view;
+
+        props.actions.addView(viewID);
+        props.actions.changeTimestepType(timestepType, viewID);
+        props.actions.changeChartType(chartType, viewID);
+        props.actions.changeSelectedSeries(selectedSeries, viewID);
+        props.actions.changeSelectedSeriesLabel(selectedSeriesLabel, viewID);
+      });
+
+      props.actions.setActiveView(activeViewID);
     });
   };
 
@@ -139,7 +146,7 @@ const LoadSession = props => {
 
 const mapStateToProps = state => {
   return {
-    ...state
+    // ...state
   };
 };
 

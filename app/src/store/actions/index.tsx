@@ -2,7 +2,27 @@
 
 export function setActiveView(id) {
   return {
-    type: 'SET_CONTAINER_DIMS',
+    type: 'SET_ACTIVE_VIEW',
+    payload: id
+  };
+}
+
+export function removeAllViews() {
+  return {
+    type: 'REMOVE_ALL_VIEWS'
+  };
+}
+
+export function addView(id) {
+  return {
+    type: 'ADD_VIEW',
+    newID: id
+  };
+}
+
+export function removeView(id) {
+  return {
+    type: 'REMOVE_VIEW',
     payload: id
   };
 }
@@ -35,19 +55,12 @@ export function changeUnits(units) {
   };
 }
 
-export function changeView(view) {
-  return {
-    type: 'CHANGE_VIEW',
-    payload: view
-  };
-}
-
 // view level actions - all need to have viewID for future multiple view support
 
-export function changeViewType(viewType, viewID) {
+export function changeChartType(chartType, viewID) {
   return {
     type: 'CHANGE_VIEW_TYPE',
-    payload: viewType,
+    payload: chartType,
     viewID: viewID
   };
 }
@@ -80,6 +93,46 @@ export function setSeriesOptions(options, viewID) {
   return {
     type: 'SET_SERIES_OPTIONS',
     payload: options,
+    viewID: viewID
+  };
+}
+export function addKeyToQueue(key, viewID) {
+  return {
+    type: 'ADD_KEY_TO_QUEUE',
+    key: key,
+    viewID: viewID
+  };
+}
+
+export function removeKeyFromQueue(key, viewID) {
+  return {
+    type: 'REMOVE_KEY_FROM_QUEUE',
+    key: key,
+    viewID: viewID
+  };
+}
+
+export function addToLoadedArray(key, array, viewID) {
+  return {
+    type: 'ADD_TO_LOADED_ARRAY',
+    key: key,
+    payload: array,
+    viewID: viewID
+  };
+}
+
+export function changeLoadedArray(array, viewID) {
+  return {
+    type: 'CHANGE_LOADED_ARRAY',
+    payload: array,
+    viewID: viewID
+  };
+}
+
+export function removeFromLoadedArray(key, viewID) {
+  return {
+    type: 'REMOVE_FROM_LOADED_ARRAY',
+    key: key,
     viewID: viewID
   };
 }

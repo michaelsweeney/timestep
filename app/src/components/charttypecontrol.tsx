@@ -10,7 +10,7 @@ import StatisticsControl from './chartcontrol/statisticscontrol';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { LandingPage } from './landingpage';
-
+import ViewHeader from './viewheader';
 import { getAllSeries } from './sql';
 import { getSeriesLookupObj } from './formatseries';
 const useStyles = makeStyles(
@@ -30,12 +30,13 @@ const useStyles = makeStyles(
   { name: 'view-container' }
 );
 
-const ViewTypeControl = props => {
+const ChartTypeControl = props => {
   const classes = useStyles();
   const container = useRef(null);
-  const { viewID } = props;
+  const { viewID, viewActive } = props;
+
   const { files, units } = props.session;
-  const { timestepType, viewType } = props.views[viewID];
+  const { timestepType, chartType } = props.views[viewID];
 
   useEffect(() => {
     getAllSeries(files).then(ar => {
@@ -51,8 +52,8 @@ const ViewTypeControl = props => {
 
   const getContainerDims = node => {
     return {
-      width: node.getBoundingClientRect()['width'],
-      height: node.getBoundingClientRect()['height']
+      width: Math.max(node.getBoundingClientRect()['width'], 400),
+      height: Math.max(node.getBoundingClientRect()['height'] - 100, 400)
     };
   };
 
@@ -65,11 +66,13 @@ const ViewTypeControl = props => {
   // get dims on window resize
   useEffect(() => {
     function handleResize() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        let dims = getContainerDims(container.current);
-        props.actions.setContainerDims(dims);
-      }, 250);
+      if (viewActive) {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          let dims = getContainerDims(container.current);
+          props.actions.setContainerDims(dims);
+        }, 250);
+      }
     }
     let resizeTimer;
     window.addEventListener('resize', handleResize);
@@ -80,18 +83,36 @@ const ViewTypeControl = props => {
     viewID: viewID
   };
 
-  const viewobj = {
+  const chartobj = {
     Histogram: <HistogramControl {...propobj} />,
     Heatmap: <HeatmapControl {...propobj} />,
     Scatter: <ScatterControl {...propobj} />,
     MultiLine: <MultiLineControl {...propobj} />,
     Statistics: <StatisticsControl {...propobj} />
   };
-  return (
-    <div ref={container} className={classes.root}>
-      {files.length == 0 ? <LandingPage /> : viewobj[viewType]}
-    </div>
-  );
+
+  if (files.length == 0) {
+    return (
+      <div
+        ref={container}
+        className={classes.root}
+        style={{ display: viewActive ? 'inline-block' : 'none' }}
+      >
+        {files.length == 0 ? <LandingPage /> : chartobj[chartType]}
+      </div>
+    );
+  } else {
+    return (
+      <div
+        ref={container}
+        className={classes.root}
+        style={{ display: viewActive ? 'inline-block' : 'none' }}
+      >
+        <ViewHeader viewID={viewID} />
+        {chartobj[chartType]}
+      </div>
+    );
+  }
 };
 
 const mapStateToProps = state => {
@@ -100,4 +121,4 @@ const mapStateToProps = state => {
   };
 };
 
-export default connect(mapStateToProps)(ViewTypeControl);
+export default connect(mapStateToProps)(ChartTypeControl);

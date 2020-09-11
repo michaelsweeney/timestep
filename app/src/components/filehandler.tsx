@@ -108,8 +108,8 @@ const FileHandler = props => {
 
 const mappedState = state => {
   return {
-    files: state.session.files,
-    units: state.session.units
+    // files: state.session.files,
+    // units: state.session.units
   };
 };
 

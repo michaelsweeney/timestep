@@ -37,8 +37,13 @@ const MultiLineControl = props => {
     getControlsVisibleHeight()
   );
   const [controlsVisible, setControlsVisible] = useState(true);
-  const [plotDims, setPlotDims] = useState({ width: 0, height: 0 });
+  const minHeight = 200;
+  const minWidth = 200;
 
+  const [plotDims, setPlotDims] = useState({
+    width: minWidth,
+    height: minHeight
+  });
   const toggleHideControlsTabs = () => {
     if (controlsVisible) {
       setControlsVisible(false);
@@ -61,8 +66,8 @@ const MultiLineControl = props => {
 
   useEffect(() => {
     setPlotDims({
-      width: containerDims.width,
-      height: Math.max(containerDims.height - controlsHeight - 20, 50)
+      width: Math.max(containerDims.width, minWidth),
+      height: Math.max(containerDims.height - controlsHeight - 20, minHeight)
     });
   }, [containerDims, controlsHeight]);
 

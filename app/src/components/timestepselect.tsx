@@ -8,8 +8,14 @@ import connect from '../store/connect';
 const useStyles = makeStyles(
   {
     root: {
-      display: 'inlineBlock',
+      display: 'inline-block',
       margin: 10
+    },
+    inputLabel: {
+      display: 'inline-block'
+    },
+    select: {
+      display: 'inline-block'
     }
   },
   {
@@ -18,18 +24,24 @@ const useStyles = makeStyles(
 );
 
 const TimeStepSelect = props => {
-  const tempViewID = 1;
-
-  const { timestepType } = props.views[tempViewID];
+  const { type } = props;
+  const { viewID } = props;
 
   const classes = useStyles();
   const handleChange = v => {
-    props.actions.changeTimestepType(v.target.value, tempViewID);
+    props.actions.changeTimestepType(v.target.value, viewID);
   };
   return (
     <div className={classes.root}>
-      <InputLabel id="label">Interval</InputLabel>
-      <Select onChange={handleChange} id="select" value={timestepType}>
+      <InputLabel className={classes.inputLabel} id="label">
+        Interval
+      </InputLabel>
+      <Select
+        className={classes.select}
+        onChange={handleChange}
+        id="select"
+        value={type}
+      >
         <MenuItem disableRipple={true} value="HVAC Timestep">
           HVAC Timestep
         </MenuItem>
@@ -53,9 +65,10 @@ const TimeStepSelect = props => {
   );
 };
 
-const mappedState = state => {
+const mappedState = (state, ownProps) => {
+  const { viewID } = ownProps;
   return {
-    views: state.views
+    type: state.views[viewID].timestepType
   };
 };
 

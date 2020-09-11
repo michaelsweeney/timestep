@@ -38,6 +38,12 @@ export default function sessionReducer(state = initialState, action) {
         ...state,
         fileInfo: action.payload
       };
+    case 'SET_ACTIVE_VIEW': {
+      return {
+        ...state,
+        activeViewID: action.payload
+      };
+    }
 
     default:
       return state;

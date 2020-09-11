@@ -5,6 +5,7 @@ import fs from 'fs';
 import { remote } from 'electron';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Tooltip } from '@material-ui/core';
+import { store } from '../store/configureStore';
 
 const useStyles = makeStyles(
   {
@@ -25,7 +26,9 @@ const SaveSession = props => {
   const classes = useStyles();
 
   const handleSave = () => {
-    let formatstr = JSON.stringify(props);
+    const { session, views } = store.getState();
+
+    let formatstr = JSON.stringify({ session, views });
 
     let options = {
       title: 'Save Session',
@@ -57,11 +60,12 @@ const SaveSession = props => {
   );
 };
 
-const mapStateToProps = state => {
-  return {
-    session: state.session,
-    views: state.views
-  };
-};
+// const mapStateToProps = state => {
+//   return {
+//     session: state.session,
+//     views: state.views
+//   };
+// };
 
-export default connect(mapStateToProps)(SaveSession);
+// export default connect(mapStateToProps)(SaveSession);
+export default SaveSession;
