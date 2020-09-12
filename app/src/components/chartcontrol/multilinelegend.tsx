@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import connect from '../../store/connect';
 import { getSeriesKeys } from '../formatseries';
-import colorscale from '../colorscaleindex';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   TableCell,
@@ -68,44 +66,7 @@ const useStyles = makeStyles(
 
 const MultiLineLegend = props => {
   const classes = useStyles();
-  const { seriesArray, units, colorScheme, files } = props;
-
-  const [seriesState, setSeriesState] = useState([]);
-
-  const { name } = getSeriesKeys(units, files);
-  // console.log(seriesArray[0][0]);
-  // console.log(seriesArray[0][0][name]);
-  useEffect(() => {
-    let stateCopy = [];
-    seriesArray.forEach((d, i) => {
-      stateCopy.push({
-        name: d[0][name],
-        key: d[0].key,
-        color: colorscale[colorScheme][i],
-        yaxis: 'Y1',
-        visible: true,
-        highlighted: false
-      });
-    });
-    setSeriesState(stateCopy);
-    props.legendCallback(stateCopy);
-  }, [seriesArray, units, colorScheme]);
-
-  const handleYAxisChange = e => {
-    let arraynum = e.target.getAttribute('arraynum');
-    let stateCopy = [...seriesState];
-    stateCopy[arraynum].yaxis = stateCopy[arraynum].yaxis == 'Y1' ? 'Y2' : 'Y1';
-    setSeriesState(stateCopy);
-    props.legendCallback(stateCopy);
-  };
-
-  const handleVisibleChange = e => {
-    let arraynum = e.target.getAttribute('arraynum');
-    let stateCopy = [...seriesState];
-    stateCopy[arraynum].visible = !stateCopy[arraynum].visible;
-    setSeriesState(stateCopy);
-    props.legendCallback(stateCopy);
-  };
+  const { seriesConfig } = props;
 
   const rectStyle = d => {
     return {
@@ -130,12 +91,11 @@ const MultiLineLegend = props => {
     <TableContainer className={classes.root}>
       <Table>
         <TableBody>
-          {seriesState.map((d, i) => {
+          {seriesConfig.map((d, i) => {
             return (
               <TableRow key={Math.random()} className={classes.legendrow}>
                 <TableCell
-                  arraynum={i}
-                  onClick={handleYAxisChange}
+                  onClick={() => props.yAxisCallback(i)}
                   style={axisStyle(d)}
                   className={classes.legendaxisswitch}
                 >
@@ -145,17 +105,14 @@ const MultiLineLegend = props => {
                   <div
                     className={classes.legendrect}
                     style={rectStyle(d)}
-                    onClick={handleVisibleChange}
-                    arraynum={i}
+                    onClick={() => props.visibleCallback(i)}
                   ></div>
                 </TableCell>
-
-                <TableCell
-                  style={textStyle(d)}
-                  className={classes.legendname}
-                  arraynum={i}
-                >
+                <TableCell style={textStyle(d)} className={classes.legendname}>
                   {d.name}
+                </TableCell>
+                <TableCell className={classes.legendrect}>
+                  <div onClick={() => props.removeSeriesCallback(d.key)}>X</div>
                 </TableCell>
               </TableRow>
             );
@@ -166,10 +123,4 @@ const MultiLineLegend = props => {
   );
 };
 
-const mapStateToProps = state => {
-  return {
-    ...state
-  };
-};
-
-export default connect(mapStateToProps)(MultiLineLegend);
+export default MultiLineLegend;

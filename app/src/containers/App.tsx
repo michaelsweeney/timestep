@@ -40,7 +40,16 @@ const App = props => {
 
   const { files } = props.session;
 
+  /* programmatic ui for testing*/
+  useEffect(() => {
+    let files = ['/Users/michaelsweeney/Documents/energyplus files/sim1.sql'];
+    props.actions.changeFiles(files);
+    props.actions.changeChartType('Statistics', 1);
+    // props.actions.changeFileInfo(files);
+  }, []);
+
   /* end programmatic ui - testing only */
+
   useEffect(() => {
     getFileSummary(files).then(b => {
       props.actions.changeFileInfo(b);

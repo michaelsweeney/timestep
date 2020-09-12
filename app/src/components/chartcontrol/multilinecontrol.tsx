@@ -3,7 +3,7 @@ import connect from '../../store/connect';
 
 import MultiSeries from '../multiseries'; // can't destructure for some reason
 import { getSeries } from '../sql';
-
+import { getSeriesKeys } from '../formatseries';
 import MultiLineLegend from './multilinelegend';
 import { ColorCategorySelect } from '../colorcategoryselect';
 import { MultiLine } from '../charts/multiline';
@@ -11,19 +11,25 @@ import { ViewWrapper } from '../viewwrapper';
 import { ControlsWrapper } from '../controlswrapper';
 import { ControlsContent } from '../controlscontent';
 import { CopySave } from '../copysave';
+import colorscale from '../colorscaleindex';
 
 const MultiLineControl = props => {
-  const [isLoading, setIsLoading] = useState(false);
-
   const plotContainer = useRef(null);
 
   const { viewID } = props;
-  const [seriesData, setSeriesData] = useState([]);
 
   const { containerDims, files, units } = props.session;
-  const { seriesOptions } = props.views[viewID];
-  const { selectedSeries, selectedSeriesLabel } = props.views[viewID];
+
+  const {
+    seriesOptions,
+    isLoading,
+    loadedObj,
+    selectedSeries,
+    selectedSeriesLabel
+  } = props.view;
+
   const optionArray = Object.keys(seriesOptions);
+  const seriesData = Object.values(loadedObj);
 
   const [colorScheme, setColorScheme] = useState('schemeTableau10');
   const [seriesConfig, setSeriesConfig] = useState([]);
@@ -71,56 +77,87 @@ const MultiLineControl = props => {
     });
   }, [containerDims, controlsHeight]);
 
-  const handleColorCategoryChange = e => {
-    setColorScheme(e);
-  };
-
   const handleSeriesSelect = (e, v) => {
-    let keys = v.map(d => seriesOptions[d]);
-    props.actions.changeSelectedSeries(keys, viewID);
-    props.actions.changeSelectedSeriesLabel(v, viewID);
-  };
+    let newkeys = v.map(d => seriesOptions[d]);
+    let existingkeys = selectedSeries;
 
-  useEffect(() => {
-    let arrayClone = [...seriesData];
-    let newkeys = selectedSeries;
-    let existingkeys = arrayClone.map(d => d[0].key);
-
-    let toremove = [];
-    existingkeys.forEach(existkey => {
-      if (!newkeys.includes(existkey)) {
-        toremove.push(existkey);
+    let keysToAdd = [];
+    let keysToRemove = [];
+    newkeys.forEach(key => {
+      if (!existingkeys.includes(key)) {
+        keysToAdd.push(key);
+      }
+    });
+    existingkeys.forEach(key => {
+      if (!newkeys.includes(key)) {
+        keysToRemove.push(key);
       }
     });
 
-    if (toremove.length > 0) {
-      arrayClone = arrayClone.filter(d => !toremove.includes(d[0].key));
-      setSeriesData(arrayClone);
-    } else {
-      newkeys.forEach(key => {
-        if (!existingkeys.includes(key)) {
-          setIsLoading(true);
-          getSeries(key).then(d => {
-            let newarray = [...arrayClone, d];
-            setSeriesData(newarray);
-            setIsLoading(false);
-          });
-        }
-      });
-    }
-  }, [selectedSeries]);
+    keysToRemove.forEach(key => {
+      props.actions.removeFromLoadedArray(key, viewID);
+    });
 
-  const handleLegendChange = v => {
-    setSeriesConfig(v);
+    keysToAdd.forEach(key => {
+      props.actions.addKeyToQueue(key, viewID);
+      getSeries(key).then(d => {
+        props.actions.addToLoadedArray(key, d, viewID);
+        props.actions.removeKeyFromQueue(key, viewID);
+      });
+    });
+    props.actions.changeSelectedSeries(newkeys, viewID);
+    props.actions.changeSelectedSeriesLabel(v, viewID);
+  };
+
+  // config handlers
+
+  useEffect(() => {
+    let config = [];
+    let { name } = getSeriesKeys(units, files);
+    seriesData.forEach((d, i) => {
+      config.push({
+        name: d[0][name],
+        key: d[0].key,
+        color: colorscale[colorScheme][i],
+        yaxis: 'Y1',
+        visible: true,
+        highlighted: false
+      });
+    });
+    setSeriesConfig(config);
+  }, [loadedObj, colorScheme]);
+
+  const handleYAxisChange = e => {
+    let arraynum = e;
+    let stateCopy = [...seriesConfig];
+    stateCopy[arraynum].yaxis = stateCopy[arraynum].yaxis == 'Y1' ? 'Y2' : 'Y1';
+    setSeriesConfig(stateCopy);
+  };
+
+  const handleVisibleChange = e => {
+    let arraynum = e;
+    let stateCopy = [...seriesConfig];
+    stateCopy[arraynum].visible = !stateCopy[arraynum].visible;
+    setSeriesConfig(stateCopy);
+  };
+
+  const handleColorCategoryChange = e => {
+    let scheme = e;
+    let stateCopy = [...seriesConfig];
+    setColorScheme(e);
+  };
+
+  const handleRemoveSeries = e => {
+    props.actions.removeFromLoadedArray(e);
+  };
+
+  // chart ui changes
+  const handleZoomChange = domain => {
+    setZoomDomain(domain);
   };
 
   const handleSelectClose = () => {
-    // setActiveTab('tab-legend');
     setControlsHeight(getControlsVisibleHeight());
-  };
-
-  const handleZoomChange = domain => {
-    setZoomDomain(domain);
   };
 
   return (
@@ -154,11 +191,11 @@ const MultiLineControl = props => {
 
         <ControlsContent tag="tab-legend" tabname="Legend">
           <MultiLineLegend
-            files={files}
-            legendCallback={handleLegendChange}
-            seriesArray={seriesData}
             colorScheme={colorScheme}
-            units={units}
+            seriesConfig={seriesConfig}
+            yAxisCallback={handleYAxisChange}
+            visibleCallback={handleVisibleChange}
+            removeSeriesCallback={handleRemoveSeries}
           />
         </ControlsContent>
         <ControlsContent tag="tab-options" tabname="Options">
@@ -180,9 +217,11 @@ const MultiLineControl = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    ...state
+    session: { ...state.session },
+    view: { ...state.views[ownProps.viewID] },
+    actions: { ...state.actions }
   };
 };
 

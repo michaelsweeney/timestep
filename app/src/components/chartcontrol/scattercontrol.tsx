@@ -12,10 +12,6 @@ import { ColorControl } from '../colorcontrol';
 import { CopySave } from '../copysave';
 
 const ScatterControl = props => {
-  // const [isLoadingX, setIsLoadingX] = useState(false);
-  // const [isLoadingY, setIsLoadingY] = useState(false);
-  // const [isLoadingZ, setIsLoadingZ] = useState(false);
-
   const plotContainer = useRef(null);
 
   const { viewID } = props;
@@ -35,8 +31,6 @@ const ScatterControl = props => {
   const xSeriesData = loadedObj.X || [];
   const ySeriesData = loadedObj.Y || [];
   const zSeriesData = loadedObj.Z || [];
-
-  console.log(xSeriesData, ySeriesData, zSeriesData);
 
   const selectedXSeriesLabel = selectedSeriesLabel
     ? selectedSeriesLabel.X

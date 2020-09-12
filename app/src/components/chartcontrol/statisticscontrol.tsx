@@ -11,17 +11,22 @@ import { ControlsContent } from '../controlscontent';
 import { CopySave } from '../copysave';
 
 const StatisticsControl = props => {
-  const [isLoading, setIsLoading] = useState(false);
-
   const plotContainer = useRef(null);
 
   const { viewID } = props;
-  const [seriesData, setSeriesData] = useState([]);
+
+  const {
+    seriesOptions,
+    isLoading,
+    loadedObj,
+    selectedSeries,
+    selectedSeriesLabel
+  } = props.view;
+
+  const optionArray = Object.keys(seriesOptions);
+  const seriesData = Object.values(loadedObj);
 
   const { containerDims, files, units } = props.session;
-  const { seriesOptions } = props.views[viewID];
-  const { selectedSeries, selectedSeriesLabel } = props.views[viewID];
-  const optionArray = Object.keys(seriesOptions);
 
   const controlsVisibleHeight = 150;
   const controlsHiddenHeight = 50;
@@ -66,40 +71,36 @@ const StatisticsControl = props => {
   }, [containerDims, controlsHeight]);
 
   const handleSeriesSelect = (e, v) => {
-    let keys = v.map(d => seriesOptions[d]);
-    props.actions.changeSelectedSeries(keys, viewID);
-    props.actions.changeSelectedSeriesLabel(v, viewID);
-  };
+    let newkeys = v.map(d => seriesOptions[d]);
+    let existingkeys = selectedSeries;
 
-  useEffect(() => {
-    let arrayClone = [...seriesData];
-    let newkeys = selectedSeries;
-    let existingkeys = arrayClone.map(d => d[0].key);
-
-    let toremove = [];
-    existingkeys.forEach(existkey => {
-      if (!newkeys.includes(existkey)) {
-        toremove.push(existkey);
+    let keysToAdd = [];
+    let keysToRemove = [];
+    newkeys.forEach(key => {
+      if (!existingkeys.includes(key)) {
+        keysToAdd.push(key);
+      }
+    });
+    existingkeys.forEach(key => {
+      if (!newkeys.includes(key)) {
+        keysToRemove.push(key);
       }
     });
 
-    if (toremove.length > 0) {
-      arrayClone = arrayClone.filter(d => !toremove.includes(d[0].key));
-      setSeriesData(arrayClone);
-    } else {
-      newkeys.forEach(key => {
-        if (!existingkeys.includes(key)) {
-          setIsLoading(true);
-          getSeries(key).then(d => {
-            let newarray = [...arrayClone, d];
-            setSeriesData(newarray);
-            setIsLoading(false);
-          });
-        }
-      });
-    }
-  }, [selectedSeries, units]);
+    keysToRemove.forEach(key => {
+      props.actions.removeFromLoadedArray(key, viewID);
+    });
 
+    keysToAdd.forEach(key => {
+      props.actions.addKeyToQueue(key, viewID);
+      getSeries(key).then(d => {
+        props.actions.addToLoadedArray(key, d, viewID);
+        props.actions.removeKeyFromQueue(key, viewID);
+      });
+    });
+    props.actions.changeSelectedSeries(newkeys, viewID);
+    props.actions.changeSelectedSeriesLabel(v, viewID);
+  };
   return (
     <>
       <ViewWrapper plotContainer={plotContainer} isLoading={isLoading}>
@@ -133,9 +134,11 @@ const StatisticsControl = props => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    ...state
+    session: { ...state.session },
+    view: { ...state.views[ownProps.viewID] },
+    actions: { ...state.actions }
   };
 };
 
