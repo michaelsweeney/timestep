@@ -15,7 +15,7 @@ const ScatterControl = props => {
   const plotContainer = useRef(null);
 
   const { viewID } = props;
-  const { containerDims, files, units } = props.session;
+  const { containerDims, files, units, isLoadingFromFile } = props.session;
   const {
     seriesOptions,
     isLoading,
@@ -114,88 +114,88 @@ const ScatterControl = props => {
     return [min, max];
   };
 
-  const handleXSeriesSelect = (e, v) => {
-    const xKey = seriesOptions[v];
-    props.actions.changeSelectedSeries(
-      {
-        X: xKey,
-        Y: selectedYSeries,
-        Z: selectedZSeries
-      },
-      viewID
-    );
-    props.actions.changeSelectedSeriesLabel(
-      {
-        X: v,
-        Y: selectedYSeriesLabel,
-        Z: selectedZSeriesLabel
-      },
-      viewID
-    );
-    props.actions.addKeyToQueue('X', viewID);
-    getSeries(xKey).then(d => {
-      props.actions.addToLoadedArray('X', d, viewID);
-      props.actions.removeKeyFromQueue('X', viewID);
+  useEffect(() => {
+    let [xmin, xmax] =
+      xSeriesData.length != 0 ? getMaxMin(xSeriesData) : [0, 1];
+    let [ymin, ymax] =
+      ySeriesData.length != 0 ? getMaxMin(ySeriesData) : [0, 1];
+    let [zmin, zmax] =
+      zSeriesData.length != 0 ? getMaxMin(zSeriesData) : [0, 1];
+
+    setXMinRange(xmin);
+    setXMaxRange(xmax);
+    setYMinRange(ymin);
+    setYMaxRange(ymax);
+    setZMinRange(zmin);
+    setZMaxRange(zmax);
+  }, [units]);
+
+  const seriesLoad = (key, label, viewID, dimension) => {
+    const dim = dimension.toUpperCase();
+    const selectedSeriesObj = {
+      X: selectedXSeries,
+      Y: selectedYSeries,
+      Z: selectedZSeries
+    };
+    selectedSeriesObj[dim] = key;
+    props.actions.changeSelectedSeries(selectedSeriesObj, viewID);
+
+    const selectedSeriesLabelObj = {
+      X: selectedXSeriesLabel,
+      Y: selectedYSeriesLabel,
+      Z: selectedZSeriesLabel
+    };
+    selectedSeriesLabelObj[dim] = label;
+    props.actions.changeSelectedSeriesLabel(selectedSeriesLabelObj, viewID);
+    props.actions.addKeyToQueue(dim, viewID);
+    getSeries(key).then(d => {
+      props.actions.addToLoadedArray(dim, d, viewID);
+      props.actions.removeKeyFromQueue(dim, viewID);
       let [min, max] = getMaxMin(d);
-      setXMinRange(min);
-      setXMaxRange(max);
+
+      if (dim == 'X') {
+        setXMinRange(min);
+        setXMaxRange(max);
+      }
+      if (dim == 'Y') {
+        setYMinRange(min);
+        setYMaxRange(max);
+      }
+      if (dim == 'Z') {
+        setZMinRange(min);
+        setZMaxRange(max);
+      }
     });
+  };
+
+  useEffect(() => {
+    if (isLoadingFromFile) {
+      try {
+        seriesLoad(selectedXSeries, selectedXSeriesLabel, viewID, 'X');
+        seriesLoad(selectedYSeries, selectedYSeriesLabel, viewID, 'Y');
+        seriesLoad(selectedZSeries, selectedZSeriesLabel, viewID, 'Z');
+      } catch {
+        console.warn('loading error', selectedSeries);
+      }
+    }
+  }, [isLoadingFromFile]);
+
+  const handleXSeriesSelect = (e, v) => {
+    const key = seriesOptions[v];
+    const label = v;
+    seriesLoad(key, label, viewID, 'X');
   };
 
   const handleYSeriesSelect = (e, v) => {
-    const yKey = seriesOptions[v];
-    props.actions.changeSelectedSeries(
-      {
-        X: selectedXSeries,
-        Y: yKey,
-        Z: selectedZSeries
-      },
-      viewID
-    );
-    props.actions.changeSelectedSeriesLabel(
-      {
-        X: selectedXSeriesLabel,
-        Y: v,
-        Z: selectedZSeriesLabel
-      },
-      viewID
-    );
-    props.actions.addKeyToQueue('Y', viewID);
-    getSeries(yKey).then(d => {
-      props.actions.addToLoadedArray('Y', d, viewID);
-      props.actions.removeKeyFromQueue('Y', viewID);
-      let [min, max] = getMaxMin(d);
-      setYMinRange(min);
-      setYMaxRange(max);
-    });
+    const key = seriesOptions[v];
+    const label = v;
+    seriesLoad(key, label, viewID, 'Y');
   };
 
   const handleZSeriesSelect = (e, v) => {
-    const zKey = seriesOptions[v];
-    props.actions.changeSelectedSeries(
-      {
-        X: selectedXSeries,
-        Y: selectedYSeries,
-        Z: zKey
-      },
-      viewID
-    );
-    props.actions.changeSelectedSeriesLabel(
-      {
-        X: selectedXSeriesLabel,
-        Y: selectedYSeriesLabel,
-        Z: v
-      },
-      viewID
-    );
-    props.actions.addKeyToQueue('Z', viewID);
-    getSeries(zKey).then(d => {
-      props.actions.addToLoadedArray('Z', d, viewID);
-      props.actions.removeKeyFromQueue('Z', viewID);
-      let [min, max] = getMaxMin(d);
-      setZMinRange(min);
-      setZMaxRange(max);
-    });
+    const key = seriesOptions[v];
+    const label = v;
+    seriesLoad(key, label, viewID, 'Z');
   };
 
   const handleColorRangeChange = v => {
@@ -276,12 +276,7 @@ const ScatterControl = props => {
         </ControlsContent>
 
         <ControlsContent tag="tab-export" tabname="Export">
-          <CopySave
-            array={[xSeriesData, ySeriesData, zSeriesData]}
-            arraytype="scatter"
-            units={units}
-            files={files}
-          ></CopySave>
+          <CopySave viewID={viewID} arraytype="scatter"></CopySave>
         </ControlsContent>
       </ControlsWrapper>
     </>

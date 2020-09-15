@@ -17,7 +17,7 @@ const HeatmapControl = props => {
   const plotContainer = useRef(null);
 
   const { viewID } = props;
-  const { containerDims, files, units } = props.session;
+  const { containerDims, files, units, isLoadingFromFile } = props.session;
   const {
     seriesOptions,
     isLoading,
@@ -87,15 +87,14 @@ const HeatmapControl = props => {
     return [min, max];
   };
 
-  const handleSeriesSelect = (e, v) => {
-    const selectedKey = seriesOptions[v];
-    props.actions.changeSelectedSeriesLabel(v, viewID);
-    props.actions.changeSelectedSeries(selectedKey, viewID);
-    props.actions.addKeyToQueue(selectedKey, viewID);
-    getSeries(selectedKey).then(d => {
-      props.actions.addToLoadedArray(selectedKey, d, viewID);
-      props.actions.removeKeyFromQueue(selectedKey, viewID);
-
+  const seriesLoad = (key, label, viewID) => {
+    props.actions.changeSelectedSeriesLabel(label, viewID);
+    props.actions.changeSelectedSeries(key, viewID);
+    props.actions.addKeyToQueue(key, viewID);
+    getSeries(key).then(d => {
+      props.actions.addToLoadedArray(key, d, viewID);
+      props.actions.removeKeyFromQueue(key, viewID);
+      props.actions.setLoadingFromFile(false);
       let [min, max] = getMaxMin(d);
       setMinRange(min);
       setMaxRange(max);
@@ -103,6 +102,22 @@ const HeatmapControl = props => {
       setMaxData(max);
     });
   };
+
+  const handleSeriesSelect = (e, v) => {
+    const selectedKey = seriesOptions[v];
+    seriesLoad(selectedKey, v, viewID);
+  };
+
+  useEffect(() => {
+    if (isLoadingFromFile) {
+      console.log(props);
+      try {
+        seriesLoad(selectedSeries, selectedSeriesLabel, viewID);
+      } catch {
+        console.warn('loading error', selectedSeries);
+      }
+    }
+  }, [isLoadingFromFile]);
 
   useEffect(() => {
     let [min, max] = getMaxMin(seriesData);
@@ -165,12 +180,7 @@ const HeatmapControl = props => {
           />
         </ControlsContent>
         <ControlsContent tag="tab-export" tabname="Export">
-          <CopySave
-            array={selectedSeries}
-            arraytype="single"
-            units={units}
-            files={files}
-          ></CopySave>
+          <CopySave viewID={viewID} arraytype="single"></CopySave>
         </ControlsContent>
       </ControlsWrapper>
     </>

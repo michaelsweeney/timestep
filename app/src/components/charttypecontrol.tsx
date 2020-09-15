@@ -10,7 +10,7 @@ import StatisticsControl from './chartcontrol/statisticscontrol';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { LandingPage } from './landingpage';
-import ViewHeader from './viewheader';
+import ViewSidebar from './viewsidebar';
 import { getAllSeries } from './sql';
 import { getSeriesLookupObj } from './formatseries';
 const useStyles = makeStyles(
@@ -35,7 +35,7 @@ const ChartTypeControl = props => {
   const container = useRef(null);
   const { viewID, viewActive } = props;
 
-  const { files, units } = props.session;
+  const { files, units, activeViewID } = props.session;
   const { timestepType, chartType } = props.views[viewID];
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const ChartTypeControl = props => {
   useEffect(() => {
     let dims = getContainerDims(container.current);
     props.actions.setContainerDims(dims);
-  }, []);
+  }, [activeViewID]);
 
   // get dims on window resize
   useEffect(() => {
@@ -108,7 +108,7 @@ const ChartTypeControl = props => {
         className={classes.root}
         style={{ display: viewActive ? 'inline-block' : 'none' }}
       >
-        <ViewHeader viewID={viewID} />
+        <ViewSidebar viewID={viewID} />
         {chartobj[chartType]}
       </div>
     );

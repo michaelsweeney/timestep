@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
 import connect from '../store/connect';
 import { makeStyles } from '@material-ui/core/styles';
-import Sidebar from '../components/sidebar';
+import Header from '../components/header';
 import Views from '../components/views';
 import '../css/app.global.css';
 import { getFileSummary } from '../components/sql';
@@ -44,7 +44,7 @@ const App = props => {
   useEffect(() => {
     let files = ['/Users/michaelsweeney/Documents/energyplus files/sim1.sql'];
     props.actions.changeFiles(files);
-    props.actions.changeChartType('Statistics', 1);
+    props.actions.changeChartType('MultiLine', 1);
     // props.actions.changeFileInfo(files);
   }, []);
 
@@ -59,7 +59,7 @@ const App = props => {
   return (
     <StylesProvider generateClassName={generateClassName}>
       <div className={classes.root}>
-        <Sidebar />
+        <Header />
         <Views />
       </div>
     </StylesProvider>

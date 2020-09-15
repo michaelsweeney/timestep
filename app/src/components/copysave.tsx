@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { clipboard } from 'electron';
 import fs from 'fs';
 import { remote } from 'electron';
+import { getSeriesKeys } from './formatseries';
 
 import { timeFormat } from 'd3';
 import AssignmentIcon from '@material-ui/icons/Assignment';
@@ -9,6 +10,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Tooltip } from '@material-ui/core';
+import { store } from '../store/configureStore';
 
 const useStyles = makeStyles(
   {
@@ -24,16 +26,44 @@ const useStyles = makeStyles(
 
 const CopySave = props => {
   const classes = useStyles();
-  const { units, files, array, arraytype } = props;
-  const valkey = units == 'ip' ? 'value_ip' : 'value_si';
-  const ismulti = files.length > 1 ? true : false;
-  const titlekey = ismulti ? 'name_multi' : 'name_single';
-  const timeparsestr = '%d %b %H:%M';
+
+  const { viewID, arraytype } = props;
+
+  const pullState = store => {
+    const stateCopy = store.getState();
+    const units = stateCopy.session.units;
+    const files = stateCopy.session.files;
+    const array = Object.values(stateCopy.views[viewID].loadedObj);
+    const valkey = units == 'ip' ? 'value_ip' : 'value_si';
+    const ismulti = files.length > 1 ? true : false;
+    const titlekey = getSeriesKeys(units, files).name;
+    const timeparsestr = '%d %b %H:%M';
+
+    return {
+      units,
+      files,
+      array,
+      ismulti,
+      titlekey,
+      timeparsestr,
+      valkey
+    };
+  };
 
   const handleFormat = () => {
+    const {
+      units,
+      files,
+      array,
+      ismulti,
+      titlekey,
+      timeparsestr,
+      valkey
+    } = pullState(store);
+    console.log(array);
     let formatted;
     if (arraytype == 'single') {
-      formatted = reformatSingleObject(array);
+      formatted = reformatSingleObject(array[0]);
     }
     if (arraytype == 'scatter') {
       formatted = reformatMultiObject(array);
@@ -73,6 +103,16 @@ const CopySave = props => {
   };
 
   const checkMultipleFiles = () => {
+    const {
+      units,
+      files,
+      array,
+      ismulti,
+      titlekey,
+      timeparsestr,
+      valkey
+    } = pullState(store);
+
     if (files.length > 1) {
       alert(
         'Copy/Paste operations are currently unavailable when multiple files have been loaded'
@@ -81,6 +121,16 @@ const CopySave = props => {
   };
 
   function reformatMultiObject(objarray) {
+    const {
+      units,
+      files,
+      array,
+      ismulti,
+      titlekey,
+      timeparsestr,
+      valkey
+    } = pullState(store);
+
     // multiple series, single file i.e. guaranteed single timestep
     let formatarray = [['Time']];
 
@@ -101,6 +151,15 @@ const CopySave = props => {
   }
 
   function reformatSingleObject(objarray) {
+    const {
+      units,
+      files,
+      array,
+      ismulti,
+      titlekey,
+      timeparsestr,
+      valkey
+    } = pullState(store);
     // single series, single file
     let formatarray = [
       ['Time', objarray[0] ? objarray[0][titlekey].replace(',', '_') : '']

@@ -94,6 +94,9 @@ const MultiLineLegend = props => {
           {seriesConfig.map((d, i) => {
             return (
               <TableRow key={Math.random()} className={classes.legendrow}>
+                <TableCell className={classes.legendrect}>
+                  <div onClick={() => props.removeSeriesCallback(d.key)}>x</div>
+                </TableCell>
                 <TableCell
                   onClick={() => props.yAxisCallback(i)}
                   style={axisStyle(d)}
@@ -110,9 +113,6 @@ const MultiLineLegend = props => {
                 </TableCell>
                 <TableCell style={textStyle(d)} className={classes.legendname}>
                   {d.name}
-                </TableCell>
-                <TableCell className={classes.legendrect}>
-                  <div onClick={() => props.removeSeriesCallback(d.key)}>X</div>
                 </TableCell>
               </TableRow>
             );

@@ -1,5 +1,12 @@
 // session level actions
 
+export function setLoadingFromFile(bool) {
+  return {
+    type: 'SET_LOADING_FROM_FILE',
+    payload: bool
+  };
+}
+
 export function setActiveView(id) {
   return {
     type: 'SET_ACTIVE_VIEW',

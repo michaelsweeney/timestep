@@ -26,7 +26,7 @@ const StatisticsControl = props => {
   const optionArray = Object.keys(seriesOptions);
   const seriesData = Object.values(loadedObj);
 
-  const { containerDims, files, units } = props.session;
+  const { containerDims, files, units, isLoadingFromFile } = props.session;
 
   const controlsVisibleHeight = 150;
   const controlsHiddenHeight = 50;
@@ -70,10 +70,7 @@ const StatisticsControl = props => {
     });
   }, [containerDims, controlsHeight]);
 
-  const handleSeriesSelect = (e, v) => {
-    let newkeys = v.map(d => seriesOptions[d]);
-    let existingkeys = selectedSeries;
-
+  const seriesLoad = (newkeys, existingkeys, labels, viewID) => {
     let keysToAdd = [];
     let keysToRemove = [];
     newkeys.forEach(key => {
@@ -96,10 +93,28 @@ const StatisticsControl = props => {
       getSeries(key).then(d => {
         props.actions.addToLoadedArray(key, d, viewID);
         props.actions.removeKeyFromQueue(key, viewID);
+        props.actions.setLoadingFromFile(false);
       });
     });
     props.actions.changeSelectedSeries(newkeys, viewID);
-    props.actions.changeSelectedSeriesLabel(v, viewID);
+    props.actions.changeSelectedSeriesLabel(labels, viewID);
+  };
+
+  useEffect(() => {
+    if (isLoadingFromFile) {
+      try {
+        seriesLoad(selectedSeries, [], selectedSeriesLabel, viewID);
+      } catch {
+        console.warn('loading error', selectedSeries);
+      }
+    }
+  }, [isLoadingFromFile]);
+
+  const handleSeriesSelect = (e, v) => {
+    let newkeys = v.map(d => seriesOptions[d]);
+    let existingkeys = selectedSeries;
+    let labels = v;
+    seriesLoad(newkeys, existingkeys, labels, viewID);
   };
   return (
     <>
@@ -122,12 +137,7 @@ const StatisticsControl = props => {
           />
         </ControlsContent>
         <ControlsContent tag="tab-export" tabname="Export">
-          <CopySave
-            array={seriesData}
-            arraytype="multi"
-            units={units}
-            files={files}
-          ></CopySave>
+          <CopySave viewID={viewID} arraytype="multi"></CopySave>
         </ControlsContent>
       </ControlsWrapper>
     </>

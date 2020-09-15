@@ -8,9 +8,9 @@ const useStyles = makeStyles(
   {
     root: {
       display: 'inline-block',
-      marginTop: 10,
-      marginLeft: 10,
-      marginRight: 5,
+      // marginTop: 10,
+      // marginLeft: 10,
+      // marginRight: 5,
       boxSizing: 'border-box'
     },
     button: {
@@ -89,8 +89,7 @@ const FileHandler = props => {
   };
   return (
     <div className={classes.root}>
-      <Button
-        disableRipple={true}
+      <span
         variant="contained"
         color="primary"
         className={isActive == 'active' ? classes.buttonactive : classes.button}
@@ -101,7 +100,7 @@ const FileHandler = props => {
         onDragLeave={handleDragLeave}
       >
         Load Files
-      </Button>
+      </span>
     </div>
   );
 };

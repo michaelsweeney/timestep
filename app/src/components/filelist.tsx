@@ -26,16 +26,7 @@ function getModalStyle() {
 const useStyles = makeStyles(
   (theme: Theme) =>
     createStyles({
-      root: {
-        display: 'inline-block',
-        marginTop: 10,
-        marginLeft: 10,
-        marginRight: 5,
-        boxSizing: 'border-box',
-        '& button': {
-          width: 115
-        }
-      },
+      root: {},
       paper: {
         position: 'absolute',
         backgroundColor: theme.palette.background.paper,
@@ -77,14 +68,9 @@ function FileList(props) {
 
   return (
     <div className={classes.root}>
-      <Button
-        disableRipple={true}
-        variant="outlined"
-        color="primary"
-        onClick={handleClick}
-      >
-        FILE INFO
-      </Button>
+      <span variant="outlined" color="primary" onClick={handleClick}>
+        File Info
+      </span>
       <Modal open={open} onClose={handleClose}>
         <div style={modalStyle} className={classes.paper}>
           <div className={classes.title}>Loaded Files</div>

@@ -10,11 +10,7 @@ import { store } from '../store/configureStore';
 const useStyles = makeStyles(
   {
     root: {
-      paddingLeft: 20,
-      paddingRight: 20,
-      marginTop: 10,
-      marginBottom: 10,
-      whiteSpace: 'nowrap'
+      display: 'inline-block'
     }
   },
   {
@@ -48,24 +44,11 @@ const SaveSession = props => {
 
   return (
     <div className={classes.root}>
-      <Button
-        variant="outlined"
-        color="primary"
-        onClick={handleSave}
-        disableRipple={true}
-      >
-        SAVE SESSION
-      </Button>
+      <span variant="outlined" color="primary" onClick={handleSave}>
+        Save Session
+      </span>
     </div>
   );
 };
 
-// const mapStateToProps = state => {
-//   return {
-//     session: state.session,
-//     views: state.views
-//   };
-// };
-
-// export default connect(mapStateToProps)(SaveSession);
 export default SaveSession;

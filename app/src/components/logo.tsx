@@ -1,15 +1,17 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import { shell } from 'electron';
 
 const useStyles = makeStyles(
   {
     root: {
-      // position: 'relative',
-      // top: 10,
-      // left: -80
-      // paddingBottom: 0,
-      // textAlign: 'left'
+      display: 'inline-block',
+      cursor: 'pointer',
+      transition: 'all 250ms !important',
+      '&:hover': {
+        opacity: 0.75
+      }
     },
     text: {
       fontSize: '38px',
@@ -29,8 +31,14 @@ const useStyles = makeStyles(
 
 const Logo = () => {
   const classes = useStyles();
+
+  const handleLink = () => {
+    let link = 'https://timestep.herokuapp.com';
+    shell.openExternal(link);
+  };
+
   return (
-    <div className={classes.root}>
+    <div onClick={handleLink} className={classes.root}>
       <div className={classes.text}>
         <span className={classes.left}>timest</span>
         <span className={classes.right}>ep</span>
@@ -39,12 +47,4 @@ const Logo = () => {
   );
 };
 
-export { Logo };
-
-// <svg
-//   width="51"
-//   height="12"
-//   viewBox="0 0 51 12"
-//   fill="none"
-//   xmlns="http://www.w3.org/2000/svg"
-// ></svg>;
+export default Logo;

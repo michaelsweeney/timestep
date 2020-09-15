@@ -7,23 +7,40 @@ import connect from '../store/connect';
 const useStyles = makeStyles(
   {
     root: {
-      boxSizing: 'border-box'
+      marginLeft: 5,
+      marginRight: 5,
+      boxSizing: 'border-box',
+      display: 'inline-block',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap'
+    },
+
+    container: {
+      display: 'inline-block'
     },
 
     tabactive: {
-      display: 'block',
+      display: 'inline-block',
       color: 'white !important',
-      backgroundColor: '#3f51b5 !important',
+      backgroundColor: 'rgba(63, 81, 181, 1) !important',
       transition: 'all 250ms !important'
     },
 
     tabinactive: {
-      display: 'block',
-      color: '#3f51b5 !important',
+      marginLeft: 5,
+      marginRight: 5,
+      display: 'inline-block',
+      color: 'rgba(63, 81, 181, 1) !important',
       backgroundColor: 'white !important',
-      transition: 'all 250ms !important'
+      transition: 'all 250ms !important',
+      '&:hover': {
+        backgroundColor: 'rgba(63, 81, 181, 0.05)  !important'
+      }
     },
-    group: {}
+    removebtn: {
+      paddingLeft: 10,
+      '&:hover': {}
+    }
   },
 
   { name: 'view-manager' }
@@ -52,7 +69,7 @@ const ViewSelector = props => {
     <div className={classes.root}>
       {Object.values(views).map((el, i) => {
         return (
-          <div key={i}>
+          <div className={classes.container} key={i}>
             <Button
               disableRipple={true}
               className={
@@ -67,14 +84,21 @@ const ViewSelector = props => {
               <span onClick={() => handleActiveViewChange(el.viewID)}>
                 {'View ' + el.viewID}
               </span>
-              <span onClick={() => handleRemoveView(el.viewID)}>
+              <span
+                className={classes.removebtn}
+                onClick={() => handleRemoveView(el.viewID)}
+              >
                 {el.viewID == 1 ? '' : 'X'}
               </span>
             </Button>
           </div>
         );
       })}
-      <Button disableRipple={true} onClick={handleAddView}>
+      <Button
+        className={classes.tabinactive}
+        disableRipple={true}
+        onClick={handleAddView}
+      >
         +
       </Button>
       {/* </ButtonGroup> */}

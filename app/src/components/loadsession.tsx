@@ -6,13 +6,15 @@ import { remote } from 'electron';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Tooltip } from '@material-ui/core';
 
+import { getSeries } from './sql';
+
 const useStyles = makeStyles(
   {
     root: {
       display: 'inline-block',
-      marginTop: 10,
-      marginLeft: 10,
-      marginRight: 5,
+      // marginTop: 10,
+      // marginLeft: 10,
+      // marginRight: 5,
       boxSizing: 'border-box'
     },
     button: {
@@ -50,8 +52,6 @@ const LoadSession = props => {
       props.actions.changeFiles(files);
       props.actions.changeUnits(units);
 
-      //
-
       Object.values(views).forEach(view => {
         let {
           viewID,
@@ -60,15 +60,16 @@ const LoadSession = props => {
           selectedSeriesLabel,
           chartType
         } = view;
-
         props.actions.addView(viewID);
         props.actions.changeTimestepType(timestepType, viewID);
         props.actions.changeChartType(chartType, viewID);
         props.actions.changeSelectedSeries(selectedSeries, viewID);
         props.actions.changeSelectedSeriesLabel(selectedSeriesLabel, viewID);
       });
-
       props.actions.setActiveView(activeViewID);
+      props.actions.setLoadingFromFile(true);
+
+      // props.actions.incrementSession();
     });
   };
 
@@ -123,14 +124,9 @@ const LoadSession = props => {
     }
   };
 
-  const handleLoad = () => {};
-
   return (
     <div className={classes.root}>
-      <Button
-        disableRipple={true}
-        variant="contained"
-        color="primary"
+      <span
         className={isActive == 'active' ? classes.buttonactive : classes.button}
         onClick={openDialog}
         onDragEnter={handleDragEnter}
@@ -138,8 +134,8 @@ const LoadSession = props => {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
       >
-        LOAD SESSION
-      </Button>
+        Load Session
+      </span>
     </div>
   );
 };

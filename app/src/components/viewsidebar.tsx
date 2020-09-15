@@ -2,27 +2,29 @@ import React from 'react';
 
 import TimeStepSelect from './timestepselect';
 import ChartTypeSelector from './charttypeselector';
+import UnitRadio from './unitradio';
+import { InfoContainer } from './infocontainer';
 
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(
   {
     root: {
-      display: 'block',
-      borderBottom: '1px solid rgba(0,0,0,0.3)',
+      display: 'inline-block',
+      borderRight: '1px solid rgba(0,0,0,0.3)',
       boxSizing: 'border-box',
-      marginLeft: 20,
-      marginRight: 25,
-      paddingTop: 10,
-      paddingBottom: 10
+      height: '100%',
+      margin: 10,
+      padding: 10,
+      width: 125
     }
   },
   {
-    name: 'view-header'
+    name: 'view-sidebar'
   }
 );
 
-const ViewHeader = props => {
+const ViewSidebar = props => {
   const classes = useStyles();
 
   const { viewID } = props;
@@ -35,4 +37,4 @@ const ViewHeader = props => {
   );
 };
 
-export default ViewHeader;
+export default ViewSidebar;

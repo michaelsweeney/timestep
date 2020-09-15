@@ -18,18 +18,30 @@ const useStyles = makeStyles(
     },
 
     tabactive: {
+      width: 100,
+      padding: '5px !important',
+      margin: '5px !important',
+      textAlign: 'center',
+      display: 'inline-block',
       color: 'white !important',
-      backgroundColor: '#3f51b5 !important',
+      backgroundColor: 'rgba(63, 81, 181, 1) !important',
       transition: 'all 250ms !important'
     },
 
     tabinactive: {
-      color: '#3f51b5 !important',
+      width: 100,
+      padding: '5px !important',
+      margin: '5px !important',
+      textAlign: 'center',
+      display: 'inline-block',
+      color: 'rgba(63, 81, 181, 1) !important',
       backgroundColor: 'white !important',
-      transition: 'all 250ms !important'
+      transition: 'all 250ms !important',
+      '&:hover': {
+        backgroundColor: 'rgba(63, 81, 181, 0.05)  !important'
+      }
     }
   },
-
   { name: 'chart-type-selector' }
 );
 
@@ -49,6 +61,7 @@ const ChartTypeSelector = props => {
 
   return (
     <div className={classes.root}>
+      <InputLabel> Chart Type </InputLabel>
       {/* <ButtonGroup className={classes.tabs}> */}
       {['MultiLine', 'Heatmap', 'Scatter', 'Histogram', 'Statistics'].map(
         (el, i) => {
@@ -58,7 +71,6 @@ const ChartTypeSelector = props => {
               className={
                 chartType == el ? classes.tabactive : classes.tabinactive
               }
-              color="primary"
               value={el}
               label={el}
               key={i}

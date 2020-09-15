@@ -5,7 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(
   {
     root: {
-      overflow: 'hidden'
+      overflow: 'hidden',
+      display: 'inline-block',
+      width: 'calc(100% - 150px)'
     },
     spinneractive: {
       visibility: 'visible',

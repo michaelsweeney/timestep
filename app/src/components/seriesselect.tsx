@@ -122,6 +122,7 @@ export default function SeriesSelect(props) {
   return (
     <div className={classes.root}>
       <Autocomplete
+        disableClearable={true}
         onChange={props.seriesCallback}
         id="virtualize-demo"
         disableListWrap

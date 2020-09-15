@@ -6,11 +6,20 @@ const initialState = {
   containerDims: {
     width: 700,
     height: 500
-  }
+  },
+  sessionIncrement: 1,
+  isLoadingFromFile: false
 };
 
 export default function sessionReducer(state = initialState, action) {
   switch (action.type) {
+    case 'SET_LOADING_FROM_FILE': {
+      return {
+        ...state,
+        isLoadingFromFile: action.payload
+      };
+    }
+
     case 'SET_ACTIVE_VIEW':
       return {
         ...state,

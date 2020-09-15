@@ -18,7 +18,7 @@ const MultiLineControl = props => {
 
   const { viewID } = props;
 
-  const { containerDims, files, units } = props.session;
+  const { containerDims, files, units, isLoadingFromFile } = props.session;
 
   const {
     seriesOptions,
@@ -77,10 +77,7 @@ const MultiLineControl = props => {
     });
   }, [containerDims, controlsHeight]);
 
-  const handleSeriesSelect = (e, v) => {
-    let newkeys = v.map(d => seriesOptions[d]);
-    let existingkeys = selectedSeries;
-
+  const seriesLoad = (newkeys, existingkeys, labels, viewID) => {
     let keysToAdd = [];
     let keysToRemove = [];
     newkeys.forEach(key => {
@@ -103,11 +100,25 @@ const MultiLineControl = props => {
       getSeries(key).then(d => {
         props.actions.addToLoadedArray(key, d, viewID);
         props.actions.removeKeyFromQueue(key, viewID);
+        props.actions.setLoadingFromFile(false);
       });
     });
     props.actions.changeSelectedSeries(newkeys, viewID);
-    props.actions.changeSelectedSeriesLabel(v, viewID);
+    props.actions.changeSelectedSeriesLabel(labels, viewID);
   };
+
+  const handleSeriesSelect = (e, v) => {
+    let newkeys = v.map(d => seriesOptions[d]);
+    let existingkeys = selectedSeries;
+    let labels = v;
+    seriesLoad(newkeys, existingkeys, labels, viewID);
+  };
+
+  useEffect(() => {
+    if (isLoadingFromFile) {
+      seriesLoad(selectedSeries, [], selectedSeriesLabel, viewID);
+    }
+  }, [isLoadingFromFile]);
 
   // config handlers
 
@@ -148,7 +159,7 @@ const MultiLineControl = props => {
   };
 
   const handleRemoveSeries = e => {
-    props.actions.removeFromLoadedArray(e);
+    props.actions.removeFromLoadedArray(e, viewID);
   };
 
   // chart ui changes
@@ -205,12 +216,7 @@ const MultiLineControl = props => {
         </ControlsContent>
 
         <ControlsContent tag="tab-export" tabname="Export">
-          <CopySave
-            array={selectedSeries}
-            arraytype="multi"
-            units={units}
-            files={files}
-          ></CopySave>
+          <CopySave viewID={viewID} arraytype="multi"></CopySave>
         </ControlsContent>
       </ControlsWrapper>
     </>

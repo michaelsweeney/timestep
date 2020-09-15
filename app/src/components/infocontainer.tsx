@@ -6,7 +6,9 @@ import { shell } from 'electron';
 
 const useStyles = makeStyles(
   {
-    root: {},
+    root: {
+      display: 'inline-block'
+    },
 
     button: {
       borderWidth: '0px !important',
