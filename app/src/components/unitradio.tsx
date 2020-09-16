@@ -7,12 +7,15 @@ const useStyles = makeStyles(
   {
     root: {
       display: 'inline-block',
-      marginLeft: 20,
-      marginRight: 20,
-      marginTop: 20,
-      marginBottom: 10
+      marginBottom: 10,
+      boxSizing: 'border-box',
+      overflow: 'hidden',
+      whitespace: 'nowrap'
     },
-    radio: { padding: 6 }
+    radio: { padding: 1 },
+    titleinput: { display: 'block', textAlign: 'center' },
+
+    radioinput: { display: 'inline-block !important' }
   },
   {
     name: 'unit-radio'
@@ -31,8 +34,8 @@ const UnitRadio = props => {
 
   return (
     <div className={classes.root}>
-      <InputLabel>Units</InputLabel>
-      <span>SI</span>
+      <InputLabel className={classes.titleinput}>Units</InputLabel>
+      <InputLabel className={classes.radioinput}>SI</InputLabel>
       <Radio
         className={classes.radio}
         disableRipple={true}
@@ -43,6 +46,7 @@ const UnitRadio = props => {
         name="radio-button-demo"
         inputProps={{ 'aria-label': 'SI' }}
       />
+
       <Radio
         className={classes.radio}
         disableRipple={true}
@@ -53,7 +57,8 @@ const UnitRadio = props => {
         name="radio-button-demo"
         inputProps={{ 'aria-label': 'IP' }}
       />
-      <span>IP</span>
+
+      <InputLabel className={classes.radioinput}>IP</InputLabel>
     </div>
   );
 };

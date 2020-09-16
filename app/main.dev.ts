@@ -60,6 +60,8 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     title: 'timestep',
     show: false,
+    // frame: false,
+    // titleBarStyle: 'hiddenInset',
     width: 1024,
     height: 728,
     minWidth: 400,

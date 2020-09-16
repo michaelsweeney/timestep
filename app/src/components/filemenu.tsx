@@ -30,9 +30,8 @@ const FileMenu = props => {
     setAnchorEl(null);
   };
   return (
-    <div>
+    <div className={classes.root}>
       <Button
-        className={classes.logo}
         aria-controls="file-menu"
         aria-haspopup="true"
         color="primary"
@@ -50,16 +49,16 @@ const FileMenu = props => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem disableRipple={true} onClick={handleClose}>
           <FileHandler />
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem disableRipple={true} onClick={handleClose}>
           <FileList />
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem disableRipple={true} onClick={handleClose}>
           <SaveSession />
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem disableRipple={true} onClick={handleClose}>
           <LoadSession />
         </MenuItem>
       </Menu>

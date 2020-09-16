@@ -137,8 +137,8 @@ const Scatter = props => {
     /* SCALES */
 
     const xScale = scaleLinear().range([0, plotwidth]);
-
     const yScale = scaleLinear().range([plotheight, 0]);
+
     if (!isZoomed) {
       xScale.domain([xminrange, xmaxrange]);
       yScale.domain([yminrange, ymaxrange]);

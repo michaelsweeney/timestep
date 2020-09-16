@@ -16,15 +16,27 @@ import { getSeriesLookupObj } from './formatseries';
 const useStyles = makeStyles(
   {
     root: {
-      width: 'calc(100% - 175px)',
+      width: '100vw',
       display: 'inline-block',
-      height: '100%',
+      height: 'calc(100vh - 115px)',
       boxSizing: 'border-box',
-      overflowY: 'hidden',
-      overflowX: 'hidden',
+      overflow: 'hidden',
+      whitespace: 'nowrap',
       '&::-webkit-scrollbar': {
         display: 'none'
       }
+    },
+    sidebar: { height: '100%' },
+    view: {
+      verticalAlign: 'top',
+      height: '100%',
+      margin: 10,
+      padding: 10,
+      display: 'inline-block',
+      width: 'calc(100% - 200px)',
+      boxSizing: 'border-box',
+      overflow: 'hidden',
+      whitespace: 'nowrap'
     }
   },
   { name: 'view-container' }
@@ -52,7 +64,7 @@ const ChartTypeControl = props => {
 
   const getContainerDims = node => {
     return {
-      width: Math.max(node.getBoundingClientRect()['width'], 400),
+      width: Math.max(node.getBoundingClientRect()['width'] - 150, 400),
       height: Math.max(node.getBoundingClientRect()['height'] - 100, 400)
     };
   };
@@ -108,8 +120,10 @@ const ChartTypeControl = props => {
         className={classes.root}
         style={{ display: viewActive ? 'inline-block' : 'none' }}
       >
-        <ViewSidebar viewID={viewID} />
-        {chartobj[chartType]}
+        <div className={classes.sidebar}>
+          <ViewSidebar viewID={viewID} />
+        </div>
+        {/* <div className={classes.view}> {chartobj[chartType]}</div> */}
       </div>
     );
   }

@@ -109,6 +109,7 @@ const ScatterControl = props => {
     let min = Math.min(...series.map(d => d[valkey]));
     let max = Math.max(...series.map(d => d[valkey]));
     let pad = (max - min) * domainPad;
+
     min = min == 0 ? min : min - pad;
     max = max + pad;
     return [min, max];
@@ -121,7 +122,6 @@ const ScatterControl = props => {
       ySeriesData.length != 0 ? getMaxMin(ySeriesData) : [0, 1];
     let [zmin, zmax] =
       zSeriesData.length != 0 ? getMaxMin(zSeriesData) : [0, 1];
-
     setXMinRange(xmin);
     setXMaxRange(xmax);
     setYMinRange(ymin);
@@ -132,6 +132,8 @@ const ScatterControl = props => {
 
   const seriesLoad = (key, label, viewID, dimension) => {
     const dim = dimension.toUpperCase();
+
+    console.log(dim);
     const selectedSeriesObj = {
       X: selectedXSeries,
       Y: selectedYSeries,

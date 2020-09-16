@@ -68,9 +68,7 @@ function FileList(props) {
 
   return (
     <div className={classes.root}>
-      <span variant="outlined" color="primary" onClick={handleClick}>
-        File Info
-      </span>
+      <div onClick={handleClick}>File Info</div>
       <Modal open={open} onClose={handleClose}>
         <div style={modalStyle} className={classes.paper}>
           <div className={classes.title}>Loaded Files</div>

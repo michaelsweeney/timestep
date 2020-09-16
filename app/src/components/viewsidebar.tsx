@@ -16,7 +16,18 @@ const useStyles = makeStyles(
       height: '100%',
       margin: 10,
       padding: 10,
-      width: 125
+      width: 150,
+      verticalAlign: 'top',
+      overflow: 'hidden',
+      whitespace: 'nowrap'
+    },
+    linebreak: {
+      marginTop: 10,
+      marginBottom: 20,
+      paddingLeft: 10,
+      paddingRight: 10,
+      borderBottom: '1px solid rgba(0,0,0,0.3)',
+      boxSizing: 'border-box'
     }
   },
   {
@@ -32,7 +43,11 @@ const ViewSidebar = props => {
   return (
     <div className={classes.root}>
       <ChartTypeSelector viewID={viewID} />
+      <div className={classes.linebreak} />
       <TimeStepSelect viewID={viewID} />
+      <div className={classes.linebreak} />
+
+      <UnitRadio />
     </div>
   );
 };

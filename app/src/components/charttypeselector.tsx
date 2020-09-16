@@ -8,13 +8,12 @@ const useStyles = makeStyles(
   {
     root: {
       display: 'inline-block',
-      marginLeft: 10,
-      marginRight: 20,
-      marginTop: 10,
-      paddingRight: 5,
-      position: 'relative',
-      left: '-5px',
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      textAlign: 'center',
+      marginBottom: 10
+    },
+    inputlabel: {
+      marginBottom: 10
     },
 
     tabactive: {
@@ -61,8 +60,7 @@ const ChartTypeSelector = props => {
 
   return (
     <div className={classes.root}>
-      <InputLabel> Chart Type </InputLabel>
-      {/* <ButtonGroup className={classes.tabs}> */}
+      <InputLabel className={classes.inputlabel}> Chart Type </InputLabel>
       {['MultiLine', 'Heatmap', 'Scatter', 'Histogram', 'Statistics'].map(
         (el, i) => {
           return (
@@ -81,7 +79,6 @@ const ChartTypeSelector = props => {
           );
         }
       )}
-      {/* </ButtonGroup> */}
     </div>
   );
 };

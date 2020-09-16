@@ -8,10 +8,10 @@ const useStyles = makeStyles(
     root: {
       display: 'inline-block',
       cursor: 'pointer',
-      transition: 'all 250ms !important',
-      '&:hover': {
-        opacity: 0.75
-      }
+      transition: 'all 250ms !important'
+      // '&:hover': {
+      //   opacity: 0.75
+      // }
     },
     text: {
       fontSize: '38px',

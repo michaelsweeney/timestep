@@ -7,8 +7,6 @@ import connect from '../store/connect';
 const useStyles = makeStyles(
   {
     root: {
-      marginLeft: 5,
-      marginRight: 5,
       boxSizing: 'border-box',
       display: 'inline-block',
       overflow: 'hidden',
@@ -82,7 +80,7 @@ const ViewSelector = props => {
               label={el.viewID}
             >
               <span onClick={() => handleActiveViewChange(el.viewID)}>
-                {'View ' + el.viewID}
+                {'View ' + el.viewID + ' - ' + el.chartType}
               </span>
               <span
                 className={classes.removebtn}

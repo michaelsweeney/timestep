@@ -9,10 +9,13 @@ const useStyles = makeStyles(
   {
     root: {
       display: 'inline-block',
-      margin: 10
+      textAlign: 'center',
+      marginBottom: 10,
+      width: '100%'
     },
-    inputLabel: {
-      display: 'inline-block'
+    inputlabel: {
+      textAlign: 'center',
+      marginBottom: 10
     },
     select: {
       display: 'inline-block'
@@ -33,7 +36,7 @@ const TimeStepSelect = props => {
   };
   return (
     <div className={classes.root}>
-      <InputLabel className={classes.inputLabel} id="label">
+      <InputLabel className={classes.inputlabel} id="label">
         Interval
       </InputLabel>
       <Select

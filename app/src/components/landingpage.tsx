@@ -34,7 +34,8 @@ const LandingPage = props => {
 
       <div className={classes.maintext}>No Files are currently loaded.</div>
       <div className={classes.maintext}>
-        Select "LOAD FILES" or drop SQL file to load timeseries results.
+        Select "LOAD FILES" from the "Files" menu or drop a valid SQL file to
+        load timeseries results.
       </div>
       <div className={classes.maintext}>
         Make sure that "Output:SQLite:SimpleAndTabular" has been included in
