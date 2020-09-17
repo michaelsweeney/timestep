@@ -44,7 +44,7 @@ const App = props => {
   useEffect(() => {
     let files = ['/Users/michaelsweeney/Documents/energyplus files/sim1.sql'];
     props.actions.changeFiles(files);
-    props.actions.changeChartType('MultiLine', 1);
+    props.actions.changeChartType('Heatmap', 1);
     // props.actions.changeFileInfo(files);
   }, []);
 

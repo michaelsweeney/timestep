@@ -12,9 +12,6 @@ const useStyles = makeStyles(
   {
     root: {
       display: 'inline-block',
-      // marginTop: 10,
-      // marginLeft: 10,
-      // marginRight: 5,
       boxSizing: 'border-box'
     },
     button: {
@@ -141,9 +138,7 @@ const LoadSession = props => {
 };
 
 const mapStateToProps = state => {
-  return {
-    // ...state
-  };
+  return {};
 };
 
 export default connect(mapStateToProps)(LoadSession);

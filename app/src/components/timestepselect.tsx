@@ -19,6 +19,14 @@ const useStyles = makeStyles(
     },
     select: {
       display: 'inline-block'
+      // left: '5 !important'
+    },
+    selectwrapper: {
+      display: 'block'
+      //  paddingLeft: 15
+    },
+    icon: {
+      // color: 'rgba(63, 81, 181, 1) !important'
     }
   },
   {
@@ -39,31 +47,38 @@ const TimeStepSelect = props => {
       <InputLabel className={classes.inputlabel} id="label">
         Interval
       </InputLabel>
-      <Select
-        className={classes.select}
-        onChange={handleChange}
-        id="select"
-        value={type}
-      >
-        <MenuItem disableRipple={true} value="HVAC Timestep">
-          HVAC Timestep
-        </MenuItem>
-        <MenuItem disableRipple={true} value="Zone Timestep">
-          Zone Timestep
-        </MenuItem>
-        <MenuItem disableRipple={true} value="Hourly">
-          Hourly
-        </MenuItem>
-        <MenuItem disableRipple={true} value="Daily">
-          Daily
-        </MenuItem>
-        <MenuItem disableRipple={true} value="Monthly">
-          Monthly
-        </MenuItem>
-        <MenuItem disableRipple={true} value="Run Period">
-          Run Period
-        </MenuItem>
-      </Select>
+      <div className={classes.selectwrapper}>
+        <Select
+          inputProps={{
+            classes: {
+              icon: classes.icon
+            }
+          }}
+          className={classes.select}
+          onChange={handleChange}
+          id="select"
+          value={type}
+        >
+          <MenuItem disableRipple={true} value="HVAC Timestep">
+            HVAC Timestep
+          </MenuItem>
+          <MenuItem disableRipple={true} value="Zone Timestep">
+            Zone Timestep
+          </MenuItem>
+          <MenuItem disableRipple={true} value="Hourly">
+            Hourly
+          </MenuItem>
+          <MenuItem disableRipple={true} value="Daily">
+            Daily
+          </MenuItem>
+          <MenuItem disableRipple={true} value="Monthly">
+            Monthly
+          </MenuItem>
+          <MenuItem disableRipple={true} value="Run Period">
+            Run Period
+          </MenuItem>
+        </Select>
+      </div>
     </div>
   );
 };

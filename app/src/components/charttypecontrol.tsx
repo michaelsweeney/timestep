@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import connect from '../store/connect';
 
@@ -26,14 +26,14 @@ const useStyles = makeStyles(
         display: 'none'
       }
     },
-    sidebar: { height: '100%' },
+    sidebar: { display: 'inline-block', height: '100%', width: 150 },
     view: {
       verticalAlign: 'top',
       height: '100%',
       margin: 10,
       padding: 10,
       display: 'inline-block',
-      width: 'calc(100% - 200px)',
+      width: 'calc(100% - 175px)',
       boxSizing: 'border-box',
       overflow: 'hidden',
       whitespace: 'nowrap'
@@ -44,11 +44,10 @@ const useStyles = makeStyles(
 
 const ChartTypeControl = props => {
   const classes = useStyles();
-  const container = useRef(null);
   const { viewID, viewActive } = props;
 
   const { files, units, activeViewID } = props.session;
-  const { timestepType, chartType } = props.views[viewID];
+  const { timestepType, chartType } = props.view;
 
   useEffect(() => {
     getAllSeries(files).then(ar => {
@@ -61,35 +60,6 @@ const ChartTypeControl = props => {
       props.actions.setSeriesOptions(parsed, viewID);
     });
   }, [files, units, timestepType]);
-
-  const getContainerDims = node => {
-    return {
-      width: Math.max(node.getBoundingClientRect()['width'] - 150, 400),
-      height: Math.max(node.getBoundingClientRect()['height'] - 100, 400)
-    };
-  };
-
-  // get initial dims after mount
-  useEffect(() => {
-    let dims = getContainerDims(container.current);
-    props.actions.setContainerDims(dims);
-  }, [activeViewID]);
-
-  // get dims on window resize
-  useEffect(() => {
-    function handleResize() {
-      if (viewActive) {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-          let dims = getContainerDims(container.current);
-          props.actions.setContainerDims(dims);
-        }, 250);
-      }
-    }
-    let resizeTimer;
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  });
 
   const propobj = {
     viewID: viewID
@@ -106,7 +76,6 @@ const ChartTypeControl = props => {
   if (files.length == 0) {
     return (
       <div
-        ref={container}
         className={classes.root}
         style={{ display: viewActive ? 'inline-block' : 'none' }}
       >
@@ -116,22 +85,22 @@ const ChartTypeControl = props => {
   } else {
     return (
       <div
-        ref={container}
         className={classes.root}
         style={{ display: viewActive ? 'inline-block' : 'none' }}
       >
         <div className={classes.sidebar}>
           <ViewSidebar viewID={viewID} />
         </div>
-        {/* <div className={classes.view}> {chartobj[chartType]}</div> */}
+        <div className={classes.view}> {chartobj[chartType]}</div>
       </div>
     );
   }
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, ownProps) => {
   return {
-    ...state
+    session: state.session,
+    view: state.views[ownProps.viewID]
   };
 };
 

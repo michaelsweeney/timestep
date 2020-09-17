@@ -18,6 +18,10 @@ const useStyles = makeStyles(
     },
 
     tabactive: {
+      paddingLeft: '5 !important',
+      paddingRight: '5 !important',
+      marginLeft: '5 !important',
+      marginRight: '5 !important',
       display: 'inline-block',
       color: 'white !important',
       backgroundColor: 'rgba(63, 81, 181, 1) !important',
@@ -25,8 +29,10 @@ const useStyles = makeStyles(
     },
 
     tabinactive: {
-      marginLeft: 5,
-      marginRight: 5,
+      paddingLeft: '5 !important',
+      paddingRight: '5 !important',
+      marginLeft: '5 !important',
+      marginRight: '5 !important',
       display: 'inline-block',
       color: 'rgba(63, 81, 181, 1) !important',
       backgroundColor: 'white !important',
@@ -47,6 +53,8 @@ const useStyles = makeStyles(
 const ViewSelector = props => {
   const classes = useStyles();
 
+  const maxViews = 3;
+
   const { views, activeViewID } = props;
 
   const handleActiveViewChange = id => {
@@ -61,6 +69,22 @@ const ViewSelector = props => {
 
   const handleRemoveView = id => {
     props.actions.removeView(id);
+  };
+
+  const AddButtonMarkup = () => {
+    if (Object.values(views).length < maxViews) {
+      return (
+        <Button
+          className={classes.tabinactive}
+          disableRipple={true}
+          onClick={handleAddView}
+        >
+          +
+        </Button>
+      );
+    } else {
+      return <span></span>;
+    }
   };
 
   return (
@@ -80,7 +104,7 @@ const ViewSelector = props => {
               label={el.viewID}
             >
               <span onClick={() => handleActiveViewChange(el.viewID)}>
-                {'View ' + el.viewID + ' - ' + el.chartType}
+                {'View ' + el.viewID}
               </span>
               <span
                 className={classes.removebtn}
@@ -92,14 +116,7 @@ const ViewSelector = props => {
           </div>
         );
       })}
-      <Button
-        className={classes.tabinactive}
-        disableRipple={true}
-        onClick={handleAddView}
-      >
-        +
-      </Button>
-      {/* </ButtonGroup> */}
+      <AddButtonMarkup />
     </div>
   );
 };

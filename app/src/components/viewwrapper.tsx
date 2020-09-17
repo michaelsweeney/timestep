@@ -7,7 +7,7 @@ const useStyles = makeStyles(
     root: {
       overflow: 'hidden',
       display: 'inline-block',
-      width: 'calc(100% - 150px)'
+      width: 'calc(100%)'
     },
     spinneractive: {
       visibility: 'visible',

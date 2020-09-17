@@ -53,6 +53,13 @@ const HeatmapControl = props => {
     height: minHeight
   });
 
+  useEffect(() => {
+    setPlotDims({
+      width: Math.max(containerDims.width, minWidth),
+      height: Math.max(containerDims.height - controlsHeight - 20, minHeight)
+    });
+  }, [containerDims, controlsHeight]);
+
   const toggleHideControlsTabs = () => {
     if (controlsVisible) {
       setControlsVisible(false);
@@ -72,13 +79,6 @@ const HeatmapControl = props => {
       setActiveTab(tag);
     }
   };
-
-  useEffect(() => {
-    setPlotDims({
-      width: Math.max(containerDims.width, minWidth),
-      height: Math.max(containerDims.height - controlsHeight - 20, minHeight)
-    });
-  }, [containerDims, controlsHeight]);
 
   const getMaxMin = series => {
     const valkey = units == 'ip' ? 'value_ip' : 'value_si';
