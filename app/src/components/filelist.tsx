@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import connect from '../store/connect';
+import { getFileSummary } from '../components/sql';
 
 import {
   Button,
@@ -42,11 +43,17 @@ const useStyles = makeStyles(
 );
 
 function FileList(props) {
+  const { files, fileInfo } = props;
   const [modalStyle] = useState(getModalStyle);
   const [controlledOpen, setControlledOpen] = useState(false);
   const classes = useStyles();
 
-  const { fileInfo } = props;
+  useEffect(() => {
+    getFileSummary(files).then(f => {
+      props.actions.changeFileInfo(f);
+    });
+  }, [files]);
+
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -112,6 +119,7 @@ function FileList(props) {
 
 const mapStateToProps = state => {
   return {
+    files: state.session.files,
     fileInfo: state.session.fileInfo
   };
 };

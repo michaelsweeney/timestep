@@ -19,21 +19,18 @@ const useStyles = makeStyles(
     },
     headerLeft: {
       display: 'inline-block',
-      width: 'calc(100% - 150px)'
+      width: 'calc(100% - 125px)'
     },
 
     headerRight: {
       display: 'inline-block',
-      width: '150px'
+      width: '125px'
     },
     logo: {
       display: 'inline-block',
       verticalAlign: 'middle'
     },
     files: {
-      // padding: 10,
-      // border: '1px solid rgba(0,0,0,0.3)',
-      // borderRadius: '10px',
       marginRight: 10,
       marginLeft: 25,
       width: 115,
@@ -42,10 +39,7 @@ const useStyles = makeStyles(
       verticalAlign: 'middle'
     },
     views: {
-      // padding: 10,
-      // border: '1px solid rgba(0,0,0,0.3)',
-      // borderRadius: '10px',
-      marginLeft: 10,
+      marginLeft: 20,
       marginRight: 10,
       display: 'inline-block',
       verticalAlign: 'middle'
@@ -56,23 +50,24 @@ const useStyles = makeStyles(
   }
 );
 
-const Header = props => {
+const Header = () => {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <div className={classes.headerLeft}>
-        <div className={classes.files}>
-          <FileMenu />
+        <div className={classes.logo}>
+          <Logo />
         </div>
+
         <div className={classes.views}>
           <ViewSelector />
         </div>
       </div>
       <div className={classes.headerRight}>
-        <div className={classes.logo}>
-          <Logo />
-        </div>{' '}
+        <div className={classes.files}>
+          <FileMenu />
+        </div>
       </div>
     </div>
   );

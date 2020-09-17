@@ -132,8 +132,6 @@ const ScatterControl = props => {
 
   const seriesLoad = (key, label, viewID, dimension) => {
     const dim = dimension.toUpperCase();
-
-    console.log(dim);
     const selectedSeriesObj = {
       X: selectedXSeries,
       Y: selectedYSeries,

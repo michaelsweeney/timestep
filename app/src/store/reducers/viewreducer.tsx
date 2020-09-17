@@ -18,9 +18,9 @@ export default function viewReducer(state = initialState, action) {
     case 'ADD_VIEW': {
       return {
         ...state,
-        [action.newID]: {
-          viewID: action.newID,
-          label: `View ${action.newID}`,
+        [action.payload]: {
+          viewID: action.payload,
+          label: `View ${action.payload}`,
           timestepType: 'Hourly',
           chartType: 'Heatmap',
           seriesOptions: [],
@@ -33,7 +33,7 @@ export default function viewReducer(state = initialState, action) {
       };
     }
 
-    case 'REMOVE_ALL_VIEWS': {
+    case 'RESET_VIEWS': {
       return {};
     }
 

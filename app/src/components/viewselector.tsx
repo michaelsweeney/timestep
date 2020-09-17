@@ -52,27 +52,28 @@ const useStyles = makeStyles(
 
 const ViewSelector = props => {
   const classes = useStyles();
+  const maxViews = 4;
 
-  const maxViews = 3;
-
-  const { views, activeViewID } = props;
+  const { viewIDs, activeViewID } = props;
 
   const handleActiveViewChange = id => {
     props.actions.setActiveView(id);
   };
 
   const handleAddView = () => {
-    const nextViewID = Math.max(...Object.values(views).map(e => e.viewID)) + 1;
+    const nextViewID = Math.max(...viewIDs) + 1;
     props.actions.addView(nextViewID);
     props.actions.setActiveView(nextViewID);
   };
 
   const handleRemoveView = id => {
     props.actions.removeView(id);
+    const idCopy = [...viewIDs].filter(d => d != id);
+    props.actions.setActiveView(idCopy.slice(-1).pop());
   };
 
   const AddButtonMarkup = () => {
-    if (Object.values(views).length < maxViews) {
+    if (viewIDs.length < maxViews) {
       return (
         <Button
           className={classes.tabinactive}
@@ -89,28 +90,26 @@ const ViewSelector = props => {
 
   return (
     <div className={classes.root}>
-      {Object.values(views).map((el, i) => {
+      {viewIDs.map((el, i) => {
         return (
           <div className={classes.container} key={i}>
             <Button
               disableRipple={true}
               className={
-                activeViewID == el.viewID
-                  ? classes.tabactive
-                  : classes.tabinactive
+                activeViewID == el ? classes.tabactive : classes.tabinactive
               }
               color="primary"
-              value={el.viewID}
-              label={el.viewID}
+              value={el}
+              label={el}
             >
-              <span onClick={() => handleActiveViewChange(el.viewID)}>
-                {'View ' + el.viewID}
+              <span onClick={() => handleActiveViewChange(el)}>
+                {'View ' + el}
               </span>
               <span
                 className={classes.removebtn}
-                onClick={() => handleRemoveView(el.viewID)}
+                onClick={() => handleRemoveView(el)}
               >
-                {el.viewID == 1 ? '' : 'X'}
+                {el == 1 ? '' : 'X'}
               </span>
             </Button>
           </div>
@@ -124,7 +123,7 @@ const ViewSelector = props => {
 const mapStateToProps = state => {
   return {
     activeViewID: state.session.activeViewID,
-    views: state.views
+    viewIDs: state.session.viewArray
   };
 };
 

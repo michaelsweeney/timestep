@@ -19,11 +19,9 @@ const useStyles = makeStyles(
     },
     select: {
       display: 'inline-block'
-      // left: '5 !important'
     },
     selectwrapper: {
       display: 'block'
-      //  paddingLeft: 15
     },
     icon: {
       // color: 'rgba(63, 81, 181, 1) !important'

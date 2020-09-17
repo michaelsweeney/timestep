@@ -110,7 +110,6 @@ const HeatmapControl = props => {
 
   useEffect(() => {
     if (isLoadingFromFile) {
-      console.log(props);
       try {
         seriesLoad(selectedSeries, selectedSeriesLabel, viewID);
       } catch {

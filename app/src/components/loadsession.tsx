@@ -6,7 +6,7 @@ import { remote } from 'electron';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Tooltip } from '@material-ui/core';
 
-import { getSeries } from './sql';
+import { getSeries, getFileSummary } from './sql';
 
 const useStyles = makeStyles(
   {
@@ -44,8 +44,8 @@ const LoadSession = props => {
       const { activeViewID, files, units } = loadobj.session;
       const { views } = loadobj;
 
-      // remove all views first
-      props.actions.removeAllViews();
+      // reset views first
+      props.actions.resetViews();
       props.actions.changeFiles(files);
       props.actions.changeUnits(units);
 
@@ -57,6 +57,7 @@ const LoadSession = props => {
           selectedSeriesLabel,
           chartType
         } = view;
+
         props.actions.addView(viewID);
         props.actions.changeTimestepType(timestepType, viewID);
         props.actions.changeChartType(chartType, viewID);

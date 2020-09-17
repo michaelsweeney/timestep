@@ -14,16 +14,16 @@ export function setActiveView(id) {
   };
 }
 
-export function removeAllViews() {
+export function resetViews() {
   return {
-    type: 'REMOVE_ALL_VIEWS'
+    type: 'RESET_VIEWS'
   };
 }
 
 export function addView(id) {
   return {
     type: 'ADD_VIEW',
-    newID: id
+    payload: id
   };
 }
 

@@ -7,7 +7,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import Header from '../components/header';
 import Views from '../components/views';
 import '../css/app.global.css';
-import { getFileSummary } from '../components/sql';
 
 import {
   StylesProvider,
@@ -38,23 +37,15 @@ const useStyles = makeStyles(
 const App = props => {
   const classes = useStyles();
 
-  const { files } = props.session;
-
   /* programmatic ui for testing*/
   useEffect(() => {
     let files = ['/Users/michaelsweeney/Documents/energyplus files/sim1.sql'];
+
     props.actions.changeFiles(files);
     props.actions.changeChartType('Heatmap', 1);
-    // props.actions.changeFileInfo(files);
   }, []);
 
   /* end programmatic ui - testing only */
-
-  useEffect(() => {
-    getFileSummary(files).then(b => {
-      props.actions.changeFileInfo(b);
-    });
-  }, [files]);
 
   return (
     <StylesProvider generateClassName={generateClassName}>
@@ -68,7 +59,7 @@ const App = props => {
 
 const mapStateToProps = state => {
   return {
-    ...state
+    files: state.session.files
   };
 };
 export default hot(connect(mapStateToProps)(App));

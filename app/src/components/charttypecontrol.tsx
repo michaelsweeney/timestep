@@ -44,10 +44,12 @@ const useStyles = makeStyles(
 
 const ChartTypeControl = props => {
   const classes = useStyles();
-  const { viewID, viewActive } = props;
+  const { viewID } = props;
 
-  const { files, units, activeViewID } = props.session;
+  const { files, units, activeViewID } = props;
   const { timestepType, chartType } = props.view;
+
+  const viewActive = activeViewID == viewID ? true : false;
 
   useEffect(() => {
     getAllSeries(files).then(ar => {
@@ -99,7 +101,9 @@ const ChartTypeControl = props => {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    session: state.session,
+    files: state.session.files,
+    units: state.session.units,
+    activeViewID: state.session.activeViewID,
     view: state.views[ownProps.viewID]
   };
 };

@@ -3,6 +3,7 @@ const initialState = {
   files: [],
   fileInfo: [],
   activeViewID: 1,
+  viewArray: [1],
   containerDims: {
     width: 700,
     height: 500
@@ -20,6 +21,26 @@ export default function sessionReducer(state = initialState, action) {
       };
     }
 
+    case 'ADD_VIEW': {
+      const arrayCopy = [...state.viewArray];
+      arrayCopy.push(action.payload);
+      return {
+        ...state,
+        viewArray: arrayCopy
+      };
+    }
+    case 'REMOVE_VIEW': {
+      return {
+        ...state,
+        viewArray: [...state.viewArray].filter(d => d != action.payload)
+      };
+    }
+    case 'RESET_VIEWS': {
+      return {
+        ...state,
+        viewArray: []
+      };
+    }
     case 'SET_ACTIVE_VIEW':
       return {
         ...state,

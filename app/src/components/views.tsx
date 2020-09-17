@@ -4,7 +4,7 @@ import connect from '../store/connect';
 import ChartTypeControl from './charttypecontrol';
 
 const Views = props => {
-  const { activeViewID, views, containerDims } = props;
+  const { viewArray } = props;
   const container = useRef(null);
 
   const minwidth = 300;
@@ -21,7 +21,7 @@ const Views = props => {
   useEffect(() => {
     let dims = getContainerDims(container.current);
     props.actions.setContainerDims(dims);
-  }, [activeViewID]);
+  }, []);
 
   // get dims on window resize
   useEffect(() => {
@@ -37,23 +37,16 @@ const Views = props => {
     return () => window.removeEventListener('resize', handleResize);
   });
 
-  const mappedViews = Object.values(views).map(view => {
-    return (
-      <ChartTypeControl
-        key={view.viewID}
-        viewActive={activeViewID == view.viewID ? true : false}
-        viewID={view.viewID}
-      />
-    );
+  const mappedViews = Object.values(viewArray).map(id => {
+    return <ChartTypeControl key={id} viewID={id} />;
   });
   return <div ref={container}>{mappedViews}</div>;
 };
 
 const mapStateToProps = state => {
   return {
-    views: state.views,
-    containerDims: state.session.containerDims,
-    activeViewID: state.session.activeViewID
+    viewArray: state.session.viewArray,
+    containerDims: state.session.containerDims
   };
 };
 

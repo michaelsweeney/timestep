@@ -294,6 +294,7 @@
     "react-window": "^1.8.5",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0",
     "source-map-support": "^0.5.16"
   },
   "devEngines": {
