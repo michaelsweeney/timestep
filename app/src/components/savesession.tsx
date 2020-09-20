@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import connect from '../store/connect';
+import {connect, store} from 'src/store';
 
 import fs from 'fs';
 import { remote } from 'electron';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Tooltip } from '@material-ui/core';
-import { store } from '../store/configureStore';
 
 const useStyles = makeStyles(
   {

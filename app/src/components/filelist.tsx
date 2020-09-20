@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import connect from '../store/connect';
-import { getFileSummary } from '../components/sql';
+import {connect} from 'src/store';
+import { getFileSummary } from 'src/sql';
 
 import {
   Button,

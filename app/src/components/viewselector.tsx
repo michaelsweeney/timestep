@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import connect from '../store/connect';
+import {connect} from 'src/store';
 
 const useStyles = makeStyles(
   {
@@ -18,28 +18,23 @@ const useStyles = makeStyles(
     },
 
     tabactive: {
+      // ...styles.buttonactive,
       paddingLeft: '5 !important',
       paddingRight: '5 !important',
       marginLeft: '5 !important',
       marginRight: '5 !important',
       display: 'inline-block',
-      color: 'white !important',
-      backgroundColor: 'rgba(63, 81, 181, 1) !important',
-      transition: 'all 250ms !important'
+      // transition: 'all 250ms !important'
     },
 
     tabinactive: {
+      // ...styles.buttoninactive,
       paddingLeft: '5 !important',
       paddingRight: '5 !important',
       marginLeft: '5 !important',
       marginRight: '5 !important',
       display: 'inline-block',
-      color: 'rgba(63, 81, 181, 1) !important',
-      backgroundColor: 'white !important',
-      transition: 'all 250ms !important',
-      '&:hover': {
-        backgroundColor: 'rgba(63, 81, 181, 0.05)  !important'
-      }
+      // transition: 'all 250ms !important'
     },
     removebtn: {
       paddingLeft: 10,
@@ -69,7 +64,9 @@ const ViewSelector = props => {
   const handleRemoveView = id => {
     props.actions.removeView(id);
     const idCopy = [...viewIDs].filter(d => d != id);
-    props.actions.setActiveView(idCopy.slice(-1).pop());
+    if (id == activeViewID) {
+      props.actions.setActiveView(idCopy.slice(-1).pop());
+    }
   };
 
   const AddButtonMarkup = () => {
@@ -91,14 +88,28 @@ const ViewSelector = props => {
   return (
     <div className={classes.root}>
       {viewIDs.map((el, i) => {
+
+        const styleProps = () => {
+          if (activeViewID ==  el ) {
+            return {
+              color: 'primary',
+              variant: 'contained'
+          } }
+          else {
+            return {
+              color: 'primary'
+            }
+          }
+         }
+        
         return (
           <div className={classes.container} key={i}>
             <Button
               disableRipple={true}
-              className={
-                activeViewID == el ? classes.tabactive : classes.tabinactive
-              }
-              color="primary"
+              {...styleProps()}
+              // className={
+              //   activeViewID == el ? classes.tabactive : classes.tabinactive
+              // }
               value={el}
               label={el}
             >
@@ -107,9 +118,11 @@ const ViewSelector = props => {
               </span>
               <span
                 className={classes.removebtn}
-                onClick={() => handleRemoveView(el)}
+                onClick={() =>
+                  viewIDs.length >= 1 ? handleRemoveView(el) : ''
+                }
               >
-                {el == 1 ? '' : 'X'}
+                {viewIDs.length > 1 ? 'X' : ''}
               </span>
             </Button>
           </div>

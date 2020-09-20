@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { AppContainer as ReactHotAppContainer } from 'react-hot-loader';
-import App from './containers/App';
+import App from './components/App';
 
 import { store } from './store/configureStore';
 import { Provider } from 'react-redux';

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import connect from '../store/connect';
+import {connect} from 'src/store';
 
 import fs from 'fs';
 import { remote } from 'electron';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Tooltip } from '@material-ui/core';
 
-import { getSeries, getFileSummary } from './sql';
+import { getSeries, getFileSummary } from 'src/sql';
 
 const useStyles = makeStyles(
   {

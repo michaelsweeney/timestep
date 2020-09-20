@@ -2,15 +2,12 @@ import React, { useState } from 'react';
 import { remote } from 'electron';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import connect from '../store/connect';
+import {connect} from 'src/store';
 
 const useStyles = makeStyles(
   {
     root: {
       display: 'inline-block',
-      // marginTop: 10,
-      // marginLeft: 10,
-      // marginRight: 5,
       boxSizing: 'border-box'
     },
     button: {
@@ -21,8 +18,7 @@ const useStyles = makeStyles(
     buttonactive: {
       width: 115,
       whiteSpace: 'nowrap',
-      backgroundColor: 'rgba(20, 20, 20, 0.5) !important',
-      transition: 'background-color 5000ms'
+      transition: 'background-color 500ms'
     }
   },
   { name: 'file-handler' }

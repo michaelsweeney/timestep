@@ -14,6 +14,7 @@ const mapStateToProps = state => {
   };
 };
 
+
 export default function(
   mapState = mapStateToProps,
   mapDispatch = mapDispatchToProps
