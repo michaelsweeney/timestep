@@ -6,10 +6,7 @@ import { useTheme, makeStyles } from '@material-ui/core/styles';
 import { VariableSizeList } from 'react-window';
 import Typography from '@material-ui/core/typography';
 
-// THIS IS TAKEN FROM MATERIAL-UI AND ONLY MODIFIED SLIGHTLY;
-// THERE IS LIKELY SOME BOILERPLATE HTAT CAN BE REMOVED.
-
-const LISTBOX_PADDING = 8; // px
+const LISTBOX_PADDING = 8;
 
 function renderRow(props) {
   const { data, index, style } = props;
@@ -150,4 +147,4 @@ function MultiSeriesSelect(props) {
   );
 }
 
-export {MultiSeriesSelect}
+export { MultiSeriesSelect };

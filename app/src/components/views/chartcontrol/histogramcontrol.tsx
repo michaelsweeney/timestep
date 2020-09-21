@@ -120,8 +120,6 @@ const HistogramControl = props => {
     setMaxData(max);
   }, [units]);
 
-  let numbins = 10;
-
   const handleRangeChange = v => {
     setMinRange(v[0]);
     setMaxRange(v[1]);

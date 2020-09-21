@@ -25,11 +25,6 @@ const useStyles = makeStyles(
       transition: 'all 250ms !important',
       textTransform: 'initial !important',
       fontSize: '16px !important',
-      // '& span': {
-      //   borderBottom: '1px solid !important',
-      //   paddingLeft: '5px',
-      //   paddingRight: '5px',
-      // }
     },
 
     tabinactive: {
@@ -108,6 +103,6 @@ const mapStateToProps = (state, ownProps) => {
   return {
     chartType: state.views[viewID].chartType
   };
-}; 
+};
 
 export default connect(mapStateToProps)(ChartTypeSelector);

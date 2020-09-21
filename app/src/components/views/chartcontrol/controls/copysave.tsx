@@ -10,7 +10,7 @@ import AssignmentIcon from '@material-ui/icons/Assignment';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Tooltip } from '@material-ui/core';
-import {store} from 'src/store';
+import { store } from 'src/store';
 
 const useStyles = makeStyles(
   {
@@ -103,15 +103,7 @@ const CopySave = props => {
   };
 
   const checkMultipleFiles = () => {
-    const {
-      units,
-      files,
-      array,
-      ismulti,
-      titlekey,
-      timeparsestr,
-      valkey
-    } = pullState(store);
+    const { files } = pullState(store);
 
     if (files.length > 1) {
       alert(
@@ -121,15 +113,7 @@ const CopySave = props => {
   };
 
   function reformatMultiObject(objarray) {
-    const {
-      units,
-      files,
-      array,
-      ismulti,
-      titlekey,
-      timeparsestr,
-      valkey
-    } = pullState(store);
+    const { titlekey, timeparsestr, valkey } = pullState(store);
 
     // multiple series, single file i.e. guaranteed single timestep
     let formatarray = [['Time']];
@@ -151,15 +135,7 @@ const CopySave = props => {
   }
 
   function reformatSingleObject(objarray) {
-    const {
-      units,
-      files,
-      array,
-      ismulti,
-      titlekey,
-      timeparsestr,
-      valkey
-    } = pullState(store);
+    const { titlekey, timeparsestr, valkey } = pullState(store);
     // single series, single file
     let formatarray = [
       ['Time', objarray[0] ? objarray[0][titlekey].replace(',', '_') : '']

@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import {
-  scaleLinear,
-  select,
-  selectAll,
-  axisLeft,
-  axisBottom,
-  axisRight
-} from 'd3';
+import { scaleLinear, select, axisLeft, axisBottom, axisRight } from 'd3';
 
 import colorscale from '../colorscaleindex';
 
@@ -15,7 +8,7 @@ import { formatDate, formatDomain } from 'src/format';
 import { D3Container } from './d3container';
 import { heatmapdims } from './chartdimensions';
 import { NoSelectionContainer } from './noselectioncontainer';
-import { getSeriesKeys} from 'src/sql'
+import { getSeriesKeys } from 'src/sql';
 
 const Heatmap = props => {
   const container = useRef(null);
@@ -32,10 +25,10 @@ const Heatmap = props => {
   const { width, height } = props.plotdims;
 
   const clrAxisFormat = formatDomain([minrange, maxrange]);
-  
+
   const seriesKeys = getSeriesKeys(units, files);
 
-  let title = series[0] ? series[0][seriesKeys.name] : ''
+  let title = series[0] ? series[0][seriesKeys.name] : '';
 
   const valkey = units == 'ip' ? 'value_ip' : 'value_si';
   const unitkey = units == 'ip' ? 'units_ip' : 'units_si';

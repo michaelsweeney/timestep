@@ -9,7 +9,7 @@ import MappedViews from './views/mappedviews';
 import '../css/app.global.css';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import { indigo, green, grey } from '@material-ui/core/colors';
+import { grey } from '@material-ui/core/colors';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {
   StylesProvider,
@@ -18,7 +18,6 @@ import {
 
 const theme = createMuiTheme({
   palette: {
-    // primary: { main: indigo[700] },
     secondary: { main: grey[800] }
   }
 });
@@ -45,15 +44,15 @@ const useStyles = makeStyles(
 const App = props => {
   const classes = useStyles();
 
-  /* programmatic ui for testing*/
-  useEffect(() => {
-    let files = ['/Users/michaelsweeney/Documents/energyplus files/sim1.sql'];
+  /* default ui setup for testing only*/
+  // useEffect(() => {
+  //   let files = ['/Users/michaelsweeney/Documents/energyplus files/sim1.sql'];
 
-    props.actions.changeFiles(files);
-    props.actions.changeChartType('Heatmap', 1);
-  }, []);
+  //   props.actions.changeFiles(files);
+  //   props.actions.changeChartType('Heatmap', 1);
+  // }, []);
+  /* end default ui setup for testing only */
 
-  /* end programmatic ui - testing only */
   return (
     <ThemeProvider theme={theme}>
       <StylesProvider generateClassName={generateClassName}>
@@ -69,7 +68,7 @@ const App = props => {
 
 const mapStateToProps = state => {
   return {
-    files: state.session.files
+    // files: state.session.files
   };
 };
 export default hot(connect(mapStateToProps)(App));

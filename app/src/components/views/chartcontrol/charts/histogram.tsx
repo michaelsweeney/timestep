@@ -1,15 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { formatDomain } from 'src/format';
-import {
-  scaleLinear,
-  select,
-  selectAll,
-  axisLeft,
-  axisBottom,
-  axisRight,
-  histogram,
-  max
-} from 'd3';
+import { scaleLinear, select, axisLeft, axisBottom, histogram, max } from 'd3';
 import { getSeriesKeys } from 'src/sql';
 
 import { D3Container } from './d3container';

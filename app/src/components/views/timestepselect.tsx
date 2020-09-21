@@ -21,10 +21,8 @@ const useStyles = makeStyles(
     select: {
       display: 'inline-block',
       textAlign: 'left'
-      // marginLeft: 30
     },
     selectwrapper: {
-      // float: 'center'
       display: 'block',
       textAlign: 'center'
     },

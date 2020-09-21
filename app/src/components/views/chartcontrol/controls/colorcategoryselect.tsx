@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Select, InputLabel, FormControl } from '@material-ui/core';
 
-// make new component
 const colorcategories = {
   Category10: 'schemeCategory10',
   Accent: 'schemeAccent',

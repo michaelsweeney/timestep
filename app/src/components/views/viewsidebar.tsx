@@ -3,7 +3,6 @@ import React from 'react';
 import TimeStepSelect from './timestepselect';
 import ChartTypeSelector from './charttypeselector';
 import UnitRadio from './unitradio';
-import { InfoContainer } from './infocontainer';
 
 import { makeStyles } from '@material-ui/core/styles';
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Select, FormControl } from '@material-ui/core';
 
-// make new component
 const colorcategories = {
   Category10: 'schemeCategory10',
   Accent: 'schemeAccent',
