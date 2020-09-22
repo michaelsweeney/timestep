@@ -28,7 +28,6 @@
     "@material-ui/lab": "^4.0.0-alpha.53",
     "@material-ui/styles": "^4.10.0",
     "@welldone-software/why-did-you-render": "^5.0.0-alpha.2",
-    "better-sqlite3": "^7.1.0",
     "d3": "^5.16.0",
     "object-sizeof": "^1.6.1",
     "react": "^16.12.0",

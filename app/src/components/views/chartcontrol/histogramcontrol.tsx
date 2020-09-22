@@ -112,14 +112,6 @@ const HistogramControl = props => {
     }
   }, [isLoadingFromFile]);
 
-  useEffect(() => {
-    let [min, max] = getMaxMin(seriesData);
-    setMinRange(min);
-    setMaxRange(max);
-    setMinData(min);
-    setMaxData(max);
-  }, [units]);
-
   const handleRangeChange = v => {
     setMinRange(v[0]);
     setMaxRange(v[1]);

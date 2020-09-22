@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { formatDomain, formatDate, formatInt } from 'src/format';
-import {getSeriesKeys} from 'src/sql'
+import { getSeriesKeys } from 'src/sql';
 import { D3Container } from './d3container';
 import { multilinedims } from './chartdimensions';
 import { NoSelectionContainer } from './noselectioncontainer';
@@ -453,16 +453,26 @@ const Multiline = props => {
         .attr('x2', xScale(pointarray[0].time));
 
       tooltip
-        .style('left', event.pageX - 175 + 'px')
+        .style(
+          'left',
+          (event.pageX / window.innerWidth) * -450 + event.pageX + 'px'
+        )
         .style('top', event.pageY - 100 + 'px')
         .style('transition', 'left 100ms, top 100ms')
         .style('opacity', 1).html(`
       <div>
-      <div class='tooltip-time'>${formatDate(pointarray[0].time)}</div>
+      <div style="
+      padding: 5px;
+      margin-left: 5px;
+      ">${formatDate(pointarray[0].time)}</div>
       ${pointarray
         .map((d, i) => {
           return `
-        <div>
+        <div
+        style="
+        overflow: hidden;
+        white-space: nowrap';
+        ">
           <div class='tooltip-rect' style=
           "
           background-color: ${seriesConfig[i].color};
@@ -474,8 +484,11 @@ const Multiline = props => {
           transition: opacity 200ms;
           box-sizing: border-box;
           border-radius: 2px;
+          position: relative;
+          top: 5px
           "
           ></div>
+          <div style="display: inline-block">${d[seriesKeys.name]}: </div>
           <div style='display: inline-block'>${formatInt(d[seriesKeys.value]) +
             ' ' +
             d[seriesKeys.units]}</div>

@@ -244,7 +244,10 @@ const Heatmap = props => {
     function handleMouseover(d) {
       tooltipdiv
         .style('opacity', 1)
-        .style('left', event.pageX - 175 + 'px')
+        .style(
+          'left',
+          (event.pageX / window.innerWidth) * -150 + event.pageX + 'px'
+        )
         .style('top', event.pageY - 75 + 'px')
         .style('transition', 'left 100ms, top 100ms')
         .html(() => {

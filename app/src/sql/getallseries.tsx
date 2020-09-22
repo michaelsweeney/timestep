@@ -4,7 +4,6 @@ import { dbProto } from './dbproto';
 import { unitdict, unitconvert } from './conversions';
 import { checkArray } from './checkarray';
 import { readBnd } from './readbnd';
-import bettersqlite from 'better-sqlite3';
 
 async function getAllSeries(sqlfiles) {
   dbProto();
@@ -25,9 +24,6 @@ async function getAllSeries(sqlfiles) {
 
     let db = new sqlite3.Database(sqlfile);
     let result = await db.allAsync(query);
-
-    // let db = bettersqlite(sqlfile);
-    // let result = await db.prepare(query).all();
 
     result.forEach(orig_row => {
       let row = { ...orig_row };

@@ -10,7 +10,7 @@ const MappedViews = props => {
   const minwidth = 300;
   const minheight = 100;
 
-  const getContainerDims = node => {
+  const calculateContainerDims = node => {
     return {
       width: Math.max(node.getBoundingClientRect()['width'] - 175, minwidth),
       height: Math.max(node.getBoundingClientRect()['height'] - 75, minheight)
@@ -19,7 +19,7 @@ const MappedViews = props => {
 
   // get initial dims after mount
   useEffect(() => {
-    let dims = getContainerDims(container.current);
+    let dims = calculateContainerDims(container.current);
     props.actions.setContainerDims(dims);
   }, []);
 
@@ -28,7 +28,7 @@ const MappedViews = props => {
     function handleResize() {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
-        let dims = getContainerDims(container.current);
+        let dims = calculateContainerDims(container.current);
         props.actions.setContainerDims(dims);
       }, 0);
     }

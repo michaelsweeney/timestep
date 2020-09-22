@@ -13,7 +13,7 @@ import {
 
 import colorscale from '../colorscaleindex';
 import { formatDomain, formatDate, idealSplit } from 'src/format';
-import { getSeriesKeys} from 'src/sql'
+import { getSeriesKeys } from 'src/sql';
 import { D3Container } from './d3container';
 import { scatterdims } from './chartdimensions';
 import { NoSelectionContainer } from './noselectioncontainer';
@@ -408,7 +408,10 @@ const Scatter = props => {
     function handleMouseover(d) {
       tooltipdiv
         .style('opacity', 1)
-        .style('left', event.pageX - 150 + 'px')
+        .style(
+          'left',
+          (event.pageX / window.innerWidth) * -100 + event.pageX + 'px'
+        )
         .style('top', event.pageY - 125 + 'px')
         .style('transition', 'left 100ms, top 100ms')
         .html(() => {

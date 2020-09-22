@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import {connect} from 'src/store';
+import { connect } from 'src/store';
 
 import HeatmapControl from './chartcontrol/heatmapcontrol';
 import HistogramControl from './chartcontrol/histogramcontrol';

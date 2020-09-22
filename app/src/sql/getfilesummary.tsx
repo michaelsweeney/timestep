@@ -1,7 +1,6 @@
 import { dbProto } from './dbproto';
 import fs from 'fs';
 import sqlite3 from 'sqlite3';
-import bettersqlite from 'better-sqlite3';
 
 async function getFileSummary(sqlfiles) {
   dbProto(); // establish async loadfiles
@@ -17,9 +16,6 @@ async function getFileSummary(sqlfiles) {
     let reports_query =
       "SELECT ReportDataDictionaryIndex from 'ReportDataDictionary'";
 
-    // let db = bettersqlite(sqlfile);
-    // let result = await db.prepare(result_query).all();
-    // let reports = await db.prepare(reports_query).all();
 
     let db = new sqlite3.Database(sqlfile);
     let result = await db.allAsync(result_query);

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { remote } from 'electron';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import {connect} from 'src/store';
+import { connect } from 'src/store';
 
 const useStyles = makeStyles(
   {
@@ -30,6 +30,9 @@ const FileHandler = props => {
   const [isActive, setIsActive] = useState('inactive');
 
   const handleFileChange = f => {
+    props.actions.resetViews();
+    props.actions.addView(1);
+    props.actions.setActiveView(1);
     props.actions.changeFiles(f);
   };
 

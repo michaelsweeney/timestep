@@ -3,7 +3,7 @@ const initialState = {
     viewID: 1,
     label: 'View 1',
     timestepType: 'Hourly',
-    chartType: 'Heatmap',
+    chartType: 'Multiline',
     seriesOptions: [],
     selectedSeries: [],
     selectedSeriesLabel: null,
@@ -43,6 +43,10 @@ export default function viewReducer(state = initialState, action) {
       return {
         ...newstate
       };
+    }
+
+    case 'CHANGE_FILES': {
+      return initialState;
     }
 
     case 'CHANGE_VIEW_TYPE':

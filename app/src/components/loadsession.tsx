@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {connect} from 'src/store';
+import { connect } from 'src/store';
 
 import fs from 'fs';
 import { remote } from 'electron';
