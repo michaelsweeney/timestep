@@ -149,6 +149,8 @@ const Scatter = props => {
     const colorScale = createColorScale();
     const colorFunc = colorscale[colorfunc];
 
+    console.log(colorfunc, colorFunc, colorscale);
+
     /* HANDLE DATA */
 
     // create data object with x, y, z, time
@@ -205,7 +207,9 @@ const Scatter = props => {
       })
       .on('mouseout', (d, i, node) => {
         handleMouseout(d);
-      });
+      })
+      .style('stroke', 'rgba(0,0,0,0.85)')
+      .style('stroke-width', '0.5px');
 
     /* AXES */
     const xAxisFormat = formatDomain([xminrange, xmaxrange]);

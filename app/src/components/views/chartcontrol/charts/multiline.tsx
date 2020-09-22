@@ -455,11 +455,12 @@ const Multiline = props => {
       tooltip
         .style(
           'left',
-          (event.pageX / window.innerWidth) * -450 + event.pageX + 'px'
+          (event.pageX / window.innerWidth) * -500 + event.pageX + 'px'
         )
-        .style('top', event.pageY - 100 + 'px')
+        .style('top', event.pageY + 50 + 'px')
         .style('transition', 'left 100ms, top 100ms')
-        .style('opacity', 1).html(`
+        .style('z-index', 999)
+        .style('opacity', 0.75).html(`
       <div>
       <div style="
       padding: 5px;
@@ -470,6 +471,7 @@ const Multiline = props => {
           return `
         <div
         style="
+        opacity: 1.0;
         overflow: hidden;
         white-space: nowrap';
         ">

@@ -13,13 +13,13 @@ const useStyles = makeStyles(
       visibility: 'visible',
       position: 'absolute',
       left: '50%',
-      top: '25%',
+      top: '30%',
       zIndex: 999
     },
     spinnerinactive: {
       position: 'absolute',
-      left: '40%',
-      top: '25%',
+      left: '50%',
+      top: '30%',
       visibility: 'hidden',
       zIndex: 999
     },
