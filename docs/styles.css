@@ -1,3 +1,30 @@
 body {
-  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.banner-container {
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  font-family: Arial;
+  color: white;
+  vertical-align: middle;
+  padding: 20%;
+}
+
+.banner-container .header {
+  font-size: 3em;
+  font-family: 'Arial';
+  color: white;
+  vertical-align: middle;
+  text-align: left;
+}
+
+.banner-container .link {
+  color: white;
+  padding-top: 15px;
+  padding-left: 5px;
+  font-size: 1.5em;
 }
