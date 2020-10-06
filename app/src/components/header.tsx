@@ -36,14 +36,14 @@ const useStyles = makeStyles(
     },
     files: {
       marginRight: 10,
-      marginLeft: 25,
+      marginLeft: 10,
       width: 115,
       paddingBottom: 5,
       display: 'inline-block',
       verticalAlign: 'top'
     },
     views: {
-      marginLeft: 20,
+      // marginLeft: 10,
       marginRight: 10,
       display: 'inline-block',
       verticalAlign: 'top'

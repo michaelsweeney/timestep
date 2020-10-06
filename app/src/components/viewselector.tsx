@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import {connect} from 'src/store';
+import { connect } from 'src/store';
 
 const useStyles = makeStyles(
   {
@@ -14,7 +14,9 @@ const useStyles = makeStyles(
     },
 
     container: {
-      display: 'inline-block'
+      display: 'inline-block',
+      paddingLeft: 5,
+      paddingRight: 5
     },
 
     tabactive: {
@@ -23,7 +25,7 @@ const useStyles = makeStyles(
       paddingRight: '5 !important',
       marginLeft: '5 !important',
       marginRight: '5 !important',
-      display: 'inline-block',
+      display: 'inline-block'
       // transition: 'all 250ms !important'
     },
 
@@ -33,7 +35,7 @@ const useStyles = makeStyles(
       paddingRight: '5 !important',
       marginLeft: '5 !important',
       marginRight: '5 !important',
-      display: 'inline-block',
+      display: 'inline-block'
       // transition: 'all 250ms !important'
     },
     removebtn: {
@@ -88,20 +90,19 @@ const ViewSelector = props => {
   return (
     <div className={classes.root}>
       {viewIDs.map((el, i) => {
-
         const styleProps = () => {
-          if (activeViewID ==  el ) {
+          if (activeViewID == el) {
             return {
               color: 'primary',
               variant: 'contained'
-          } }
-          else {
+            };
+          } else {
             return {
               color: 'primary'
-            }
+            };
           }
-         }
-        
+        };
+
         return (
           <div className={classes.container} key={i}>
             <Button

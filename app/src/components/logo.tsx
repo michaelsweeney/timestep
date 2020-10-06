@@ -7,11 +7,8 @@ const useStyles = makeStyles(
   {
     root: {
       display: 'inline-block',
-      cursor: 'pointer',
+      // cursor: 'pointer',
       transition: 'all 250ms !important'
-      // '&:hover': {
-      //   opacity: 0.75
-      // }
     },
     text: {
       fontSize: '38px',
@@ -33,8 +30,8 @@ const Logo = () => {
   const classes = useStyles();
 
   const handleLink = () => {
-    let link = 'https://timestep.herokuapp.com';
-    shell.openExternal(link);
+    // let link = 'https://timestep.herokuapp.com';
+    // shell.openExternal(link);
   };
 
   return (
