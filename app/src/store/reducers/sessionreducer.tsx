@@ -9,7 +9,8 @@ const initialState = {
     height: 500
   },
   sessionIncrement: 1,
-  isLoadingFromFile: false
+  isLoadingFromFile: false,
+  version: 'v0.2.0'
 };
 
 export default function sessionReducer(state = initialState, action) {

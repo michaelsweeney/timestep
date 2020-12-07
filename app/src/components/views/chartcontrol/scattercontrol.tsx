@@ -3,6 +3,8 @@ import { connect } from 'src/store';
 
 import { getSeries } from 'src/sql';
 import { Scatter } from './charts/scatter';
+import { ScatterCanvas } from './charts/scattercanvas';
+
 import { ChartWrapper } from './chartwrapper';
 
 import {
@@ -218,7 +220,23 @@ const ScatterControl = props => {
         plotContainer={plotContainer}
         isLoading={isLoading ? true : false}
       >
-        <Scatter
+        {/* <Scatter
+          plotdims={plotDims}
+          files={files}
+          units={units}
+          colorfunc={colorfunc}
+          reversecolor={reverseColor}
+          xseries={xSeriesData}
+          xminrange={xMinRange}
+          xmaxrange={xMaxRange}
+          yseries={ySeriesData}
+          yminrange={yMinRange}
+          ymaxrange={yMaxRange}
+          zseries={zSeriesData}
+          zminrange={zMinRange}
+          zmaxrange={zMaxRange}
+        />         */}
+        <ScatterCanvas
           plotdims={plotDims}
           files={files}
           units={units}

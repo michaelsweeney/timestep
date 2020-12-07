@@ -2,13 +2,13 @@ const heatmapdims = {
   labelmargins: {
     y: 40,
     x: 40,
-    title: 20,
+    title: 30,
     legend: 50,
     legendlabel: 105
   },
   margins: {
     l: 75,
-    t: 50,
+    t: 60,
     b: 50,
     r: 115
   }

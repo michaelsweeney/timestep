@@ -36,7 +36,7 @@ const HistogramControl = props => {
 
   const [activeTab, setActiveTab] = useState('tab-series');
 
-  const controlsVisibleHeight = 200;
+  const controlsVisibleHeight = 225;
   const controlsHiddenHeight = 100;
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);

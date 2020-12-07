@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
 import { connect } from 'src/store';
 import { makeStyles } from '@material-ui/core/styles';
+import Version from './version';
 import Header from './header';
 import MappedViews from './views/mappedviews';
 import '../css/app.global.css';
@@ -46,10 +47,9 @@ const App = props => {
 
   /* default ui setup for testing only*/
   // useEffect(() => {
-  //   let files = ['/Users/michaelsweeney/Documents/energyplus files/sim1.sql'];
-
-  //   props.actions.changeFiles(files);
-  //   props.actions.changeChartType('Heatmap', 1);
+  // const files = ['/Users/michaelsweeney/Downloads/Sample SQL Files/sim1.sql'];
+  // props.actions.changeFiles(files);
+  // props.actions.changeChartType('Heatmap', 1);
   // }, []);
   /* end default ui setup for testing only */
 
@@ -60,6 +60,7 @@ const App = props => {
         <div className={classes.root}>
           <Header />
           <MappedViews />
+          <Version />
         </div>
       </StylesProvider>
     </ThemeProvider>

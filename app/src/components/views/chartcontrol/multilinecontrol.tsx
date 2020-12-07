@@ -4,6 +4,8 @@ import { connect } from 'src/store';
 import { getSeries, getSeriesKeys } from 'src/sql';
 
 import { Multiline } from './charts/Multiline';
+import { MultilineCanvas } from './charts/multilinecanvas';
+
 import { ChartWrapper } from './chartwrapper';
 
 import colorscale from './colorscaleindex';
@@ -170,7 +172,7 @@ const MultilineControl = props => {
   return (
     <>
       <ChartWrapper plotContainer={plotContainer} isLoading={isLoading}>
-        <Multiline
+        <MultilineCanvas
           zoomCallback={handleZoomChange}
           zoomDomain={zoomDomain}
           files={files}

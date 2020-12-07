@@ -1,7 +1,7 @@
 {
   "name": "timestep",
   "productName": "timestep",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "SQL-based Timeseries Viewer for EnergyPlus",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",

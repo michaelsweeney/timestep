@@ -4,6 +4,8 @@ import { connect } from 'src/store';
 import { getSeries } from 'src/sql';
 
 import { Heatmap } from './charts/heatmap';
+import { HeatmapCanvas } from './charts/heatmapcanvas';
+
 import { ChartWrapper } from './chartwrapper';
 
 import {
@@ -135,7 +137,7 @@ const HeatmapControl = props => {
   return (
     <>
       <ChartWrapper plotContainer={plotContainer} isLoading={isLoading}>
-        <Heatmap
+        <HeatmapCanvas
           plotdims={plotDims}
           files={files}
           series={seriesData}
@@ -144,7 +146,7 @@ const HeatmapControl = props => {
           minrange={minRange}
           maxrange={maxRange}
           reversecolor={reverseColor}
-        ></Heatmap>
+        />
       </ChartWrapper>
       <ControlsWrapper
         height={controlsHeight}

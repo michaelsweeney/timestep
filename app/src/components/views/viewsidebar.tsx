@@ -45,7 +45,6 @@ const ViewSidebar = props => {
       <div className={classes.linebreak} />
       <TimeStepSelect viewID={viewID} />
       <div className={classes.linebreak} />
-
       <UnitRadio />
     </div>
   );

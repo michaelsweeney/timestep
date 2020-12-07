@@ -27,18 +27,18 @@ const BinControl = props => {
 
   return (
     <div className={classes.root}>
-      <InputLabel>Bin Range</InputLabel>
-      <RangeSlider
-        defaultValue={props.defaultRange}
-        rangeCallback={props.rangeCallback}
-      ></RangeSlider>
-      <InputLabel>{'Bins: ' + props.numBins}</InputLabel>
+      <InputLabel>{'# Bins: ' + props.numBins}</InputLabel>
       <SingleSlider
         min={0}
         max={50}
         defaultValue={10}
         sliderCallback={props.binCallback}
-      ></SingleSlider>
+      />
+      <InputLabel>Bin Range</InputLabel>
+      <RangeSlider
+        defaultValue={props.defaultRange}
+        rangeCallback={props.rangeCallback}
+      />
     </div>
   );
 };

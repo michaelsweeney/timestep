@@ -35,7 +35,7 @@ const useStyles = makeStyles(
       right: 10
     },
     files: {
-      marginRight: 10,
+      marginRight: 0,
       marginLeft: 10,
       width: 115,
       paddingBottom: 5,

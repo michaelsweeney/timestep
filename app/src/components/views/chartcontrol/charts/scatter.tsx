@@ -149,8 +149,6 @@ const Scatter = props => {
     const colorScale = createColorScale();
     const colorFunc = colorscale[colorfunc];
 
-    console.log(colorfunc, colorFunc, colorscale);
-
     /* HANDLE DATA */
 
     // create data object with x, y, z, time
@@ -204,6 +202,7 @@ const Scatter = props => {
       .attr('fill', d => (d.z === '' ? '#3f8cb5' : colorFunc(colorScale(d.z))))
       .on('mouseover', (d, i, node) => {
         handleMouseover(d);
+        xw;
       })
       .on('mouseout', (d, i, node) => {
         handleMouseout(d);

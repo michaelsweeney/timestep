@@ -380,7 +380,7 @@ const Multiline = props => {
 
     const tooltip = select(container.current)
       .selectAll('.tooltip')
-      .data(seriesArray)
+      .data([0])
       .join('div')
       .attr('class', 'tooltip')
       .style('opacity', 0);
@@ -460,7 +460,7 @@ const Multiline = props => {
         .style('top', event.pageY + 50 + 'px')
         .style('transition', 'left 100ms, top 100ms')
         .style('z-index', 999)
-        .style('opacity', 0.75).html(`
+        .style('opacity', 0.85).html(`
       <div>
       <div style="
       padding: 5px;
