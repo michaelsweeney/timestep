@@ -1,1 +1,1 @@
-Documentation and download link: <https://timestep.herokuapp.com>
+Documentation and download link: <michaelsweeney.github.io/timestep>
