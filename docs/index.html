@@ -4,13 +4,202 @@
     <link rel="icon" href="favicon.ico" />
     <title>timestep</title>
     <link rel="stylesheet" href="styles.css" />
+    <script src="https://use.fontawesome.com/0e25d0fbef.js"></script>
   </head>
   <body>
-    <div class="banner-container">
-      <div class="header">Timestep has moved to Heroku</div>
-      <a class="link" href="https://timestep.herokuapp.com/"
-        >click to redirect</a
-      >
+    <div class="logo-title">
+      <span class="title-left">timest</span><span class="title-right">ep</span>
+    </div>
+    <div class="section">
+      <h2 class="section-header">
+        EnergyPlus timeseries visualization software
+      </h2>
+      <p>
+        EnergyPlus has rich support for hourly and sub-hourly reporting, but as
+        a model becomes larger and more complex, the simulation output size can
+        become unwieldy for many existing tools. This can result in
+        prohibitively long load-times just to view your simulation results.
+      </p>
+      <p>
+        Timestep attempts to solve this problem, offering a clean, user-friendly
+        and near-instanteous querying interface, as well as modern data
+        visualization capabilities. It accomplishes this by using the EnergyPlus
+        SQLite Output reporting capability, and can load and visualize extremely
+        large simulation output files in seconds, rather than minutes.
+      </p>
+      <div>Current Timestep features:</div>
+      <ul>
+        <li>Native support and install packages for MacOS and Windows.</li>
+        <li>
+          Heatmap, Multi-Line, Scatter Plot, Histogram, and Statistical Summary
+          outputs
+        </li>
+        <li>CSV and clipboard export</li>
+        <li>Saved sessions and multiple views within a session</li>
+        <li>Support for multiple simulation files</li>
+        <li>
+          Auto-detection and parsing of BND files for more contextual IP units
+          conversion.
+        </li>
+      </ul>
+      <div>Planned Timestep features:</div>
+      <ul>
+        <li>Support for ESO files as well as SQLite Outputs</li>
+        <li>Support for platform-agnostic CSV files</li>
+        <li>Support for tabular data (similar to eplusout.html reports)</li>
+        <li>
+          Additional chart types like 2D hexbins, scatter matrices, and
+          box/violin distribution plots
+        </li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2 class="section-header">Install and Setup</h2>
+      <ol>
+        <li>
+          Download the current build for
+          <a
+            id="mac-download-link"
+            href="https://www.dropbox.com/s/pjhyppc8hkg1b3g/timestep-0.2.0-mac.zip?dl=1"
+            >Mac</a
+          >
+          or
+          <a
+            id="pc-download-link"
+            href="https://www.dropbox.com/sh/0xuntmd2aql84we/AACwhg3192AAEfx3Ak69hnjea?dl=1"
+            >PC</a
+          >.
+        </li>
+        <li>
+          (Optional): Download the
+          <a
+            id="sample-sql-link"
+            href="https://www.dropbox.com/sh/0f9kreh5on3p6jb/AACcoFnaRFtf483rPmRSovTEa?dl=1"
+            >sample SQL file</a
+          >.
+        </li>
+        <li>Unzip the file and place it in its own directory.</li>
+        <li>Double-click "timestep" (timestep.exe on Windows)</li>
+        <li>
+          If experiencing issues running the program on Windows, select "More
+          Info" at the "Windows Protected Your PC" at the pop-up and then select
+          "Run Away."
+        </li>
+        <li>
+          If experiencing issues running the program on Mac, check out
+          <a
+            href="https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac"
+            target="_blank"
+            >this link</a
+          >
+          to open packages from unidentified developers.
+        </li>
+        <li>
+          Ensure that any desired EnergyPlus simulations have been run with the
+          following command in the IDF file: "Output:SQLite, SimpleAndTabular"
+        </li>
+        <li>
+          Click the "Load Files button", or drag a valid SQL file (or multiple
+          SQL files) over the load files button.
+        </li>
+        <li>Start exploring your model results!</li>
+      </ol>
+    </div>
+
+    <div class="section">
+      <h2 class="section-header">Screenshots</h2>
+
+      <div class="image-block">
+        <div class="image-container">
+          <img src="./screenshots/heatmap.png" alt="" />
+        </div>
+        <div class="image-subheader">
+          Heatmaps with Variable Color Domain
+        </div>
+      </div>
+
+      <div class="image-block">
+        <div class="image-container">
+          <img src="./screenshots/scatter.png" alt="" />
+        </div>
+        <div class="image-subheader">
+          Scatter Plots with Color Dimensions
+        </div>
+      </div>
+
+      <div class="image-block">
+        <div class="image-container">
+          <img src="./screenshots/multiline.png" alt="" />
+        </div>
+        <div class="image-subheader">
+          Interactive Line Plots with Multiple Axes
+        </div>
+      </div>
+
+      <div class="image-block">
+        <div class="image-container">
+          <img src="./screenshots/histogram.png" alt="" />
+        </div>
+        <div class="image-subheader">
+          Histograms with Variable Bin Settings
+        </div>
+      </div>
+
+      <div class="image-block">
+        <div class="image-container">
+          <img src="./screenshots/statistics.png" alt="" />
+        </div>
+        <div class="image-subheader">
+          Statistical Summaries
+        </div>
+      </div>
+
+      <div class="image-block">
+        <div class="image-container">
+          <img src="./screenshots/live_search.png" alt="" />
+        </div>
+        <div class="image-subheader">
+          Live-Searchable Reports
+        </div>
+      </div>
+      <div class="image-block">
+        <div class="image-container">
+          <img src="./screenshots/multiline_multiple_sims.png" alt="" />
+        </div>
+        <div class="image-subheader">
+          Support for Multiple Simulations (Line Plot)
+        </div>
+      </div>
+      <div class="image-block">
+        <div class="image-container">
+          <img src="./screenshots/scatter_multiple_sims.png" alt="" />
+        </div>
+        <div class="image-subheader">
+          Support for Multiple Simulations (Scatter)
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2 class="section-header">Contributing</h2>
+      <div>
+        Timestep is an open-source project and welcomes contributions! It uses
+        the following frameworks / languages:
+
+        <li>Electron</li>
+        <li>Redux</li>
+        <li>D3</li>
+        <li>React</li>
+        <li>Material-UI</li>
+        <li>Typescript / Javascript</li>
+        If you're interested in contributing, check out the main
+        <a
+          id="github-repo-link"
+          href="https://github.com/michaelsweeney/timestep"
+          >github repo</a
+        >!
+      </div>
     </div>
   </body>
 </html>

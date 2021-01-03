@@ -1,30 +1,67 @@
+/* COLORS
+#3f51b5
+#f50057
+*/
+
 body {
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  margin-left: 10%;
+  margin-right: 10%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: rgb(20, 20, 20);
 }
 
-.banner-container {
-  display: inline-block;
-  height: 100%;
-  width: 100%;
-  font-family: Arial;
-  color: white;
-  vertical-align: middle;
-  padding: 20%;
+.logo-title {
+  text-align: left;
+  font-size: 46px;
+  font-weight: 300;
+  letter-spacing: 2px;
+}
+.title-right {
+  color: #f50057;
+}
+.title-left {
+  color: #3f51b5;
 }
 
-.banner-container .header {
-  font-size: 3em;
-  font-family: 'Arial';
-  color: white;
-  vertical-align: middle;
+.section-header {
+  color: rgba(0, 0, 0, 1);
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.section-subheader {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.section {
+  margin-top: 20px;
+}
+.section li {
+  margin-top: 7.5px;
+}
+
+.image-block {
+  margin-top: 10px;
+  margin-bottom: 30px;
+  border-radius: 0px;
+  padding: 20px;
+  /* background-color: rgba(20, 20, 20, 0.4); */
+}
+
+.image-subheader {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 18px;
+  text-decoration: underline;
+}
+.image-container {
   text-align: left;
 }
-
-.banner-container .link {
-  color: white;
-  padding-top: 15px;
-  padding-left: 5px;
-  font-size: 1.5em;
+.image-container img {
+  width: 100%;
+  border: rgb(94, 94, 94) solid 1px;
 }
