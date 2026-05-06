@@ -1,27 +1,17 @@
-import fs from 'fs';
-import sqlite3 from 'sqlite3';
-import { dbProto } from './dbproto';
 import { readBnd } from './readbnd';
 import { unitdict } from './conversions';
 
 async function getSeriesIndex(file, idx) {
-  dbProto(); // establish async loadfiles
-
   let loadedobj = {};
-  let db = new sqlite3.Database(file);
   let query = `SELECT * FROM ReportDataDictionary WHERE ReportDataDictionaryIndex == ${idx}`;
   let bndfile = file.replace('.sql', '.bnd');
-  let bndexists = false;
+  let bndexists = await window.api.fs.exists(bndfile);
   let bnd_dict;
-  if (fs.existsSync(bndfile)) {
-    bndexists = true;
-    bnd_dict = readBnd(bndfile);
+  if (bndexists) {
+    bnd_dict = await readBnd(bndfile);
   }
 
-  // when using bettersqlite in this module, loading state becomes synchronous
-  // throughout app and spinner doesn't show up. use regular sqlite3 module for now.
-
-  let result = await db.allAsync(query);
+  let result = await window.api.db.allRows(file, query);
   let file_short = file
     .replace(/\\/g, '/')
     .split('/')
@@ -38,7 +28,7 @@ async function getSeriesIndex(file, idx) {
     //if m3/s (try to read bnd, get gpm or cfm)
     if (row.Units == 'm3/s') {
       if (bndexists) {
-        fluidtype = bnd_dict[row.KeyValue];
+        let fluidtype = bnd_dict[row.KeyValue];
         if (fluidtype == 'Air') {
           row.units_ip = 'cfm';
         } else if (fluidtype == 'Water') {

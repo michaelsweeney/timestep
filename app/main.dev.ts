@@ -13,6 +13,7 @@ import { app, BrowserWindow } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
+import { registerIpcHandlers } from './ipc-handlers';
 import installExtension, {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS
@@ -60,26 +61,16 @@ const createWindow = async () => {
   mainWindow = new BrowserWindow({
     title: 'timestep',
     show: false,
-    // frame: false,
-    // titleBarStyle: 'hiddenInset',
     width: 1024,
     height: 728,
     minWidth: 400,
     minHeight: 400,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
     },
     icon: __dirname + '/resources/Icon.icns'
-
-    // webPreferences:
-    //   process.env.NODE_ENV === 'development' || process.env.E2E_BUILD === 'true'
-    //     ? {
-    //         nodeIntegration: true
-    //       }
-    //     : {
-    //         preload: path.join(__dirname, 'dist/renderer.prod.js')
-    //         // preload: './renderer.prod.js'
-    //       }
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
@@ -118,6 +109,8 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+registerIpcHandlers();
 
 app.on('ready', createWindow);
 

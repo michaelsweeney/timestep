@@ -2,7 +2,6 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import { Button } from '@material-ui/core';
-import { shell } from 'electron';
 
 const useStyles = makeStyles(
   {
@@ -22,7 +21,7 @@ const useStyles = makeStyles(
 
 const handleLink = () => {
   let link = 'https://timestep.herokuapp.com';
-  shell.openExternal(link);
+  window.api.shell.openExternal(link);
 };
 
 const InfoContainer = props => {

@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'src/store';
 
-import fs from 'fs';
-import { remote } from 'electron';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Tooltip } from '@material-ui/core';
 
@@ -36,53 +34,49 @@ const LoadSession = props => {
 
   const [isActive, setIsActive] = useState('inactive');
 
-  const handleFileChange = f => {
-    fs.readFile(f[0], 'utf8', (err, data) => {
-      if (err) throw err;
-      let loadobj = JSON.parse(data);
+  const handleFileChange = async f => {
+    const data = await window.api.fs.readText(f[0]);
+    let loadobj = JSON.parse(data);
 
-      const { activeViewID, files, units } = loadobj.session;
-      const { views } = loadobj;
+    const { activeViewID, files, units } = loadobj.session;
+    const { views } = loadobj;
 
-      // reset views first
-      props.actions.resetViews();
-      props.actions.changeFiles(files);
-      props.actions.changeUnits(units);
+    // reset views first
+    props.actions.resetViews();
+    props.actions.changeFiles(files);
+    props.actions.changeUnits(units);
 
-      Object.values(views).forEach(view => {
-        let {
-          viewID,
-          timestepType,
-          selectedSeries,
-          selectedSeriesLabel,
-          chartType
-        } = view;
+    Object.values(views).forEach(view => {
+      let {
+        viewID,
+        timestepType,
+        selectedSeries,
+        selectedSeriesLabel,
+        chartType
+      } = view;
 
-        props.actions.addView(viewID);
-        props.actions.changeTimestepType(timestepType, viewID);
-        props.actions.changeChartType(chartType, viewID);
-        props.actions.changeSelectedSeries(selectedSeries, viewID);
-        props.actions.changeSelectedSeriesLabel(selectedSeriesLabel, viewID);
-      });
-      props.actions.setActiveView(activeViewID);
-      props.actions.setLoadingFromFile(true);
-
-      // props.actions.incrementSession();
+      props.actions.addView(viewID);
+      props.actions.changeTimestepType(timestepType, viewID);
+      props.actions.changeChartType(chartType, viewID);
+      props.actions.changeSelectedSeries(selectedSeries, viewID);
+      props.actions.changeSelectedSeriesLabel(selectedSeriesLabel, viewID);
     });
+    props.actions.setActiveView(activeViewID);
+    props.actions.setLoadingFromFile(true);
   };
 
   const openDialog = () => {
-    setTimeout(() => {
-      remote.dialog
-        .showOpenDialog({
-          filters: [
-            { name: 'Timestep Sessions', extensions: ['tss'] },
-            { name: 'All Files', extensions: ['*'] }
-          ],
-          properties: ['openFile']
-        })
-        .then(d => handleFileChange(d.filePaths));
-    }, 0);
+    window.api.dialog
+      .openFiles({
+        filters: [
+          { name: 'Timestep Sessions', extensions: ['tss'] },
+          { name: 'All Files', extensions: ['*'] }
+        ],
+        properties: ['openFile']
+      })
+      .then(d => {
+        if (!d.canceled) handleFileChange(d.filePaths);
+      });
   };
 
   const handleDragEnter = e => {

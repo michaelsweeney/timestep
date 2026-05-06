@@ -1,7 +1,5 @@
 import { getSeriesIndex } from './getseriesindex';
 import { unitconvert } from './conversions';
-import sqlite3 from 'sqlite3';
-import { dbProto } from './dbproto';
 
 async function getSeries(filetag) {
   let sqlfile = filetag.split(',')[0];
@@ -28,13 +26,11 @@ async function getSeries(filetag) {
     idx;
   let result;
 
-  let db = new sqlite3.Database(sqlfile);
-
   try {
-    result = await db.allAsync(query_year);
+    result = await window.api.db.allRows(sqlfile, query_year);
   } catch {
     console.log('no year');
-    result = await db.allAsync(query_noyear);
+    result = await window.api.db.allRows(sqlfile, query_noyear);
   }
 
   let data_array = [];

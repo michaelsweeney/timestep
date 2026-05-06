@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import {connect, store} from 'src/store';
+import { connect, store } from 'src/store';
 
-import fs from 'fs';
-import { remote } from 'electron';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Tooltip } from '@material-ui/core';
 
@@ -20,7 +18,7 @@ const useStyles = makeStyles(
 const SaveSession = props => {
   const classes = useStyles();
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const { session, views } = store.getState();
 
     let formatstr = JSON.stringify({ session, views });
@@ -30,16 +28,17 @@ const SaveSession = props => {
       buttonLabel: 'Save Session',
       filters: [{ name: 'tss', extensions: ['tss'] }]
     };
-    remote.dialog.showSaveDialog(options).then(f => {
-      if (f.canceled || !f.filePath) return;
-      let path = f.filePath;
-      if (path.split('.')[1] != 'tss') {
-        path = path + '.tss';
-      }
-      fs.writeFile(path, formatstr, err => {
-        if (err) console.log(err);
-      });
-    });
+    const f = await window.api.dialog.saveFile(options);
+    if (f.canceled || !f.filePath) return;
+    let path = f.filePath;
+    if (path.split('.')[1] != 'tss') {
+      path = path + '.tss';
+    }
+    try {
+      await window.api.fs.writeText(path, formatstr);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

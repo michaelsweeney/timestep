@@ -1,29 +1,22 @@
-import fs from 'fs';
-import sqlite3 from 'sqlite3';
-import { dbProto } from './dbproto';
-import { unitdict, unitconvert } from './conversions';
+import { unitdict } from './conversions';
 import { checkArray } from './checkarray';
 import { readBnd } from './readbnd';
 
 async function getAllSeries(sqlfiles) {
-  dbProto();
   checkArray(sqlfiles);
   let loadedobj = [];
   for (let i = 0; i < sqlfiles.length; i++) {
     let sqlfile = sqlfiles[i];
     let bndfile = sqlfile.replace('.sql', '.bnd');
-    let bndexists = false;
+    let bndexists = await window.api.fs.exists(bndfile);
     let bnd_dict;
 
-    if (fs.existsSync(bndfile)) {
-      bndexists = true;
-      bnd_dict = readBnd(bndfile);
+    if (bndexists) {
+      bnd_dict = await readBnd(bndfile);
     }
 
     let query = `SELECT * FROM ReportDataDictionary`;
-
-    let db = new sqlite3.Database(sqlfile);
-    let result = await db.allAsync(query);
+    let result = await window.api.db.allRows(sqlfile, query);
 
     result.forEach(orig_row => {
       let row = { ...orig_row };

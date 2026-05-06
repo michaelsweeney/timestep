@@ -61,6 +61,7 @@
       "app.html",
       "main.prod.js",
       "main.prod.js.map",
+      "preload.js",
       "package.json"
     ],
     "dmg": {

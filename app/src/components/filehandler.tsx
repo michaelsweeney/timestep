@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { remote } from 'electron';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'src/store';
@@ -37,17 +36,17 @@ const FileHandler = props => {
   };
 
   const openDialog = () => {
-    setTimeout(() => {
-      remote.dialog
-        .showOpenDialog({
-          filters: [
-            { name: 'EP SQLite Files', extensions: ['sql'] },
-            { name: 'All Files', extensions: ['*'] }
-          ],
-          properties: ['openFile', 'multiSelections']
-        })
-        .then(d => handleFileChange(d.filePaths));
-    }, 0);
+    window.api.dialog
+      .openFiles({
+        filters: [
+          { name: 'EP SQLite Files', extensions: ['sql'] },
+          { name: 'All Files', extensions: ['*'] }
+        ],
+        properties: ['openFile', 'multiSelections']
+      })
+      .then(d => {
+        if (!d.canceled) handleFileChange(d.filePaths);
+      });
   };
 
   const handleDragEnter = e => {
