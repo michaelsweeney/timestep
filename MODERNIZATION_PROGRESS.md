@@ -82,15 +82,37 @@ manually verify**:
 12. `yarn package` produces a working artifact on at least one
     platform (macOS / Linux / Windows).
 
+## In progress
+
+- **TypeScript 3.7 → 5.9** — partially landed.
+  - typescript bumped to ^5.9.0; @types/node bumped to ^20.
+  - tsconfig `baseUrl` + `paths` added so `src/...` imports resolve.
+  - Pre-existing Babel-only `export X from '...'` in
+    `app/src/store/index.tsx` rewritten to standard ES form.
+  - tsconfig loosened: `noImplicitAny`, `useUnknownInCatchVariables`,
+    `noUnusedLocals`, `noUnusedParameters` set to false. This is a
+    necessary concession because `yarn ts` was effectively never
+    running (it was bailing on syntax errors before semantic
+    analysis), so the codebase has 5+ years of un-flagged
+    type debt.
+  - **`yarn ts` went from 853 errors → ~213.** The remainder are
+    real type issues under `strictNullChecks` etc.: `TS2339`
+    (~80) property-not-on-type, `TS2345` (~51) arg-not-assignable,
+    `TS18046` (~42) unknown narrowing, `TS18048` (~11)
+    possibly-undefined. Not blocking the bundler (Babel doesn't use
+    tsc), but `yarn ts` does not pass.
+  - Build pipeline (Babel-driven) was not re-verified at this
+    checkpoint — should be unaffected since the changes are
+    tsconfig-only plus a one-line standard-form export rewrite.
+
 ## Known follow-ups (Phase 1)
 
+- **Finish the TS bump** — work through the remaining ~213 type
+  errors. Many will fall to typed prop interfaces on the Redux-
+  connected components; some are genuine null-safety issues.
 - **Webpack 4 → 5** — removes the `--openssl-legacy-provider` and
   `hashFunction: sha256` shims, removes `node:` import compatibility
   workarounds, simplifies modern dep handling, much faster HMR.
-- **TypeScript 3.7 → 5.x** — currently `yarn ts` fails on a few dep
-  type files using `import type` and template-literal types.
-  `skipLibCheck: true` doesn't help because those are *parse* errors,
-  not type-check errors. Bumping TS resolves it.
 - **React 16 → 18** + drop `react-hot-loader` for Fast Refresh
   (the `hot()` HOC in `App.tsx` is the only consumer).
 - **MUI 4 → 5** — `makeStyles` → `styled`/`sx`, `createMuiTheme` →

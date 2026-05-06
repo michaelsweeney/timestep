@@ -1,2 +1,2 @@
-export connect from './connect'
-export {store} from './configureStore' 
+export { default as connect } from './connect';
+export { store } from './configureStore';
