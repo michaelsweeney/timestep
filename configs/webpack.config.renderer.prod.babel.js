@@ -21,7 +21,12 @@ export default merge.smart(baseConfig, {
 
   mode: 'production',
 
-  target: 'electron-preload',
+  // The renderer runs with nodeIntegration: false / contextIsolation: true,
+  // so it has no `require` and no Node built-ins. Use 'web' and override the
+  // base config's externals so dependencies get bundled instead of left as
+  // runtime require() calls.
+  target: 'web',
+  externals: [],
 
   entry: path.join(__dirname, '..', 'app/src/index.tsx'),
 

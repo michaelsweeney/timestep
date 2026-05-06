@@ -6,11 +6,9 @@
  */
 
 import path from 'path';
-import fs from 'fs';
 import webpack from 'webpack';
-import chalk from 'chalk';
 import merge from 'webpack-merge';
-import { spawn, execSync } from 'child_process';
+import { spawn } from 'child_process';
 import { TypedCssModulesPlugin } from 'typed-css-modules-webpack-plugin';
 import baseConfig from './webpack.config.base';
 import CheckNodeEnv from '../internals/scripts/CheckNodeEnv';
@@ -23,30 +21,18 @@ if (process.env.NODE_ENV === 'production') {
 
 const port = process.env.PORT || 1212;
 const publicPath = `http://localhost:${port}/dist`;
-const dll = path.join(__dirname, '..', 'dll');
-const manifest = path.resolve(dll, 'renderer.json');
-const requiredByDLLConfig = module.parent.filename.includes(
-  'webpack.config.renderer.dev.dll'
-);
-
-/**
- * Warn if the DLL is not built
- */
-if (!requiredByDLLConfig && !(fs.existsSync(dll) && fs.existsSync(manifest))) {
-  console.log(
-    chalk.black.bgYellow.bold(
-      'The DLL files are missing. Sit back while we build them for you with "yarn build-dll"'
-    )
-  );
-  execSync('yarn build-dll');
-}
 
 export default merge.smart(baseConfig, {
   devtool: 'inline-source-map',
 
   mode: 'development',
 
-  target: 'electron-renderer',
+  // The renderer runs with nodeIntegration: false / contextIsolation: true,
+  // so it has no `require` and no Node built-ins. Use 'web' and override the
+  // base config's externals so dependencies get bundled instead of left as
+  // runtime require() calls.
+  target: 'web',
+  externals: [],
 
   entry: [
     ...(process.env.PLAIN_HMR ? [] : ['react-hot-loader/patch']),
@@ -201,14 +187,6 @@ export default merge.smart(baseConfig, {
     }
   },
   plugins: [
-    requiredByDLLConfig
-      ? null
-      : new webpack.DllReferencePlugin({
-          context: path.join(__dirname, '..', 'dll'),
-          manifest: require(manifest),
-          sourceType: 'var'
-        }),
-
     new webpack.HotModuleReplacementPlugin({
       multiStep: true
     }),

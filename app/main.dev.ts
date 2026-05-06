@@ -73,7 +73,13 @@ const createWindow = async () => {
     icon: __dirname + '/resources/Icon.icns'
   });
 
-  mainWindow.loadURL(`file://${__dirname}/app.html`);
+  // Pass dev-mode info to the HTML via query string — the renderer can no
+  // longer read process.env directly with contextIsolation: true.
+  const isDev =
+    process.env.NODE_ENV === 'development' || !!process.env.START_HOT;
+  const port = process.env.PORT || 1212;
+  const search = isDev ? `?dev=1&port=${port}` : '';
+  mainWindow.loadURL(`file://${__dirname}/app.html${search}`);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
