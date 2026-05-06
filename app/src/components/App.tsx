@@ -7,6 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Version from './version';
 import Header from './header';
 import MappedViews from './views/mappedviews';
+import NotificationSnackbar from './notificationsnackbar';
 import '../css/app.global.css';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -61,6 +62,7 @@ const App = props => {
           <Header />
           <MappedViews />
           <Version />
+          <NotificationSnackbar />
         </div>
       </StylesProvider>
     </ThemeProvider>

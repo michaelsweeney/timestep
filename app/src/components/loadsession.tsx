@@ -117,7 +117,9 @@ const LoadSession = props => {
       handleFileChange(files);
       setIsActive('inactive');
     } else {
-      alert('file loading error: only valid Timestep Session files allowed');
+      props.actions.setNotification(
+        'File loading error: only valid Timestep Session files allowed.'
+      );
       setIsActive('inactive');
     }
   };

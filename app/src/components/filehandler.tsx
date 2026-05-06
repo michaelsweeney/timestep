@@ -82,7 +82,9 @@ const FileHandler = props => {
       handleFileChange(files);
       setIsActive('inactive');
     } else {
-      alert('file loading error: only valid SQLite files allowed');
+      props.actions.setNotification(
+        'File loading error: only valid SQLite files allowed.'
+      );
       setIsActive('inactive');
     }
   };

@@ -30,9 +30,10 @@ const SaveSession = props => {
       buttonLabel: 'Save Session',
       filters: [{ name: 'tss', extensions: ['tss'] }]
     };
-    remote.dialog.showSaveDialog(formatstr, options).then(f => {
+    remote.dialog.showSaveDialog(options).then(f => {
+      if (f.canceled || !f.filePath) return;
       let path = f.filePath;
-      if (f.filePath.split('.')[1] != 'tss') {
+      if (path.split('.')[1] != 'tss') {
         path = path + '.tss';
       }
       fs.writeFile(path, formatstr, err => {

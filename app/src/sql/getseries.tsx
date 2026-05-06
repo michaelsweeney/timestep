@@ -44,7 +44,10 @@ async function getSeries(filetag) {
     if (row.Year) {
       year = row.Year;
     } else {
-      year = 2017; // new Date().getFullYear();
+      // EnergyPlus SQL files don't always carry a Year column. The simulation
+      // year is arbitrary for non-actual-weather runs, so fall back to the
+      // current year purely so Date construction succeeds.
+      year = new Date().getFullYear();
     }
     let time = new Date(
       year + '-' + row.Month + '-' + row.Day + ' ' + row.Hour + ':' + row.Minute
