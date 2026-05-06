@@ -5,7 +5,13 @@
 // Plain JS on purpose so no extra build step is needed; the renderer-side
 // type definitions live in app/src/types/electron-api.d.ts.
 
-const { contextBridge, ipcRenderer, clipboard, shell } = require('electron');
+const {
+  contextBridge,
+  ipcRenderer,
+  clipboard,
+  shell,
+  webUtils
+} = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
   dialog: {
@@ -26,5 +32,8 @@ contextBridge.exposeInMainWorld('api', {
   },
   shell: {
     openExternal: url => shell.openExternal(url)
-  }
+  },
+  // Replaces File.path (removed in Electron 32+). Pass a File object,
+  // get its absolute filesystem path back synchronously.
+  getPathForFile: file => webUtils.getPathForFile(file)
 });

@@ -45,6 +45,7 @@ interface ElectronApi {
   shell: {
     openExternal(url: string): Promise<void>;
   };
+  getPathForFile(file: File): string;
 }
 
 declare global {

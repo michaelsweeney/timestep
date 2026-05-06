@@ -97,7 +97,9 @@ const LoadSession = props => {
     setIsActive('inactive');
   };
   const handleDrop = e => {
-    let files = Object.values(e.dataTransfer.files).map(f => f.path);
+    let files = Object.values(e.dataTransfer.files).map(f =>
+      window.api.getPathForFile(f as File)
+    );
 
     // handle error alert for non-sql files
     let errflag = false;

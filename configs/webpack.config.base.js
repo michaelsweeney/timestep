@@ -33,7 +33,10 @@ export default {
   output: {
     path: path.join(__dirname, '..', 'app'),
     // https://github.com/webpack/webpack/issues/1114
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'commonjs2',
+    // Webpack 4's default md4 hash isn't available under OpenSSL 3 (Node 17+).
+    // Bumping to webpack 5 is the real fix; sha256 is the conservative override.
+    hashFunction: 'sha256'
   },
 
   /**

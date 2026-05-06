@@ -43,6 +43,6 @@
     "react-window": "^1.8.5",
     "react-windowed-select": "^2.0.2",
     "redux": "^4.0.5",
-    "sqlite3": "4.2.0"
+    "sqlite3": "^5.1.7"
   }
 }

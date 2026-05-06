@@ -11,80 +11,109 @@ Tracking the work-in-progress against `MODERNIZATION.md` (on branch
   hard-coded `year = 2017` → dynamic.
 - **node-sass → sass swap** — unblocks `yarn install` on Node 18+.
 - **Renderer security refactor** — `nodeIntegration: false`,
-  `contextIsolation: true`, all `electron.remote` / `fs` / `sqlite3`
-  imports removed from the renderer. Communication is now exclusively
-  through a narrow `window.api` surface defined in `app/preload.js`
-  and backed by IPC handlers in `app/ipc-handlers.ts`.
-  - Drive-by fix: `readBnd` was returning an empty object before
-    `fs.readFile`'s callback fired, so the m3/s → cfm/gpm fluid-type
-    detection silently never worked. Now async/await-correct.
-  - Drive-by fix: same `showSaveDialog(formatstr, options)` arg-order
-    bug existed in `copysave.tsx`'s "Save to CSV" path.
-  - Removed `app/src/sql/dbproto.tsx` (no longer needed — the
-    `Database.prototype.allAsync` patch is replaced by the IPC handler).
+  `contextIsolation: true`. Renderer talks to main only through a narrow
+  `window.api` bridge (`app/preload.js` + `app/ipc-handlers.ts`).
+  Drive-by fixes: `readBnd` async correctness; `copysave.tsx` had the
+  same `showSaveDialog` arg-order bug; `dbproto.tsx` removed.
+- **Renderer build fix** — `target: 'web'` and empty `externals` on the
+  renderer configs so the bundle doesn't depend on a Node `require` at
+  runtime. Removed the dev DLL pre-bundle. App.html now reads dev mode
+  from a URL query param (passed by main) since `process` is no longer
+  available to the renderer.
+- **Electron 7 → 41 + ecosystem** — full bump:
+  - electron 7.1.13 → ^41.0.0
+  - electron-builder ^22 → ^26
+  - electron-rebuild ^1 → @electron/rebuild ^4
+  - electron-devtools-installer ^2 → ^4 (with v3+ options-object API)
+  - sqlite3 4.2.0 → ^5.1.7 (in app/package.json)
+  - Dropped electron-updater + electron-log (auto-update class was
+    dead code; not instantiated anywhere)
+  - Dropped electron-debug v4 (uses `node:`-prefixed imports webpack 4
+    can't resolve). Devtools are now opened directly in main when in
+    dev mode.
+  - Dropped `devtron` (long-deprecated since 2018).
+  - Replaced `extends browserslist-config-erb` with explicit
+    `last 2 chrome versions` (we control which Chromium ships).
+  - `webpack.config.base.js`: `output.hashFunction: 'sha256'` (works
+    around webpack 4's md4 default that OpenSSL 3 / Node 17+ rejects).
+  - Build/dev scripts set `NODE_OPTIONS=--openssl-legacy-provider`
+    because terser-webpack-plugin v2 also uses md4 internally and
+    ignores `hashFunction`. Both shims go away with webpack 5.
+  - Added `skipLibCheck: true` to `tsconfig.json`.
+  - File.path drag-drop → `webUtils.getPathForFile` exposed via
+    preload (File.path was removed in Electron 32+).
+  - `webPreferences.sandbox: false` set explicitly (required for
+    preload to use webUtils; sandbox tightening is future work).
+- **Case-sensitivity fixes** — `Multilinecontrol` →
+  `multilinecontrol`, `Multilinelegend` → `multilinelegend`,
+  `@material-ui/core/typography` → `Typography`. These were broken on
+  Linux (case-strict) but worked on macOS HFS+.
+
+## What now actually builds
+
+Both `yarn build-renderer` and `yarn build-main` complete cleanly.
+TypeScript still has 3 pre-existing errors in `app/src/store/index.tsx`
+from a Babel-only `export X from '...'` syntax — orthogonal to this
+work.
 
 ## Not yet smoke-tested
 
-The renderer security refactor has not been run against an actual
-Electron build. **Before merging, manually verify**:
+The Electron 41 runtime has not been exercised. **Before merging,
+manually verify**:
 
-1. `yarn dev` boots without errors. The preload script
-   (`app/preload.js`) is loaded; check the renderer console for
-   `Uncaught ReferenceError: api is not defined` — if you see that,
-   the preload didn't load.
-2. Click "Load Files" → native file picker opens, a `.sql` file loads
-   and the file list populates.
-3. Drag a `.sql` file onto "Load Files" → same.
-4. Drag a non-`.sql` file → bottom-center MUI Snackbar warning
-   appears (no `alert()` popup).
-5. Open a chart view → values render. Specifically check a series
-   with `m3/s` units when the matching `.bnd` file is alongside the
-   `.sql` — the IP units should be `cfm` (Air) or `gpm` (Water);
-   previously these silently fell through to the default because of
-   the `readBnd` bug.
-6. "Save Session" → file picker opens, writes a `.tss`. Cancel works.
-7. "Load Session" → reads a `.tss` and restores views.
-8. "Copy" / "Save to CSV" buttons on a chart work; clipboard receives
-   the data.
-9. "Info" button (`InfoOutlinedIcon`) opens the timestep website in
-   the OS default browser.
-10. Open a SQL file lacking a `Year` column → timestamps show the
-    current year, not 2017.
+1. `yarn install` completes (root + `app/`); native sqlite3 builds
+   against the new Electron via `@electron/rebuild`.
+2. `yarn dev` boots; main process spawns; renderer loads. DevTools
+   open automatically.
+3. Renderer console shows no errors. In particular: no
+   `ReferenceError: api is not defined`, no `Uncaught TypeError`
+   from missing window globals.
+4. Click "Load Files" → native dialog opens, a `.sql` file loads.
+5. Drag a `.sql` file onto "Load Files" → file loads. (The
+   `webUtils.getPathForFile` migration is the riskiest piece —
+   the call needs to succeed inside the contextBridge.)
+6. Same drag-drop test on "Load Session" with a `.tss`.
+7. Drag a non-`.sql` file → MUI Snackbar warning.
+8. Open a chart view; values render; m3/s units pick up cfm/gpm
+   from a sibling `.bnd` file (this fixes a longstanding bug).
+9. "Save Session" / "Load Session" round-trips.
+10. "Copy" / "Save to CSV" buttons work; clipboard receives data.
+11. "Info" button opens timestep.herokuapp.com in OS browser.
+12. `yarn package` produces a working artifact on at least one
+    platform (macOS / Linux / Windows).
 
-Watch the **main process** stdout for any unhandled IPC errors
-(they'll surface as rejected `ipcRenderer.invoke` promises in the
-renderer console).
+## Known follow-ups (Phase 1)
 
-## Architecture notes for future work
+- **Webpack 4 → 5** — removes the `--openssl-legacy-provider` and
+  `hashFunction: sha256` shims, removes `node:` import compatibility
+  workarounds, simplifies modern dep handling, much faster HMR.
+- **TypeScript 3.7 → 5.x** — currently `yarn ts` fails on a few dep
+  type files using `import type` and template-literal types.
+  `skipLibCheck: true` doesn't help because those are *parse* errors,
+  not type-check errors. Bumping TS resolves it.
+- **React 16 → 18** + drop `react-hot-loader` for Fast Refresh
+  (the `hot()` HOC in `App.tsx` is the only consumer).
+- **MUI 4 → 5** — `makeStyles` → `styled`/`sx`, `createMuiTheme` →
+  `createTheme`.
+- **D3 5 → 7** — fix `mouse`/`event` API removal in `multiline.tsx`
+  and the `(event, datum)` callback signature change everywhere.
+- **Re-enable sandbox** — currently `sandbox: false` so the preload
+  can call `webUtils.getPathForFile`. Move dialog/file-input handling
+  to main-side and tighten sandbox to `true`.
+- **TS strict-mode payoff** — components are still typed as `props`
+  with no shape; add prop interfaces incrementally.
+- **Remove the Babel `export X from '...'` proposal** in
+  `app/src/store/index.tsx` (also fixes the 3 standing tsc errors).
 
-`app/preload.js` is intentionally plain JavaScript so it doesn't need
-its own webpack pipeline. The renderer-side type surface lives in
-`app/src/types/electron-api.d.ts` and must be kept in sync with the
-preload by hand. If you find yourself reaching for a richer type
-contract, the next step is to add a small `webpack.config.preload.babel.js`
-and emit `app/preload.js` from `app/preload.ts`.
+## Architecture notes
 
-`ipc-handlers.ts` caches `sqlite3.Database` handles in a module-level
-`Map` keyed by file path. They're never closed. That's fine for the
-current "open one file, view it, quit" usage but would leak in a
-session that loads many files. Add `db:closeFile` to the API if it
-becomes a concern.
-
-## Suggested next step
-
-**Bump Electron 7 → latest stable** (~34). With this branch in place,
-the bump is now mostly mechanical:
-
-- `remote` is already gone, so the Electron 14 removal isn't a blocker.
-- `nodeIntegration` is already off, so the default change in Electron
-  12 isn't a blocker.
-- `sqlite3@4.2.0` won't load against modern Electron's Node ABI — bump
-  to `sqlite3@^5.1.7` (or migrate to `better-sqlite3` for synchronous
-  in-process queries; the IPC layer would simplify since main can
-  reply without async wrapping).
-- The Electron 7 → modern jump also hits: drag-and-drop `File.path`
-  is gone in Electron 32+ (use `webUtils.getPathForFile()` in the
-  preload), `webContents.openDevTools()` arg shape, native menu APIs.
-
-After Electron, continue with Phase 1 toolchain (React 16→18, TS
-3.7→5, MUI 4→5, D3 5→7, drop `react-hot-loader`).
+- `app/preload.js` is plain JavaScript so no extra build step is
+  needed. Renderer-side type surface in
+  `app/src/types/electron-api.d.ts` is hand-maintained.
+- `ipc-handlers.ts` caches `sqlite3.Database` handles in a
+  module-level Map keyed by file path. Handles are never closed.
+  Fine for the current "open one file, view it, quit" usage.
+- Browser-hosted version (per `MODERNIZATION.md`) is a separate
+  long-running track; nothing on this branch progresses it directly,
+  but the IPC abstraction is shaped so swapping main's sqlite3 for
+  sql.js is mechanical.
