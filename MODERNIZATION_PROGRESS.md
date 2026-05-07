@@ -101,18 +101,53 @@ manually verify**:
     `TS18046` (~42) unknown narrowing, `TS18048` (~11)
     possibly-undefined. Not blocking the bundler (Babel doesn't use
     tsc), but `yarn ts` does not pass.
-  - Build pipeline (Babel-driven) was not re-verified at this
-    checkpoint — should be unaffected since the changes are
-    tsconfig-only plus a one-line standard-form export rewrite.
+
+- **Webpack 4 → 5** — landed.
+  - webpack ^4.41 → ^5.106, webpack-cli ^3 → ^7,
+    webpack-dev-server ^3 → ^5, webpack-merge ^4 → ^6 (drops the
+    `merge.smart` API; converted to plain `merge()`).
+  - Loaders: babel-loader ^8 → ^10, css-loader ^3 → ^7,
+    style-loader ^1 → ^4, sass-loader ^8 → ^16,
+    mini-css-extract-plugin ^0.9 → ^2, terser-webpack-plugin ^2 → ^5.
+  - file-loader / url-loader removed entirely; replaced with
+    webpack 5 native asset modules (`type: 'asset'` /
+    `'asset/resource'`) for fonts and images.
+  - optimize-css-assets-webpack-plugin (webpack 4 only) replaced
+    with css-minimizer-webpack-plugin ^8.
+  - `webpack-bundle-analyzer` ^3 → ^5.
+  - `typed-css-modules-webpack-plugin` ^0.1 → ^0.2.
+  - `@babel/core` and the babel presets bumped to ^7.24; dropped
+    seven `plugin-proposal-*` plugins that have moved into
+    `@babel/preset-env` since (class-properties, json-strings,
+    logical-assignment-operators, nullish-coalescing-operator,
+    numeric-separator, optional-chaining, export-namespace-from).
+  - Removed `@types/webpack` (was pinned to webpack 4 types).
+  - **Removed both shims** the Electron bump added:
+    `NODE_OPTIONS=--openssl-legacy-provider` from build/dev scripts
+    and `output.hashFunction: 'sha256'`. Webpack 5 + terser v5
+    don't use md4.
+  - Webpack configs renamed from `*.babel.js` to plain `*.js` and
+    converted to CommonJS — webpack-cli v6+ no longer auto-loads
+    `.babel.js` configs through `@babel/register`. Internal scripts
+    (`CheckNodeEnv`, `DeleteSourceMaps`) follow the same change.
+  - Externals moved from `webpack.config.base.js` to
+    `webpack.config.main.prod.js` only — they belong to the main
+    process bundle, not the renderer.
+  - Asset module rule paired with `resolve: { fullySpecified: false }`
+    on `*.m?js` to match webpack 4 / Node CJS resolution semantics
+    (MUI's esm builds depend on this).
+  - dev-server v5: `before()` hook → `setupMiddlewares`; static
+    config switched to the new `static: { directory }` shape.
+  - **`yarn build-renderer` and `yarn build-main` both succeed**
+    on webpack 5. Renderer artifact is 647 KiB minified
+    (acceptable for a React + MUI + D3 + Redux app; size budget
+    can be tackled with code-splitting in a later pass).
 
 ## Known follow-ups (Phase 1)
 
 - **Finish the TS bump** — work through the remaining ~213 type
   errors. Many will fall to typed prop interfaces on the Redux-
   connected components; some are genuine null-safety issues.
-- **Webpack 4 → 5** — removes the `--openssl-legacy-provider` and
-  `hashFunction: sha256` shims, removes `node:` import compatibility
-  workarounds, simplifies modern dep handling, much faster HMR.
 - **React 16 → 18** + drop `react-hot-loader` for Fast Refresh
   (the `hot()` HOC in `App.tsx` is the only consumer).
 - **MUI 4 → 5** — `makeStyles` → `styled`/`sx`, `createMuiTheme` →
