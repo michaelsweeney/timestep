@@ -6,27 +6,34 @@
     <script>
       // Main appends ?dev=1&port=NNNN to the loaded URL when running with
       // START_HOT. The renderer no longer has access to process.env.
-      const params = new URLSearchParams(location.search);
-      const isDev = params.has('dev');
+      // Block-scope so this script's top-level consts don't collide with
+      // the second script's identically-named consts (classic <script> tags
+      // share the global lexical environment).
+      {
+        const params = new URLSearchParams(location.search);
+        const isDev = params.has('dev');
 
-      if (!isDev) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = './dist/style.css';
-        document.getElementsByTagName('head')[0].appendChild(link);
+        if (!isDev) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = './dist/style.css';
+          document.getElementsByTagName('head')[0].appendChild(link);
+        }
       }
     </script>
   </head>
   <body>
     <div id="root"></div>
     <script>
-      const params = new URLSearchParams(location.search);
-      const isDev = params.has('dev');
-      const port = params.get('port') || 1212;
-      const src = isDev
-        ? `http://localhost:${port}/dist/renderer.dev.js`
-        : './dist/renderer.prod.js';
-      document.write(`<script defer src="${src}"><\/script>`);
+      {
+        const params = new URLSearchParams(location.search);
+        const isDev = params.has('dev');
+        const port = params.get('port') || 1212;
+        const src = isDev
+          ? `http://localhost:${port}/dist/renderer.dev.js`
+          : './dist/renderer.prod.js';
+        document.write(`<script defer src="${src}"><\/script>`);
+      }
     </script>
   </body>
 </html>

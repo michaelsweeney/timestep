@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "description": "SQL-based Timeseries Viewer for EnergyPlus",
   "main": "./main.prod.js",
+  "type": "commonjs",
   "author": {
     "name": "Michael Sweeney",
     "email": "timestepvis@gmail.com",
