@@ -116,8 +116,13 @@ module.exports = merge(baseConfig, {
       globPattern: 'app/**/*.{css,scss,sass}'
     }),
 
+    // Substitute renderer references to process.env at build time. The
+    // renderer runs with contextIsolation: true / nodeIntegration: false,
+    // so the `process` global doesn't exist at runtime. Listed keys fall
+    // back to the default value when the env var is unset at build time.
     new webpack.EnvironmentPlugin({
-      NODE_ENV: 'development'
+      NODE_ENV: 'development',
+      PLAIN_HMR: null
     })
   ],
 
