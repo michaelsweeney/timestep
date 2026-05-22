@@ -52,3 +52,6 @@ npm-debug.log.*
 
 
 app/node_modules
+
+# EnergyPlus SQLite databases — binary, large; checked-in copies live in test-models/
+*.sql
