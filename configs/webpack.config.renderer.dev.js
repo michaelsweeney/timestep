@@ -127,7 +127,10 @@ module.exports = merge(baseConfig, {
     hot: true,
     headers: { 'Access-Control-Allow-Origin': '*' },
     static: {
-      directory: path.join(__dirname, 'dist')
+      // Serve from app/ so app.html is reachable at http://localhost:PORT/app.html.
+      // Loading the document from the dev server keeps it same-origin with the
+      // renderer bundle (which is already served from this server's publicPath).
+      directory: path.join(__dirname, '..', 'app')
     },
     historyApiFallback: {
       verbose: true,

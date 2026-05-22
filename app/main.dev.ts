@@ -69,7 +69,15 @@ const createWindow = async () => {
     process.env.NODE_ENV === 'development' || !!process.env.START_HOT;
   const port = process.env.PORT || 1212;
   const search = isDev ? `?dev=1&port=${port}` : '';
-  mainWindow.loadURL(`file://${__dirname}/app.html${search}`);
+  // In dev, load app.html from the dev server so the document and the
+  // renderer bundle share the http://localhost:PORT origin. Chromium's
+  // Local Network Access blocks file:// → http://localhost script loads,
+  // which 403's the renderer in DevTools. Prod loads both HTML and
+  // renderer.prod.js via file:// from inside the asar (same origin).
+  const targetUrl = isDev
+    ? `http://localhost:${port}/app.html${search}`
+    : `file://${__dirname}/app.html`;
+  mainWindow.loadURL(targetUrl);
 
   // @TODO: Use 'ready-to-show' event
   //        https://github.com/electron/electron/blob/master/docs/api/browser-window.md#using-ready-to-show-event
