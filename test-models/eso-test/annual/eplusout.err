@@ -1,0 +1,652 @@
+Program Version,EnergyPlus, Version 22.1.0-ed759b17ee, YMD=2026.05.23 16:43,
+   ************* Beginning Zone Sizing Calculations
+   ** Warning ** ProcessScheduleInput: Schedule:Constant="VAV_BOT WITH REHEAT MAX OA FRACTION", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Constant="VAV_MID WITH REHEAT MAX OA FRACTION", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** ProcessScheduleInput: Schedule:Constant="VAV_TOP WITH REHEAT MAX OA FRACTION", Blank Schedule Type Limits Name input -- will not be validated.
+   ** Warning ** CheckUsedConstructions: There are 23 nominally unused constructions in input.
+   **   ~~~   ** Each Unused construction is shown.
+   ************* Construction=AIR_WALL
+   ************* Construction=OPAQUEDOOR
+   ************* Construction=ATTICROOFDECK
+   ************* Construction=EXT_SLAB_8IN
+   ************* Construction=EXT_SLAB_6IN_WITH_CARPET
+   ************* Construction=EXT_SLAB_6IN
+   ************* Construction=BASEMENT_WALL
+   ************* Construction=INT_WOOD_FLOOR
+   ************* Construction=EXT_SOFFIT_FLOOR
+   ************* Construction=RES_ROOF
+   ************* Construction=SEMIHEATED_ROOF
+   ************* Construction=RES_EXT_WALL_GRD
+   ************* Construction=RES_EXT_WALL_MID
+   ************* Construction=RES_EXT_WALL_TOP
+   ************* Construction=SEMIHEATED_EXT_WALL_GRD
+   ************* Construction=SEMIHEATED_EXT_WALL_MID
+   ************* Construction=SEMIHEATED_EXT_WALL_TOP
+   ************* Construction=NONRES_FLOOR
+   ************* Construction=RES_FLOOR
+   ************* Construction=SEMIHEATED_FLOOR
+   ************* Construction=NONRES_FLOOR_CEILING
+   ************* Construction=RES_FLOOR_CEILING
+   ************* Construction=SEMIHEATED_FLOOR_CEILING
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_BOT_ZN_1_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_BOT_ZN_2_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_BOT_ZN_3_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_BOT_ZN_4_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_MID_ZN_1_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_MID_ZN_2_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_MID_ZN_3_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_MID_ZN_4_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_TOP_ZN_1_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_TOP_ZN_2_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_TOP_ZN_3_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GetDaylightingControls: Fraction of zone or space controlled by the Daylighting reference points is < 1.0.
+   **   ~~~   ** ..discovered in Daylighting:Controls="PERIMETER_TOP_ZN_4_DAYLCTRL", only 0.524 of the zone or space is controlled.
+   ** Warning ** GeneratorController constructor ElectricLoadCenter:Generators, Availability Schedule for Generator:PVWatts 'PV_MODULE' will be be ignored (runs all the time).
+   ** Warning ** Calculated design heating load for zone=BASEMENT is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=CORE_BOTTOM is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=DATACENTER_BOT_ZN_6 is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=DATACENTER_MID_ZN_6 is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=DATACENTER_TOP_ZN_6 is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ** Warning ** Calculated design heating load for zone=DATACENTER_BASEMENT_ZN_6 is zero.
+   **   ~~~   ** Check Sizing:Zone and ZoneControl:Thermostat inputs.
+   ************* Beginning System Sizing Calculations
+   ************* Beginning Plant Sizing Calculations
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "CORE_BOTTOM VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 0.31000 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.36466 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "CORE_BOTTOM VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.97243 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "CORE_MID VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 0.33200 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.39104 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "CORE_MID VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 1.00000 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "CORE_TOP VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 0.35200 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.41442 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "CORE_TOP VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 1.00000 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_BOT_ZN_3 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 0.26300 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.30939 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_BOT_ZN_3 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.82503 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_BOT_ZN_2 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 0.10500 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.12403 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_BOT_ZN_2 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.33074 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_BOT_ZN_1 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 0.11700 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.13767 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_BOT_ZN_1 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.36712 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_BOT_ZN_4 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 8.60000E-002 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.10175 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_BOT_ZN_4 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.30000 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_MID_ZN_3 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 0.29200 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.34345 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_MID_ZN_3 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.91586 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_MID_ZN_2 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.31451 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_MID_ZN_1 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 0.11200 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.13222 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_MID_ZN_1 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.35259 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_MID_ZN_4 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 9.40000E-002 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.11072 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_MID_ZN_4 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.30000 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_TOP_ZN_3 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 0.25900 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.30526 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_TOP_ZN_3 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.81404 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_TOP_ZN_2 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 0.10200 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.11949 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_TOP_ZN_2 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.31864 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_TOP_ZN_1 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 0.10700 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.12628 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_TOP_ZN_1 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.33675 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_TOP_ZN_4 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Minimum Cooling Air Flow Fraction of 9.00000E-002 [m3/s]
+   **   ~~~   ** differs from Design Size Minimum Cooling Air Flow Fraction of 0.10609 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeHVACSingleDuct: Potential issue with equipment sizing for AirTerminal:SingleDuct:VAV:Reheat = "PERIMETER_TOP_ZN_4 VAV BOX COMPONENT".
+   **   ~~~   ** User-Specified Maximum Flow Fraction during Reheat of 0.50000 []
+   **   ~~~   ** differs from Design Size Maximum Flow Fraction during Reheat of 0.30000 []
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ** Warning ** Controller:MechanicalVentilation="VAV_BOT WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="CORE_BOTTOM".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA CORE_BOTTOM".
+   ** Warning ** Controller:MechanicalVentilation="VAV_BOT WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_BOT_ZN_3".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_BOT_ZN_3".
+   ** Warning ** Controller:MechanicalVentilation="VAV_BOT WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_BOT_ZN_2".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_BOT_ZN_2".
+   ** Warning ** Controller:MechanicalVentilation="VAV_BOT WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_BOT_ZN_1".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_BOT_ZN_1".
+   ** Warning ** Controller:MechanicalVentilation="VAV_BOT WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_BOT_ZN_4".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_BOT_ZN_4".
+   ** Warning ** Controller:MechanicalVentilation="VAV_MID WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="CORE_MID".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA CORE_MID".
+   ** Warning ** Controller:MechanicalVentilation="VAV_MID WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_MID_ZN_3".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_MID_ZN_3".
+   ** Warning ** Controller:MechanicalVentilation="VAV_MID WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_MID_ZN_2".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_MID_ZN_2".
+   ** Warning ** Controller:MechanicalVentilation="VAV_MID WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_MID_ZN_1".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_MID_ZN_1".
+   ** Warning ** Controller:MechanicalVentilation="VAV_MID WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_MID_ZN_4".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_MID_ZN_4".
+   ** Warning ** Controller:MechanicalVentilation="VAV_TOP WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="CORE_TOP".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA CORE_TOP".
+   ** Warning ** Controller:MechanicalVentilation="VAV_TOP WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_TOP_ZN_3".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_TOP_ZN_3".
+   ** Warning ** Controller:MechanicalVentilation="VAV_TOP WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_TOP_ZN_2".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_TOP_ZN_2".
+   ** Warning ** Controller:MechanicalVentilation="VAV_TOP WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_TOP_ZN_1".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_TOP_ZN_1".
+   ** Warning ** Controller:MechanicalVentilation="VAV_TOP WITH REHEAT_DCV", Zone OA/person rate
+   **   ~~~   ** For Zone="PERIMETER_TOP_ZN_4".
+   **   ~~~   ** Zone outside air per person rate not set in Design Specification Outdoor Air Object="SZ DSOA PERIMETER_TOP_ZN_4".
+   ** Warning ** In calculating the design coil UA for Coil:Cooling:Water VAV_BOT WITH REHEAT COOLING COIL
+   **   ~~~   ** the coil bypass factor is unrealistically large;
+   **   ~~~   ** The initial design conditions are: Tair,in = 24.5648
+   **   ~~~   **                                    Wair,in = 8.756586E-003
+   **   ~~~   **                                    Twater,in = 6.6700
+   **   ~~~   **                                    Tair,out = 11.0237
+   **   ~~~   **                                    Wair,out = 8.500000E-003
+   ** Warning ** In calculating the design coil UA for Coil:Cooling:Water VAV_MID WITH REHEAT COOLING COIL
+   **   ~~~   ** the coil bypass factor is unrealistically large;
+   **   ~~~   ** The initial design conditions are: Tair,in = 24.6198
+   **   ~~~   **                                    Wair,in = 8.770327E-003
+   **   ~~~   **                                    Twater,in = 6.6700
+   **   ~~~   **                                    Tair,out = 11.0237
+   **   ~~~   **                                    Wair,out = 8.500000E-003
+   ** Warning ** In calculating the design coil UA for Coil:Cooling:Water VAV_TOP WITH REHEAT COOLING COIL
+   **   ~~~   ** the coil bypass factor is unrealistically large;
+   **   ~~~   ** The initial design conditions are: Tair,in = 24.5498
+   **   ~~~   **                                    Wair,in = 8.750219E-003
+   **   ~~~   **                                    Twater,in = 6.6700
+   **   ~~~   **                                    Tair,out = 11.0237
+   **   ~~~   **                                    Wair,out = 8.500000E-003
+   ** Warning ** In calculating the design coil UA for Coil:Cooling:Water CAV_BAS COOLING COIL
+   **   ~~~   ** the coil bypass factor is unrealistically large;
+   **   ~~~   ** The initial design conditions are: Tair,in = 24.3325
+   **   ~~~   **                                    Wair,in = 8.885319E-003
+   **   ~~~   **                                    Twater,in = 6.6700
+   **   ~~~   **                                    Tair,out = 11.4065
+   **   ~~~   **                                    Wair,out = 8.500000E-003
+   ************* SizeHumidifier: Potential issue with equipment sizing for Humidifier:Steam:Electric = "DATACENTER_BASEMENT_ZN_6 HUMIDIFIER".
+   **   ~~~   ** User-Specified Nominal Capacity Volume of 3.72E-005 [Wm3/s]
+   **   ~~~   ** differs from Design Size Nominal Capacity Volume of 1.44E-004 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeChillerElectricReformulatedEIR: Potential issue with equipment sizing for COOLSYS1 CHILLER1
+   **   ~~~   ** User-Specified Reference Chilled Water Flow Rate of 2.52893E-002 [m3/s]
+   **   ~~~   ** differs from Design Size Reference Chilled Water Flow Rate of 4.99108E-002 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* SizeChillerElectricReformulatedEIR: Potential issue with equipment sizing for COOLSYS1 CHILLER2
+   **   ~~~   ** User-Specified Reference Chilled Water Flow Rate of 2.52893E-002 [m3/s]
+   **   ~~~   ** differs from Design Size Reference Chilled Water Flow Rate of 4.99108E-002 [m3/s]
+   **   ~~~   ** This may, or may not, indicate mismatched component sizes.
+   **   ~~~   ** Verify that the value entered is intended and is consistent with other components.
+   ************* Testing Individual Branch Integrity
+   ************* All Branches passed integrity testing
+   ************* Testing Individual Supply Air Path Integrity
+   ************* All Supply Air Paths passed integrity testing
+   ************* Testing Individual Return Air Path Integrity
+   ************* All Return Air Paths passed integrity testing
+   ************* No node connection errors were found.
+   ************* Beginning Simulation
+   ** Warning ** In Output:Table:Monthly 'SpaceGainsMonthly' invalid Variable or Meter Name 'ZONE GAS EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'SpaceGainsMonthly' invalid Variable or Meter Name 'ZONE HOT WATER EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'SpaceGainsMonthly' invalid Variable or Meter Name 'ZONE STEAM EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'SpaceGainsMonthly' invalid Variable or Meter Name 'ZONE OTHER EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'PeakSpaceGainsMonthly' invalid Variable or Meter Name 'ZONE GAS EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'PeakSpaceGainsMonthly' invalid Variable or Meter Name 'ZONE HOT WATER EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'PeakSpaceGainsMonthly' invalid Variable or Meter Name 'ZONE STEAM EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'PeakSpaceGainsMonthly' invalid Variable or Meter Name 'ZONE OTHER EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'SpaceGainComponentsAtCoolingPeakMonthly' invalid Variable or Meter Name 'ZONE GAS EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'SpaceGainComponentsAtCoolingPeakMonthly' invalid Variable or Meter Name 'ZONE HOT WATER EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'SpaceGainComponentsAtCoolingPeakMonthly' invalid Variable or Meter Name 'ZONE STEAM EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'SpaceGainComponentsAtCoolingPeakMonthly' invalid Variable or Meter Name 'ZONE OTHER EQUIPMENT TOTAL HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionElectricityGeneratedPropaneMonthly' invalid Variable or Meter Name 'PROPANE:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionElectricityGeneratedPropaneMonthly' invalid Variable or Meter Name 'PROPANE:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionDieselFuelOilMonthly' invalid Variable or Meter Name 'DIESEL:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionDieselFuelOilMonthly' invalid Variable or Meter Name 'DIESEL:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionDieselFuelOilMonthly' invalid Variable or Meter Name 'FUELOILNO1:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionDieselFuelOilMonthly' invalid Variable or Meter Name 'FUELOILNO1:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionDieselFuelOilMonthly' invalid Variable or Meter Name 'FUELOILNO2:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionDieselFuelOilMonthly' invalid Variable or Meter Name 'FUELOILNO2:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionDistrictHeatingCoolingMonthly' invalid Variable or Meter Name 'DISTRICTCOOLING:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionDistrictHeatingCoolingMonthly' invalid Variable or Meter Name 'DISTRICTCOOLING:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionDistrictHeatingCoolingMonthly' invalid Variable or Meter Name 'DISTRICTHEATING:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionDistrictHeatingCoolingMonthly' invalid Variable or Meter Name 'DISTRICTHEATING:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionCoalGasolineMonthly' invalid Variable or Meter Name 'COAL:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionCoalGasolineMonthly' invalid Variable or Meter Name 'COAL:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionCoalGasolineMonthly' invalid Variable or Meter Name 'GASOLINE:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionCoalGasolineMonthly' invalid Variable or Meter Name 'GASOLINE:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'OTHERFUEL1:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'OTHERFUEL1:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'OTHERFUEL2:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'OTHERFUEL2:FACILITY'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionElectricityMonthly' invalid Variable or Meter Name 'HEATRECOVERY:ELECTRICITY'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionElectricityMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:ELECTRICITY'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionNaturalGasMonthly' invalid Variable or Meter Name 'INTERIOREQUIPMENT:NATURALGAS'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionNaturalGasMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:NATURALGAS'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionNaturalGasMonthly' invalid Variable or Meter Name 'COOLING:NATURALGAS'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionNaturalGasMonthly' invalid Variable or Meter Name 'COGENERATION:NATURALGAS'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionNaturalGasMonthly' invalid Variable or Meter Name 'HUMIDIFIER:NATURALGAS'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionDieselMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:DIESEL'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionDieselMonthly' invalid Variable or Meter Name 'COOLING:DIESEL'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionDieselMonthly' invalid Variable or Meter Name 'HEATING:DIESEL'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionDieselMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:DIESEL'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionDieselMonthly' invalid Variable or Meter Name 'COGENERATION:DIESEL'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionFuelOilMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:FUELOILNO1'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionFuelOilMonthly' invalid Variable or Meter Name 'COOLING:FUELOILNO1'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionFuelOilMonthly' invalid Variable or Meter Name 'HEATING:FUELOILNO1'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionFuelOilMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:FUELOILNO1'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionFuelOilMonthly' invalid Variable or Meter Name 'COGENERATION:FUELOILNO1'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionFuelOilMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:FUELOILNO2'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionFuelOilMonthly' invalid Variable or Meter Name 'COOLING:FUELOILNO2'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionFuelOilMonthly' invalid Variable or Meter Name 'HEATING:FUELOILNO2'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionFuelOilMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:FUELOILNO2'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionFuelOilMonthly' invalid Variable or Meter Name 'COGENERATION:FUELOILNO2'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionCoalMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:COAL'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionCoalMonthly' invalid Variable or Meter Name 'HEATING:COAL'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionCoalMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:COAL'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionPropaneMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:PROPANE'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionPropaneMonthly' invalid Variable or Meter Name 'COOLING:PROPANE'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionPropaneMonthly' invalid Variable or Meter Name 'HEATING:PROPANE'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionPropaneMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:PROPANE'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionPropaneMonthly' invalid Variable or Meter Name 'COGENERATION:PROPANE'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionPropaneMonthly' invalid Variable or Meter Name 'HUMIDIFIER:PROPANE'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionGasolineMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:GASOLINE'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionGasolineMonthly' invalid Variable or Meter Name 'COOLING:GASOLINE'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionGasolineMonthly' invalid Variable or Meter Name 'HEATING:GASOLINE'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionGasolineMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:GASOLINE'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionGasolineMonthly' invalid Variable or Meter Name 'COGENERATION:GASOLINE'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:OTHERFUEL1'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'COOLING:OTHERFUEL1'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'HEATING:OTHERFUEL1'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:OTHERFUEL1'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'COGENERATION:OTHERFUEL1'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:OTHERFUEL2'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'COOLING:OTHERFUEL2'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'HEATING:OTHERFUEL2'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:OTHERFUEL2'
+   ** Warning ** In Output:Table:Monthly 'EndUseEnergyConsumptionOtherFuelsMonthly' invalid Variable or Meter Name 'COGENERATION:OTHERFUEL2'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseElectricityPart2Monthly' invalid Variable or Meter Name 'HEATRECOVERY:ELECTRICITY'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseElectricityPart2Monthly' invalid Variable or Meter Name 'WATERSYSTEMS:ELECTRICITY'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseNaturalGasMonthly' invalid Variable or Meter Name 'INTERIOREQUIPMENT:NATURALGAS'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseNaturalGasMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:NATURALGAS'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseNaturalGasMonthly' invalid Variable or Meter Name 'COOLING:NATURALGAS'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseNaturalGasMonthly' invalid Variable or Meter Name 'COGENERATION:NATURALGAS'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseDieselMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:DIESEL'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseDieselMonthly' invalid Variable or Meter Name 'COOLING:DIESEL'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseDieselMonthly' invalid Variable or Meter Name 'HEATING:DIESEL'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseDieselMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:DIESEL'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseDieselMonthly' invalid Variable or Meter Name 'COGENERATION:DIESEL'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseFuelOilMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:FUELOILNO1'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseFuelOilMonthly' invalid Variable or Meter Name 'COOLING:FUELOILNO1'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseFuelOilMonthly' invalid Variable or Meter Name 'HEATING:FUELOILNO1'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseFuelOilMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:FUELOILNO1'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseFuelOilMonthly' invalid Variable or Meter Name 'COGENERATION:FUELOILNO1'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseFuelOilMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:FUELOILNO2'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseFuelOilMonthly' invalid Variable or Meter Name 'COOLING:FUELOILNO2'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseFuelOilMonthly' invalid Variable or Meter Name 'HEATING:FUELOILNO2'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseFuelOilMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:FUELOILNO2'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseFuelOilMonthly' invalid Variable or Meter Name 'COGENERATION:FUELOILNO2'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseCoalMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:COAL'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseCoalMonthly' invalid Variable or Meter Name 'HEATING:COAL'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseCoalMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:COAL'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUsePropaneMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:PROPANE'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUsePropaneMonthly' invalid Variable or Meter Name 'COOLING:PROPANE'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUsePropaneMonthly' invalid Variable or Meter Name 'HEATING:PROPANE'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUsePropaneMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:PROPANE'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUsePropaneMonthly' invalid Variable or Meter Name 'COGENERATION:PROPANE'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseGasolineMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:GASOLINE'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseGasolineMonthly' invalid Variable or Meter Name 'COOLING:GASOLINE'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseGasolineMonthly' invalid Variable or Meter Name 'HEATING:GASOLINE'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseGasolineMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:GASOLINE'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseGasolineMonthly' invalid Variable or Meter Name 'COGENERATION:GASOLINE'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseOtherFuelsMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:OTHERFUEL1'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseOtherFuelsMonthly' invalid Variable or Meter Name 'COOLING:OTHERFUEL1'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseOtherFuelsMonthly' invalid Variable or Meter Name 'HEATING:OTHERFUEL1'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseOtherFuelsMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:OTHERFUEL1'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseOtherFuelsMonthly' invalid Variable or Meter Name 'COGENERATION:OTHERFUEL1'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseOtherFuelsMonthly' invalid Variable or Meter Name 'EXTERIOREQUIPMENT:OTHERFUEL2'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseOtherFuelsMonthly' invalid Variable or Meter Name 'COOLING:OTHERFUEL2'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseOtherFuelsMonthly' invalid Variable or Meter Name 'HEATING:OTHERFUEL2'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseOtherFuelsMonthly' invalid Variable or Meter Name 'WATERSYSTEMS:OTHERFUEL2'
+   ** Warning ** In Output:Table:Monthly 'PeakEnergyEndUseOtherFuelsMonthly' invalid Variable or Meter Name 'COGENERATION:OTHERFUEL2'
+   ** Warning ** In Output:Table:Monthly 'UnglazedTranspiredSolarCollectorSummaryMonthly' invalid Variable or Meter Name 'SOLAR COLLECTOR SYSTEM EFFICIENCY'
+   ** Warning ** In Output:Table:Monthly 'UnglazedTranspiredSolarCollectorSummaryMonthly' invalid Variable or Meter Name 'SOLAR COLLECTOR SYSTEM EFFICIENCY'
+   ** Warning ** In Output:Table:Monthly 'UnglazedTranspiredSolarCollectorSummaryMonthly' invalid Variable or Meter Name 'SOLAR COLLECTOR OUTSIDE FACE SUCTION VELOCITY'
+   ** Warning ** In Output:Table:Monthly 'UnglazedTranspiredSolarCollectorSummaryMonthly' invalid Variable or Meter Name 'SOLAR COLLECTOR SENSIBLE HEATING RATE'
+   ** Warning ** In Output:Table:Monthly 'BoilerReportMonthly' invalid Variable or Meter Name 'BOILER GAS CONSUMPTION'
+   ** Warning ** In Output:Table:Monthly 'BoilerReportMonthly' invalid Variable or Meter Name 'BOILER GAS CONSUMPTION RATE'
+   ** Warning ** In Output:Table:Monthly 'DXReportMonthly' invalid Variable or Meter Name 'COOLING COIL CRANKCASE HEATER ELECTRICITY ENERGY'
+   ** Warning ** In Output:Table:Monthly 'DXReportMonthly' invalid Variable or Meter Name 'COOLING COIL CRANKCASE HEATER ELECTRICITY RATE'
+   ** Warning ** In Output:Table:Monthly 'WindowACReportMonthly' invalid Variable or Meter Name 'ZONE WINDOW AIR CONDITIONER TOTAL COOLING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'WindowACReportMonthly' invalid Variable or Meter Name 'ZONE WINDOW AIR CONDITIONER ELECTRICITY ENERGY'
+   ** Warning ** In Output:Table:Monthly 'WindowACReportMonthly' invalid Variable or Meter Name 'ZONE WINDOW AIR CONDITIONER TOTAL COOLING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'WindowACReportMonthly' invalid Variable or Meter Name 'ZONE WINDOW AIR CONDITIONER SENSIBLE COOLING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'WindowACReportMonthly' invalid Variable or Meter Name 'ZONE WINDOW AIR CONDITIONER LATENT COOLING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'WindowACReportMonthly' invalid Variable or Meter Name 'ZONE WINDOW AIR CONDITIONER TOTAL COOLING RATE'
+   ** Warning ** In Output:Table:Monthly 'WindowACReportMonthly' invalid Variable or Meter Name 'ZONE WINDOW AIR CONDITIONER SENSIBLE COOLING RATE'
+   ** Warning ** In Output:Table:Monthly 'WindowACReportMonthly' invalid Variable or Meter Name 'ZONE WINDOW AIR CONDITIONER LATENT COOLING RATE'
+   ** Warning ** In Output:Table:Monthly 'WindowACReportMonthly' invalid Variable or Meter Name 'ZONE WINDOW AIR CONDITIONER ELECTRICITY RATE'
+   ** Warning ** In Output:Table:Monthly 'WaterHeaterReportMonthly' invalid Variable or Meter Name 'WATER HEATER BURNER HEATING ENERGY'
+   ** Warning ** In Output:Table:Monthly 'WaterHeaterReportMonthly' invalid Variable or Meter Name 'WATER HEATER GAS CONSUMPTION'
+   ** Warning ** In Output:Table:Monthly 'WaterHeaterReportMonthly' invalid Variable or Meter Name 'WATER HEATER LOSS DEMAND ENERGY'
+   ** Warning ** In Output:Table:Monthly 'WaterHeaterReportMonthly' invalid Variable or Meter Name 'WATER HEATER HEAT RECOVERY SUPPLY ENERGY'
+   ** Warning ** In Output:Table:Monthly 'WaterHeaterReportMonthly' invalid Variable or Meter Name 'WATER HEATER SOURCE ENERGY'
+   ** Warning ** In Output:Table:Monthly 'GeneratorReportMonthly' invalid Variable or Meter Name 'GENERATOR PRODUCED AC ELECTRICITY ENERGY'
+   ** Warning ** In Output:Table:Monthly 'GeneratorReportMonthly' invalid Variable or Meter Name 'GENERATOR DIESEL CONSUMPTION'
+   ** Warning ** In Output:Table:Monthly 'GeneratorReportMonthly' invalid Variable or Meter Name 'GENERATOR GAS CONSUMPTION'
+   ** Warning ** In Output:Table:Monthly 'GeneratorReportMonthly' invalid Variable or Meter Name 'GENERATOR PRODUCED AC ELECTRICITY ENERGY'
+   ** Warning ** In Output:Table:Monthly 'GeneratorReportMonthly' invalid Variable or Meter Name 'GENERATOR TOTAL HEAT RECOVERY'
+   ** Warning ** In Output:Table:Monthly 'GeneratorReportMonthly' invalid Variable or Meter Name 'GENERATOR JACKET HEAT RECOVERY ENERGY'
+   ** Warning ** In Output:Table:Monthly 'GeneratorReportMonthly' invalid Variable or Meter Name 'GENERATOR LUBE HEAT RECOVERY'
+   ** Warning ** In Output:Table:Monthly 'GeneratorReportMonthly' invalid Variable or Meter Name 'GENERATOR EXHAUST HEAT RECOVERY ENERGY'
+   ** Warning ** In Output:Table:Monthly 'GeneratorReportMonthly' invalid Variable or Meter Name 'GENERATOR EXHAUST AIR TEMPERATURE'
+   ** Warning ** In Output:Table:Monthly 'AirLoopSystemEnergyAndWaterUseMonthly' invalid Variable or Meter Name 'AIR SYSTEM NATURAL GAS ENERGY'
+   ** Warning ** In Output:Table:Monthly 'AirLoopSystemComponentEnergyUseMonthly' invalid Variable or Meter Name 'AIR SYSTEM HEATING COIL NATURAL GAS ENERGY'
+   ** Warning ** In Output:Table:Monthly 'AirLoopSystemComponentEnergyUseMonthly' invalid Variable or Meter Name 'AIR SYSTEM HUMIDIFIER NATURAL GAS ENERGY'
+   ** Warning ** CalcEquipmentFlowRates: "CORE_BOTTOM SUB CAT" - Target water temperature is greater than the hot water temperature (1.29 C)
+   **   ~~~   **  Environment=WILLIAM R FAIRCHILD ANN HTG 99.6% CONDNS DB, at Simulation time=01/21 06:00 - 06:10
+   **   ~~~   ** ...target water temperature       = 60.00 C
+   **   ~~~   ** ...hot water temperature       = 58.71 C
+   **   ~~~   ** ...Note: target water temperature should be less than or equal to the hot water temperature
+   **   ~~~   ** ...Target water temperature should be less than or equal to the hot water temperature. Verify temperature setpoints and schedules.
+   ** Warning ** CalcEquipmentFlowRates: "CORE_MID SUB CAT" - Target water temperature is greater than the hot water temperature (1.29 C)
+   **   ~~~   **  Environment=WILLIAM R FAIRCHILD ANN HTG 99.6% CONDNS DB, at Simulation time=01/21 06:00 - 06:10
+   **   ~~~   ** ...target water temperature       = 60.00 C
+   **   ~~~   ** ...hot water temperature       = 58.71 C
+   **   ~~~   ** ...Note: target water temperature should be less than or equal to the hot water temperature
+   **   ~~~   ** ...Target water temperature should be less than or equal to the hot water temperature. Verify temperature setpoints and schedules.
+   ** Warning ** CalcEquipmentFlowRates: "CORE_TOP SUB CAT" - Target water temperature is greater than the hot water temperature (1.29 C)
+   **   ~~~   **  Environment=WILLIAM R FAIRCHILD ANN HTG 99.6% CONDNS DB, at Simulation time=01/21 06:00 - 06:10
+   **   ~~~   ** ...target water temperature       = 60.00 C
+   **   ~~~   ** ...hot water temperature       = 58.71 C
+   **   ~~~   ** ...Note: target water temperature should be less than or equal to the hot water temperature
+   **   ~~~   ** ...Target water temperature should be less than or equal to the hot water temperature. Verify temperature setpoints and schedules.
+   ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER1": The condenser outlet temperature (21.65 C) is outside the range of condenser outlet temperatures (X var) given in Electric Input to Cooling Output Ratio Function of Part-load Ratio bicubic curve = WC_PD_150TO300_2010_PB_EIRFPLR
+   **   ~~~   ** The range specified = 31.13 C to 36.52 C. Environment=WILLIAM R FAIRCHILD ANN CLG .4% CONDNS DB=>MWB, at Simulation time=08/21 00:05 - 00:08
+   ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER1": The part-load ratio (0.150) is outside the range of part-load ratios (Y var) given in Electric Input to Cooling Output Ratio Function of Part-load Ratio bicubic curve = WC_PD_150TO300_2010_PB_EIRFPLR
+   **   ~~~   ** The range specified = 0.190 to 1.030. Environment=WILLIAM R FAIRCHILD ANN CLG .4% CONDNS DB=>MWB, at Simulation time=08/21 00:05 - 00:08
+   ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Tower range temperature is outside model boundaries at 0.77.
+   **   ~~~   **  ...Valid range = 1.11 to 11.11. Occurrence info = WILLIAM R FAIRCHILD ANN CLG .4% CONDNS DB=>MWB, 08/21 00:05 - 00:08
+   **   ~~~   **  ...Tower range temperature passed to the model = 0.77333
+   **   ~~~   **  ...Range temperatures outside model boundaries may not adversely affect tower performance.
+   **   ~~~   **  ...This is not an unexpected occurrence when simulating actual conditions.
+   ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER2": The evaporator outlet temperature (14.60 C) is outside the range of evaporator outlet temperatures (X var) given in Cooling Capacity Function of Temperature biquadratic curve = WC_PD_2010_PB_CAPFT
+   **   ~~~   ** The range specified = 5.00 C to 10.00 C. Environment=WILLIAM R FAIRCHILD ANN CLG .4% CONDNS DB=>MWB, at Simulation time=08/21 09:10 - 09:20
+   ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER2": The evaporator outlet temperature (14.60 C) is outside the range of evaporator outlet temperatures (X var) given in Electric Input to Cooling Output Ratio Function of Temperature biquadratic curve = WC_PD_2010_PB_EIRFT
+   **   ~~~   ** The range specified = 5.00 C to 10.00 C. Environment=WILLIAM R FAIRCHILD ANN CLG .4% CONDNS DB=>MWB, at Simulation time=08/21 09:10 - 09:20
+   ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER2": The condenser outlet temperature (21.78 C) is outside the range of condenser outlet temperatures (X var) given in Electric Input to Cooling Output Ratio Function of Part-load Ratio bicubic curve = WC_PD_150TO300_2010_PB_EIRFPLR
+   **   ~~~   ** The range specified = 31.13 C to 36.52 C. Environment=WILLIAM R FAIRCHILD ANN CLG .4% CONDNS DB=>MWB, at Simulation time=08/21 09:10 - 09:20
+   ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER2": The part-load ratio (0.150) is outside the range of part-load ratios (Y var) given in Electric Input to Cooling Output Ratio Function of Part-load Ratio bicubic curve = WC_PD_150TO300_2010_PB_EIRFPLR
+   **   ~~~   ** The range specified = 0.190 to 1.030. Environment=WILLIAM R FAIRCHILD ANN CLG .4% CONDNS DB=>MWB, at Simulation time=08/21 09:10 - 09:20
+   ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Tower approach temperature is outside model boundaries at 19.88.
+   **   ~~~   **  ...Valid range = 1.11 to 11.11. Occurrence info = RUNPERIOD 1, 01/02 10:10 - 10:20
+   **   ~~~   **  ...Tower approach temperature passed to the model = 19.87698
+   **   ~~~   **  ...Approach temperatures outside model boundaries may not adversely affect tower performance.
+   **   ~~~   **  ...This is not an unexpected occurrence when simulating actual conditions.
+   ** Warning ** GetSpecificHeatGlycol: Temperature is out of range (too high) for fluid [ETHYLENEGLYCOL40PERCENT] specific heat **
+   **   ~~~   ** ..Called From:NodeReportingCalc:AIRLOOP DATACENTER TOP CCOIL WATER OUTLET,Temperature=[172.44], supplied data range=[-10.00,125.00]
+   **   ~~~   **  Environment=RUNPERIOD 1, at Simulation time=01/07 04:20 - 04:30
+   ** Warning ** GetDensityGlycol: Temperature is out of range (too high) for fluid [ETHYLENEGLYCOL40PERCENT] density **
+   **   ~~~   ** ..Called From:NodeReportingCalc:AIRLOOP DATACENTER TOP CCOIL WATER OUTLET,Temperature=[172.44], supplied data range=[-10.00,125.00]
+   **   ~~~   **  Environment=RUNPERIOD 1, at Simulation time=01/07 04:20 - 04:30
+   ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Inlet air wet-bulb temperature is outside model boundaries at -2.82.
+   **   ~~~   **  ...Valid range = -1.00 to 26.67. Occurrence info = RUNPERIOD 1, 01/09 05:10 - 05:12
+   **   ~~~   **  ...Inlet air wet-bulb temperature passed to the model = -1.000000
+   **   ~~~   **  ...Wet-bulb temperatures outside model boundaries may not adversely affect tower performance.
+   ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Inlet air wet-bulb temperature is outside model boundaries at -2.81.
+   **   ~~~   **  ...Valid range = -1.00 to 26.67. Occurrence info = RUNPERIOD 1, 01/09 05:20 - 05:21
+   **   ~~~   **  ...Inlet air wet-bulb temperature passed to the model = -1.000000
+   **   ~~~   **  ...Wet-bulb temperatures outside model boundaries may not adversely affect tower performance.
+   ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Inlet air wet-bulb temperature is outside model boundaries at -2.79.
+   **   ~~~   **  ...Valid range = -1.00 to 26.67. Occurrence info = RUNPERIOD 1, 01/09 05:43 - 05:47
+   **   ~~~   **  ...Inlet air wet-bulb temperature passed to the model = -1.000000
+   **   ~~~   **  ...Wet-bulb temperatures outside model boundaries may not adversely affect tower performance.
+   ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Inlet air wet-bulb temperature is outside model boundaries at -2.85.
+   **   ~~~   **  ...Valid range = -1.00 to 26.67. Occurrence info = RUNPERIOD 1, 01/09 06:06 - 06:08
+   **   ~~~   **  ...Inlet air wet-bulb temperature passed to the model = -1.000000
+   **   ~~~   **  ...Wet-bulb temperatures outside model boundaries may not adversely affect tower performance.
+   ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Inlet air wet-bulb temperature is outside model boundaries at -2.97.
+   **   ~~~   **  ...Valid range = -1.00 to 26.67. Occurrence info = RUNPERIOD 1, 01/09 06:20 - 06:25
+   **   ~~~   **  ...Inlet air wet-bulb temperature passed to the model = -1.000000
+   **   ~~~   **  ...Wet-bulb temperatures outside model boundaries may not adversely affect tower performance.
+   ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Water flow rate ratio is outside model boundaries at 0.51.
+   **   ~~~   **  ...Valid range = 0.75 to 1.25. Occurrence info = RUNPERIOD 1, 06/26 16:20 - 16:30
+   **   ~~~   **  ...Water flow rate ratio passed to the model = 0.75000
+   **   ~~~   **  ...Water flow rate ratios outside model boundaries may not adversely affect tower performance.
+   ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 2" - Water flow rate ratio is outside model boundaries at 0.51.
+   **   ~~~   **  ...Valid range = 0.75 to 1.25. Occurrence info = RUNPERIOD 1, 06/26 16:20 - 16:30
+   **   ~~~   **  ...Water flow rate ratio passed to the model = 0.75000
+   **   ~~~   **  ...Water flow rate ratios outside model boundaries may not adversely affect tower performance.
+   ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Water flow rate ratio is outside model boundaries at 0.51.
+   **   ~~~   **  ...Valid range = 0.75 to 1.25. Occurrence info = RUNPERIOD 1, 06/26 16:40 - 16:50
+   **   ~~~   **  ...Water flow rate ratio passed to the model = 0.75000
+   **   ~~~   **  ...Water flow rate ratios outside model boundaries may not adversely affect tower performance.
+   ************* Simulation Error Summary *************
+   ************* There are 31 unused schedules in input.
+   ************* Use Output:Diagnostics,DisplayUnusedSchedules; to see them.
+   *************
+   ************* ===== Recurring Error Summary =====
+   ************* The following recurring error messages occurred.
+   *************
+   *************  ** Warning ** "CORE_BOTTOM SUB CAT" - Target water temperature should be less than or equal to the hot water temperature error continues...
+   *************  **   ~~~   **   This error occurred 1011259 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=1.933928  Min=0.137235
+   *************
+   *************  ** Warning ** "CORE_MID SUB CAT" - Target water temperature should be less than or equal to the hot water temperature error continues...
+   *************  **   ~~~   **   This error occurred 1011259 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=1.933928  Min=0.137235
+   *************
+   *************  ** Warning ** "CORE_TOP SUB CAT" - Target water temperature should be less than or equal to the hot water temperature error continues...
+   *************  **   ~~~   **   This error occurred 1011259 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=1.933928  Min=0.137235
+   *************
+   *************  ** Warning ** Plant loop exceeding upper temperature limit, PlantLoop="SINGLE WATER PLANT LOOP"
+   *************  **   ~~~   **   This error occurred 678 total times;
+   *************  **   ~~~   **   during Warmup 333 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=44.576394
+   *************
+   *************  ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER1": The cond outlet temp range in Electric Input to Cooling Output Ratio Function of PLR curve error continues.
+   *************  **   ~~~   **   This error occurred 248148 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=28.67652  Min=20.334154
+   *************
+   *************  ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER1": The part-load ratio range in Electric Input to Cooling Output Ratio Function of PLRatio curve error continues.
+   *************  **   ~~~   **   This error occurred 169860 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=0.189999  Min=0.15
+   *************
+   *************  ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Tower range temperature is out of range error continues...
+   *************  **   ~~~   **   This error occurred 10160 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=1.110857  Min=5.394482E-006
+   *************
+   *************  ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER2": The evap outlet temp range in Cooling Capacity Function of Temp curve error continues.
+   *************  **   ~~~   **   This error occurred 560 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=15.21926  Min=10.084791
+   *************
+   *************  ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER2": The evap outlet temp range in Electric Input to Cooling Output Ratio Function of Temp curve error continues.
+   *************  **   ~~~   **   This error occurred 560 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=15.21926  Min=10.084791
+   *************
+   *************  ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER2": The cond outlet temp range in Electric Input to Cooling Output Ratio Function of PLR curve error continues.
+   *************  **   ~~~   **   This error occurred 5544 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=28.67652  Min=21.1
+   *************
+   *************  ** Warning ** CHILLER:ELECTRIC:REFORMULATEDEIR "COOLSYS1 CHILLER2": The part-load ratio range in Electric Input to Cooling Output Ratio Function of PLRatio curve error continues.
+   *************  **   ~~~   **   This error occurred 540 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=0.187774  Min=0.
+   *************
+   *************  ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Tower approach temperature is out of range error continues...
+   *************  **   ~~~   **   This error occurred 3468 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=26.268703  Min=11.111148
+   *************
+   *************  ** Warning ** GetSpecificHeatGlycol: Temperature out of range (too high) for fluid [ETHYLENEGLYCOL40PERCENT] specific heat **
+   *************  **   ~~~   **   This error occurred 2651 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=1638.984741 {C}  Min=125.12046 {C}
+   *************
+   *************  ** Warning ** GetDensityGlycol: Temperature out of range (too high) for fluid [ETHYLENEGLYCOL40PERCENT] density **
+   *************  **   ~~~   **   This error occurred 1202 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=1638.984741 {C}  Min=125.323271 {C}
+   *************
+   *************  ** Warning ** CoolingTower:VariableSpeed "TOWERWATERSYS COOLTOWER 1" - Inlet air wet-bulb temperature is out of range error continues...
+   *************  **   ~~~   **   This error occurred 50 total times;
+   *************  **   ~~~   **   during Warmup 0 times;
+   *************  **   ~~~   **   during Sizing 0 times.
+   *************  **   ~~~   **   Max=-1.  Min=-5.168703
+   *************
+   *************
+   ************* ===== Final Error Summary =====
+   ************* The following error categories occurred.  Consider correcting or noting.
+   ************* Nominally Unused Constructions
+   ************* ..The nominally unused constructions warning is provided to alert you to potential conditions that can cause
+   ************* ..extra time during simulation. Each construction is calculated by the algorithm indicated in the HeatBalanceAlgorithm
+   ************* ..object. You may remove the constructions indicated (when you use the DisplayExtraWarnings option).
+   *************
+   ************* EnergyPlus Warmup Error Summary. During Warmup: 0 Warning; 0 Severe Errors.
+   ************* EnergyPlus Sizing Error Summary. During Sizing: 23 Warning; 0 Severe Errors.
+   ************* EnergyPlus Completed Successfully-- 3477415 Warning; 0 Severe Errors; Elapsed Time=00hr 01min  9.85sec

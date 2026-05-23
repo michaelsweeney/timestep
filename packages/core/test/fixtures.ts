@@ -15,6 +15,20 @@ export const designDayDir = path.join(
 export const designDaySql = path.join(designDayDir, 'eplusout.sql');
 export const designDayBnd = path.join(designDayDir, 'eplusout.bnd');
 
+export const annualDir = path.join(
+  REPO_ROOT,
+  'test-models',
+  'eso-test',
+  'annual'
+);
+
+// Annual run with 20 curated variables spread across four reporting
+// frequencies (Zone Timestep / Hourly / Daily / Monthly) — exercises
+// the multi-frequency dictionary handling that has historically been
+// a friction point in Timestep.
+export const annualSql = path.join(annualDir, 'eplusout.sql');
+export const annualBnd = path.join(annualDir, 'eplusout.bnd');
+
 export function fixtureExists(p: string): boolean {
   try {
     return fs.statSync(p).isFile();
