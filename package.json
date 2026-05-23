@@ -262,6 +262,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@reduxjs/toolkit": "^1.4.0",
+    "@timestep/core": "link:./packages/core",
     "baseline-browser-mapping": "^2.10.27",
     "caniuse-lite": "^1.0.30001792",
     "connected-react-router": "^6.6.1",

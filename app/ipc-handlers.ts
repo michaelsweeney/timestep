@@ -1,27 +1,8 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron';
 import fs from 'fs';
-import sqlite3 from 'sqlite3';
+import { Sqlite3Engine } from '@timestep/core/sqlite3';
 
-// Keep one Database handle per file so we don't re-open on every query.
-const dbCache = new Map<string, sqlite3.Database>();
-
-function getDb(file: string): sqlite3.Database {
-  let db = dbCache.get(file);
-  if (!db) {
-    db = new sqlite3.Database(file, sqlite3.OPEN_READONLY);
-    dbCache.set(file, db);
-  }
-  return db;
-}
-
-function allRows(file: string, sql: string): Promise<unknown[]> {
-  return new Promise((resolve, reject) => {
-    getDb(file).all(sql, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
-    });
-  });
-}
+const engine = new Sqlite3Engine();
 
 export function registerIpcHandlers(): void {
   ipcMain.handle('dialog:openFiles', async (event, opts) => {
@@ -55,6 +36,6 @@ export function registerIpcHandlers(): void {
   });
 
   ipcMain.handle('db:allRows', async (_event, file: string, sql: string) => {
-    return allRows(file, sql);
+    return engine.allRows(file, sql);
   });
 }

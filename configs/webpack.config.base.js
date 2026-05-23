@@ -10,7 +10,14 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        exclude: /node_modules/,
+        // Include `packages/` alongside `app/` so `@timestep/core`'s .ts
+        // sources get transpiled. By default the .ts files would be read
+        // from node_modules/@timestep/core (symlinked) and the
+        // `exclude: /node_modules/` rule would skip them.
+        include: [
+          path.join(__dirname, '..', 'app'),
+          path.join(__dirname, '..', 'packages')
+        ],
         use: {
           loader: 'babel-loader',
           options: {

@@ -1,0 +1,22 @@
+{
+  "name": "@timestep/core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Headless engine + query layer for Timestep. Reads EnergyPlus SQLite outputs (and, eventually, raw .eso files) and returns chart-ready series.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./sqlite3": {
+      "types": "./src/engine/sqlite3.ts",
+      "default": "./src/engine/sqlite3.ts"
+    }
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "sqlite3": "^5.1.7"
+  }
+}
