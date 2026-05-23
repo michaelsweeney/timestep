@@ -1,7 +1,6 @@
 // import '../wdyr';
 import React, { useState, useEffect } from 'react';
 
-import { hot } from 'react-hot-loader/root';
 import { connect } from 'src/store';
 import { makeStyles } from '@material-ui/core/styles';
 import Version from './version';
@@ -74,4 +73,4 @@ const mapStateToProps = state => {
     // files: state.session.files
   };
 };
-export default hot(connect(mapStateToProps)(App));
+export default connect(mapStateToProps)(App);

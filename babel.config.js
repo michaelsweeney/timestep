@@ -2,8 +2,6 @@
 
 const developmentEnvironments = ['development', 'test'];
 
-const developmentPlugins = [require('react-hot-loader/babel')];
-
 const productionPlugins = [
   require('babel-plugin-dev-expression'),
 
@@ -45,7 +43,7 @@ module.exports = api => {
       require('@babel/plugin-syntax-dynamic-import'),
       require('@babel/plugin-syntax-import-meta'),
 
-      ...(development ? developmentPlugins : productionPlugins)
+      ...(development ? [] : productionPlugins)
     ]
   };
 };
