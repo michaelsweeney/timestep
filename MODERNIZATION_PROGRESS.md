@@ -49,6 +49,60 @@ Tracking the work-in-progress against `MODERNIZATION.md` (on branch
   `@material-ui/core/typography` → `Typography`. These were broken on
   Linux (case-strict) but worked on macOS HFS+.
 
+- **Dev workflow boot-up on Electron 41 / Plasma 6 Wayland**
+  (commit `3a4cfc3`) — first-time runtime testing surfaced six small
+  but load-bearing fixes:
+  - `internals/scripts/CheckNativeDep.js` early-returns when there are
+    no native modules in the root tree. Its empty-list path called
+    `npm ls  --json` with no args, which on npm 11 (Node 24) returns
+    the whole root dep set and got every JS root dep mis-flagged as
+    native — hard-blocking `yarn install`.
+  - `app/package.json` declares `"type": "commonjs"` so Electron 41's
+    `await import()`-based entry load routes through the CJS loader,
+    which is where `@babel/register`'s extension hook lives.
+  - New `app/main.dev.cjs` shim that requires
+    `internals/scripts/BabelRegister` then `./main.dev.ts`. Necessary
+    because the `-r BabelRegister` flag stopped intercepting the
+    entry under Electron 41 / Node 22's dynamic-import-based entry
+    path. The `.cjs` extension forces CJS load regardless.
+  - `start-main-dev` script points at the shim and passes
+    `--ozone-platform=x11`. KDE Plasma 6 was creating the
+    native-Wayland surface but never presenting it; XWayland works.
+  - Deleted orphan `app/app.global.css`. Nothing imported it, but
+    `TypedCssModulesPlugin`'s glob picked it up and choked on its
+    `@import '~@fortawesome/...'` (`~` prefix removed in css-loader 6+).
+  - `app/app.html` — block-scope the two inline `<script>` tags. Both
+    declared top-level `const params`, and classic script tags share
+    the global lexical environment → SyntaxError before React mounted.
+
+- **Renderer loads same-origin in dev** (commit `0d130d0`) — Chromium's
+  Local Network Access (successor to PNA) blocks `file://` →
+  `http://localhost` script loads, which 403'd `renderer.dev.js` in
+  DevTools. In dev, main now loads `app.html` *from* the dev server
+  so the document and the renderer bundle share the
+  `http://localhost:PORT` origin. Prod still loads via `file://` inside
+  the asar (both HTML and `renderer.prod.js` co-located → same-origin).
+  Codex was the second pair of eyes that recommended this approach
+  over a Chromium command-line flag; archived rationale in
+  `.claude/handoffs/2026-05-22-electron-41-renderer-403-pna.md`.
+
+- **Dropped react-hot-loader v4** (commit `d91b478`) — was broken
+  under webpack 5 (HMR patch references the CJS `module` global,
+  absent in `target: 'web'` bundles) and React 16.6+ (needs
+  `@hot-loader/react-dom` aliased over `react-dom`; the alias never
+  made the webpack 5 migration). Was planned as Phase 1 (Fast Refresh
+  replacement) — pulled forward because the three touchpoints (index
+  AppContainer wrap, App.tsx `hot()` HOC, dev webpack entry) were
+  smaller than debugging the broken v4. The PLAIN_HMR substitution
+  added in `7656f68` was also removed (dead with hot-loader gone).
+  Fast Refresh / HMR is gone until the React 18 bump; full reload
+  via `Ctrl+R` works.
+
+- **Reference test models** (commit `c3b5d09`) — 20 ASHRAE 901
+  prototype tabular `.htm` reports across building-type × climate-zone
+  matrix, checked in under `test-models/`. Matching `.sql` databases
+  are gitignored (binary, ~7-8 MB each).
+
 ## What now actually builds
 
 Both `yarn build-renderer` and `yarn build-main` complete cleanly.
@@ -56,31 +110,35 @@ TypeScript still has 3 pre-existing errors in `app/src/store/index.tsx`
 from a Babel-only `export X from '...'` syntax — orthogonal to this
 work.
 
-## Not yet smoke-tested
+## Smoke-test status
 
-The Electron 41 runtime has not been exercised. **Before merging,
-manually verify**:
+Verified by running on Linux / KDE Plasma 6 Wayland:
 
-1. `yarn install` completes (root + `app/`); native sqlite3 builds
-   against the new Electron via `@electron/rebuild`.
-2. `yarn dev` boots; main process spawns; renderer loads. DevTools
-   open automatically.
-3. Renderer console shows no errors. In particular: no
-   `ReferenceError: api is not defined`, no `Uncaught TypeError`
-   from missing window globals.
-4. Click "Load Files" → native dialog opens, a `.sql` file loads.
-5. Drag a `.sql` file onto "Load Files" → file loads. (The
-   `webUtils.getPathForFile` migration is the riskiest piece —
-   the call needs to succeed inside the contextBridge.)
-6. Same drag-drop test on "Load Session" with a `.tss`.
-7. Drag a non-`.sql` file → MUI Snackbar warning.
-8. Open a chart view; values render; m3/s units pick up cfm/gpm
+1. ✅ `yarn install` completes at root + `app/`; native sqlite3
+   rebuilds against Electron 41 via `@electron/rebuild`.
+2. ✅ `yarn dev` boots; renderer dev server on :1212; Electron
+   window appears; React mounts; renderer DevTools shows only the
+   benign CSP dev-warning. (Required the six fixes above to get
+   here.)
+
+Still to drive in the UI:
+
+3. Click "Load Files" → native dialog opens, a `.sql` file loads,
+   chart renders.
+4. Drag a `.sql` file onto "Load Files" → file loads. **Riskiest
+   item** — exercises `webUtils.getPathForFile` inside the
+   contextBridge (the Electron 32+ File.path migration).
+5. Same drag-drop test on "Load Session" with a `.tss`.
+6. Drag a non-`.sql` file → MUI Snackbar warning.
+7. Open a chart view; values render; m3/s units pick up cfm/gpm
    from a sibling `.bnd` file (this fixes a longstanding bug).
-9. "Save Session" / "Load Session" round-trips.
-10. "Copy" / "Save to CSV" buttons work; clipboard receives data.
-11. "Info" button opens timestep.herokuapp.com in OS browser.
-12. `yarn package` produces a working artifact on at least one
+8. "Save Session" / "Load Session" round-trips.
+9. "Copy" / "Save to CSV" buttons work; clipboard receives data.
+10. "Info" button opens timestep.herokuapp.com in OS browser.
+11. `yarn package` produces a working artifact on at least one
     platform (macOS / Linux / Windows).
+12. Re-run on macOS and Windows before merging — the fixes above
+    are Linux-shaped (ozone-platform flag, case-sensitivity, etc.).
 
 ## In progress
 
@@ -148,8 +206,8 @@ manually verify**:
 - **Finish the TS bump** — work through the remaining ~213 type
   errors. Many will fall to typed prop interfaces on the Redux-
   connected components; some are genuine null-safety issues.
-- **React 16 → 18** + drop `react-hot-loader` for Fast Refresh
-  (the `hot()` HOC in `App.tsx` is the only consumer).
+- **React 16 → 18** + add Fast Refresh. react-hot-loader is already
+  gone (see "Done"); no HMR until the React 18 work lands.
 - **MUI 4 → 5** — `makeStyles` → `styled`/`sx`, `createMuiTheme` →
   `createTheme`.
 - **D3 5 → 7** — fix `mouse`/`event` API removal in `multiline.tsx`
