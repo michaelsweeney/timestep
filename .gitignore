@@ -55,3 +55,7 @@ app/node_modules
 
 # EnergyPlus SQLite databases — binary, large; checked-in copies live in test-models/
 *.sql
+
+# EnergyPlus binary/verbose outputs — large, regeneratable from the IDF
+*.eso
+test-models/eso-test/**/eplusout.csv
