@@ -4,5 +4,6 @@ import type { Engine } from '@timestep/core';
 // app/preload.js. The actual sqlite3 work happens in main (Sqlite3Engine).
 export const ipcEngine: Engine = {
   allRows: (file, sql) => window.api.db.allRows(file, sql),
-  readText: path => window.api.fs.readText(path)
+  readText: path => window.api.fs.readText(path),
+  fileExists: path => window.api.fs.exists(path)
 };

@@ -1,42 +1,38 @@
+import type { Engine } from '../engine/types';
 import { getSeriesIndex } from './getseriesindex';
 import { unitconvert } from './conversions';
 
-async function getSeries(filetag) {
-  let sqlfile = filetag.split(',')[0];
-  let file_short = sqlfile
-    .replace(/\\/g, '/')
-    .split('/')
-    .pop()
-    .split('.')[0];
-  let idx = filetag.split(',')[1];
+export async function getSeries(engine: Engine, filetag: string) {
+  const sqlfile = filetag.split(',')[0];
+  const idx = filetag.split(',')[1];
 
-  let series_obj = await getSeriesIndex(sqlfile, idx);
-  series_obj = Object.values(series_obj)[0];
+  const series_index = await getSeriesIndex(engine, sqlfile, idx);
+  const series_obj: any = Object.values(series_index)[0];
 
-  let long_name_single_ip = series_obj.name_ip_single;
-  let long_name_multi_ip = series_obj.name_ip_multi;
-  let long_name_single_si = series_obj.name_si_single;
-  let long_name_multi_si = series_obj.name_si_multi;
+  const long_name_single_ip = series_obj.name_ip_single;
+  const long_name_multi_ip = series_obj.name_ip_multi;
+  const long_name_single_si = series_obj.name_si_single;
+  const long_name_multi_si = series_obj.name_si_multi;
 
-  let query_year =
+  const query_year =
     "SELECT ReportData.Value, ReportData.TimeIndex, Time.Year, Time.SimulationDays, Time.Month, Time.Day, Time.Hour, Time.Minute, Time.Dst, Time.Interval, Time.DayType FROM 'ReportData' INNER JOIN Time ON ReportData.TimeIndex = Time.TimeIndex WHERE ReportData.ReportDataDictionaryIndex = " +
     idx;
-  let query_noyear =
+  const query_noyear =
     "SELECT ReportData.Value, ReportData.TimeIndex, Time.Month, Time.Day, Time.SimulationDays, Time.Hour, Time.Minute, Time.Dst, Time.Interval, Time.DayType FROM 'ReportData' INNER JOIN Time ON ReportData.TimeIndex = Time.TimeIndex WHERE ReportData.ReportDataDictionaryIndex = " +
     idx;
-  let result;
+  let result: any[];
 
   try {
-    result = await window.api.db.allRows(sqlfile, query_year);
+    result = (await engine.allRows(sqlfile, query_year)) as any[];
   } catch {
     console.log('no year');
-    result = await window.api.db.allRows(sqlfile, query_noyear);
+    result = (await engine.allRows(sqlfile, query_noyear)) as any[];
   }
 
-  let data_array = [];
+  const data_array: any[] = [];
   result.forEach(row => {
-    let data = {};
-    let year;
+    const data: any = {};
+    let year: number;
     if (row.Year) {
       year = row.Year;
     } else {
@@ -45,7 +41,7 @@ async function getSeries(filetag) {
       // current year purely so Date construction succeeds.
       year = new Date().getFullYear();
     }
-    let time = new Date(
+    const time = new Date(
       year + '-' + row.Month + '-' + row.Day + ' ' + row.Hour + ':' + row.Minute
     );
     data.name_ip_single = long_name_single_ip;
@@ -84,7 +80,9 @@ async function getSeries(filetag) {
     } else {
       data.value_ip =
         row.Value *
-        unitconvert[series_obj.units_si.replace('/', '_').replace('%', 'pct')];
+        (unitconvert[
+          series_obj.units_si.replace('/', '_').replace('%', 'pct')
+        ] as number);
 
       if (isNaN(data.value_ip)) {
         console.warn('unit_dict conversion error:');
@@ -99,5 +97,3 @@ async function getSeries(filetag) {
   });
   return data_array;
 }
-
-export { getSeries };

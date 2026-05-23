@@ -39,4 +39,13 @@ export class Sqlite3Engine implements Engine {
   readText(path: string): Promise<string> {
     return fs.promises.readFile(path, 'utf8');
   }
+
+  async fileExists(path: string): Promise<boolean> {
+    try {
+      await fs.promises.access(path);
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }

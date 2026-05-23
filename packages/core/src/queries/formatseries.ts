@@ -1,4 +1,8 @@
-function getSeriesKeys(units, files) {
+// Pure helpers for choosing the right field names off a series row given
+// the active unit system (si/ip) and whether multiple files are in play
+// (different name field for chart legends).
+
+export function getSeriesKeys(units: string, files: unknown[]) {
   let name_tag = '';
   let val_tag = '';
   let unit_tag = '';
@@ -29,19 +33,21 @@ function getSeriesKeys(units, files) {
   };
 }
 
-function getSeriesLookupObj(config) {
+export function getSeriesLookupObj(config: {
+  array: any[];
+  units: string;
+  timestepType: string;
+  files: unknown[];
+}) {
   const { array, units, timestepType, files } = config;
-  let { name } = getSeriesKeys(units, files);
+  const { name } = getSeriesKeys(units, files);
   const filtered = array.filter(f => {
     return f.ReportingFrequency == timestepType;
   });
-  const seriesLookupObj = {};
+  const seriesLookupObj: Record<string, unknown> = {};
   filtered.forEach(o => {
-    let key = o.key;
+    const key = o.key;
     seriesLookupObj[o[name]] = key;
   });
   return seriesLookupObj;
 }
-
-
-export {getSeriesKeys, getSeriesLookupObj}

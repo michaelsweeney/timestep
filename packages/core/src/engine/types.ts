@@ -6,4 +6,5 @@
 export interface Engine {
   allRows(file: string, sql: string): Promise<unknown[]>;
   readText(path: string): Promise<string>;
+  fileExists(path: string): Promise<boolean>;
 }

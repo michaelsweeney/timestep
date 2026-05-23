@@ -1,24 +1,25 @@
+import type { Engine } from '../engine/types';
 import { readBnd } from './readbnd';
 import { unitdict } from './conversions';
 
-async function getSeriesIndex(file, idx) {
-  let loadedobj = {};
-  let query = `SELECT * FROM ReportDataDictionary WHERE ReportDataDictionaryIndex == ${idx}`;
-  let bndfile = file.replace('.sql', '.bnd');
-  let bndexists = await window.api.fs.exists(bndfile);
-  let bnd_dict;
+export async function getSeriesIndex(engine: Engine, file: string, idx: any) {
+  const loadedobj: Record<string, any> = {};
+  const query = `SELECT * FROM ReportDataDictionary WHERE ReportDataDictionaryIndex == ${idx}`;
+  const bndfile = file.replace('.sql', '.bnd');
+  const bndexists = await engine.fileExists(bndfile);
+  let bnd_dict: Record<string, string> | undefined;
   if (bndexists) {
-    bnd_dict = await readBnd(bndfile);
+    bnd_dict = await readBnd(engine, bndfile);
   }
 
-  let result = await window.api.db.allRows(file, query);
-  let file_short = file
+  const result = (await engine.allRows(file, query)) as any[];
+  const file_short = file
     .replace(/\\/g, '/')
     .split('/')
-    .pop()
+    .pop()!
     .split('.')[0];
   result.forEach(row => {
-    let key = file + ',' + row.ReportDataDictionaryIndex;
+    const key = file + ',' + row.ReportDataDictionaryIndex;
     row.file = file;
     row.file_short = file_short;
     row.key = key;
@@ -27,8 +28,8 @@ async function getSeriesIndex(file, idx) {
     // handle ip units
     //if m3/s (try to read bnd, get gpm or cfm)
     if (row.Units == 'm3/s') {
-      if (bndexists) {
-        let fluidtype = bnd_dict[row.KeyValue];
+      if (bndexists && bnd_dict) {
+        const fluidtype = bnd_dict[row.KeyValue];
         if (fluidtype == 'Air') {
           row.units_ip = 'cfm';
         } else if (fluidtype == 'Water') {
@@ -64,5 +65,3 @@ async function getSeriesIndex(file, idx) {
   });
   return loadedobj;
 }
-
-export { getSeriesIndex };

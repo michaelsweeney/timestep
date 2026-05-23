@@ -1,4 +1,6 @@
-const unitdict = {
+// SI → IP unit mapping and conversion factors. Used by getSeries (to compute
+// IP values) and getSeriesIndex / getAllSeries (to label units).
+export const unitdict: Record<string, string> = {
   deg: 'deg',
   m: 'ft',
   m2: 'ft2',
@@ -40,7 +42,7 @@ const unitdict = {
   W_W: 'W/W'
 };
 
-const unitconvert = {
+export const unitconvert: Record<string, number | string> = {
   deg: 1,
   m: 3.28,
   m2: 10.7639,
@@ -81,5 +83,3 @@ const unitconvert = {
   pct: 1,
   W_W: 1
 };
-
-export { unitdict, unitconvert };
