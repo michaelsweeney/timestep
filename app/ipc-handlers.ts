@@ -1,8 +1,9 @@
 import { ipcMain, dialog, BrowserWindow } from 'electron';
 import fs from 'fs';
+import sqlite3 from 'sqlite3';
 import { Sqlite3Engine } from '@timestep/core/sqlite3';
 
-const engine = new Sqlite3Engine();
+const engine = new Sqlite3Engine(sqlite3);
 
 export function registerIpcHandlers(): void {
   ipcMain.handle('dialog:openFiles', async (event, opts) => {

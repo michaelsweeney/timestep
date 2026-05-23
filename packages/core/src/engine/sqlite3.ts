@@ -1,18 +1,27 @@
 import fs from 'fs';
-import sqlite3 from 'sqlite3';
 import type { Engine } from './types';
+
+// Type-only reference; the runtime module is injected by the caller.
+// sqlite3 lives in app/node_modules under the electron-react-boilerplate
+// two-package-json pattern, so packages/core can't resolve it on its
+// own at runtime (works in webpack-bundled prod, breaks in
+// @babel/register-loaded dev).
+type Sqlite3Module = typeof import('sqlite3');
+type Database = InstanceType<Sqlite3Module['Database']>;
 
 // Caches one read-only Database handle per file path so repeated queries
 // against the same .sql don't reopen the file. Handles live for the
 // process lifetime — fine for the current "open file, view it, quit"
 // usage; revisit if/when we add a Close button.
 export class Sqlite3Engine implements Engine {
-  private dbs = new Map<string, sqlite3.Database>();
+  private dbs = new Map<string, Database>();
 
-  private getDb(file: string): sqlite3.Database {
+  constructor(private readonly sqlite3: Sqlite3Module) {}
+
+  private getDb(file: string): Database {
     let db = this.dbs.get(file);
     if (!db) {
-      db = new sqlite3.Database(file, sqlite3.OPEN_READONLY);
+      db = new this.sqlite3.Database(file, this.sqlite3.OPEN_READONLY);
       this.dbs.set(file, db);
     }
     return db;
