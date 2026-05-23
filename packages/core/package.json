@@ -16,7 +16,14 @@
     }
   },
   "license": "MIT",
+  "scripts": {
+    "test": "vitest run"
+  },
   "peerDependencies": {
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "sqlite3": "^5.1.7",
+    "vitest": "^2.1.0"
   }
 }
