@@ -13,6 +13,10 @@
     "./sqlite3": {
       "types": "./src/engine/sqlite3.ts",
       "default": "./src/engine/sqlite3.ts"
+    },
+    "./eso-sqlite": {
+      "types": "./src/eso/esotosqlite.ts",
+      "default": "./src/eso/esotosqlite.ts"
     }
   },
   "license": "MIT",
