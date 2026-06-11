@@ -12,7 +12,7 @@ describe('multi-frequency dictionary', () => {
   it('surfaces the same variable name at four distinct frequencies', async () => {
     if (!fixtureExists(annualSql)) {
       throw new Error(
-        `Fixture missing: ${annualSql}. Regenerate by running EnergyPlus against the IDF in test-models/eso-test/annual/.`
+        `Fixture missing: ${annualSql}. Regenerate with: node scripts/eplus-matrix.mjs --only large-office-multifreq`
       );
     }
 

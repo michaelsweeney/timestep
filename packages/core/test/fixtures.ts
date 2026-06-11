@@ -1,15 +1,15 @@
 import path from 'path';
 import fs from 'fs';
 
-// Resolve paths to the EnergyPlus reference fixtures checked in (or
-// gitignored) under <repo>/test-models/.
+// Resolve paths to the EnergyPlus reference fixtures under
+// <repo>/test-models/ (gitignored, local-only — see test-models/README.md;
+// regenerate with `node scripts/eplus-matrix.mjs`).
 const REPO_ROOT = path.join(__dirname, '..', '..', '..');
 
 export const designDayDir = path.join(
   REPO_ROOT,
   'test-models',
-  'eso-test',
-  'design-day'
+  'large-office-design-day'
 );
 
 export const designDaySql = path.join(designDayDir, 'eplusout.sql');
@@ -18,8 +18,7 @@ export const designDayBnd = path.join(designDayDir, 'eplusout.bnd');
 export const annualDir = path.join(
   REPO_ROOT,
   'test-models',
-  'eso-test',
-  'annual'
+  'large-office-multifreq'
 );
 
 // Annual run with 20 curated variables spread across four reporting

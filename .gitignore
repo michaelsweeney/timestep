@@ -53,9 +53,7 @@ npm-debug.log.*
 
 app/node_modules
 
-# EnergyPlus SQLite databases — binary, large; checked-in copies live in test-models/
-*.sql
-
-# EnergyPlus binary/verbose outputs — large, regeneratable from the IDF
-*.eso
-test-models/eso-test/**/eplusout.csv
+# EnergyPlus test data — local-only and regeneratable; see test-models/README.md
+test-models/*
+!test-models/README.md
+test-matrix/

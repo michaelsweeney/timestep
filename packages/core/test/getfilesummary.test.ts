@@ -8,7 +8,7 @@ describe('getFileSummary', () => {
   it('returns shape + counts for the design-day .sql', async () => {
     if (!fixtureExists(designDaySql)) {
       throw new Error(
-        `Fixture missing: ${designDaySql}. Populate test-models/eso-test/design-day/ first.`
+        `Fixture missing: ${designDaySql}. Populate test-models/large-office-design-day/ first (see test-models/README.md).`
       );
     }
 

@@ -8,7 +8,7 @@ describe('readBnd', () => {
   it('parses the design-day .bnd into a node→fluid map', async () => {
     if (!fixtureExists(designDayBnd)) {
       throw new Error(
-        `Fixture missing: ${designDayBnd}. Populate test-models/eso-test/design-day/ first.`
+        `Fixture missing: ${designDayBnd}. Populate test-models/large-office-design-day/ first (see test-models/README.md).`
       );
     }
 
