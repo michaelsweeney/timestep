@@ -27,6 +27,9 @@ contextBridge.exposeInMainWorld('api', {
   db: {
     allRows: (file, sql) => ipcRenderer.invoke('db:allRows', file, sql)
   },
+  eso: {
+    convertToSql: path => ipcRenderer.invoke('eso:convertToSql', path)
+  },
   clipboard: {
     writeText: text => clipboard.writeText(text)
   },

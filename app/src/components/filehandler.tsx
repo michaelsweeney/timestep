@@ -35,17 +35,43 @@ const FileHandler = props => {
     props.actions.changeFiles(f);
   };
 
+  // .eso files are converted to SQLite in the main process (cached on
+  // path+size+mtime, so repeat opens are instant) and swapped for the
+  // resulting .sql path; .sql files pass through untouched.
+  const resolveFiles = async files => {
+    const resolved = [];
+    for (const f of files) {
+      if (/\.eso$/i.test(f)) {
+        props.actions.setNotification(`Converting ${f} to SQLite...`);
+        resolved.push(await window.api.eso.convertToSql(f));
+      } else {
+        resolved.push(f);
+      }
+    }
+    return resolved;
+  };
+
+  const loadFiles = files => {
+    resolveFiles(files)
+      .then(resolved => handleFileChange(resolved))
+      .catch(err => {
+        props.actions.setNotification(`File loading error: ${err.message}`);
+      });
+  };
+
   const openDialog = () => {
     window.api.dialog
       .openFiles({
         filters: [
+          { name: 'EnergyPlus Outputs', extensions: ['sql', 'eso'] },
           { name: 'EP SQLite Files', extensions: ['sql'] },
+          { name: 'EP ESO Files', extensions: ['eso'] },
           { name: 'All Files', extensions: ['*'] }
         ],
         properties: ['openFile', 'multiSelections']
       })
       .then(d => {
-        if (!d.canceled) handleFileChange(d.filePaths);
+        if (!d.canceled) loadFiles(d.filePaths);
       });
   };
 
@@ -71,20 +97,15 @@ const FileHandler = props => {
       window.api.getPathForFile(f as File)
     );
 
-    // handle error alert for non-sql files
-    let errflag = false;
-    files.forEach(f => {
-      if (f.split('.')[1] != 'sql') {
-        errflag = true;
-      }
-    });
+    // handle error alert for non-sql/eso files
+    const errflag = files.some(f => !/\.(sql|eso)$/i.test(f));
 
     if (!errflag) {
-      handleFileChange(files);
+      loadFiles(files);
       setIsActive('inactive');
     } else {
       props.actions.setNotification(
-        'File loading error: only valid SQLite files allowed.'
+        'File loading error: only .sql or .eso files allowed.'
       );
       setIsActive('inactive');
     }

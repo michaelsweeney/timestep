@@ -8,6 +8,8 @@
 
 import { parseEso, type ParsedEso } from './parseeso';
 
+export { convertEsoCached } from './esocache';
+
 type Sqlite3Module = typeof import('sqlite3');
 type Database = InstanceType<Sqlite3Module['Database']>;
 

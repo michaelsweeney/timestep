@@ -39,6 +39,9 @@ interface ElectronApi {
   db: {
     allRows(file: string, sql: string): Promise<unknown[]>;
   };
+  eso: {
+    convertToSql(path: string): Promise<string>;
+  };
   clipboard: {
     writeText(text: string): void;
   };
