@@ -86,19 +86,24 @@ function buildGraph(model) {
     }
   }
 
-  // 5. Some components carry no node rows anywhere in the structured
-  // records (return plenums, notably) — their topology only exists in the
-  // node connection records. Backfill any pairless vertex from its own
-  // Inlet/Outlet connections.
+  // 5. The structured records under-report some node hookups: return
+  // plenums have no node rows at all, and multi-stream components (ERV
+  // heat exchangers) only carry their primary pair in Component Sets —
+  // the secondary stream exists solely in the node connection records.
+  // Augment every vertex with its own Inlet/Outlet connections that the
+  // structured records missed.
   const connByObject = {};
   for (const nc of model.nodeConnections)
     (connByObject[vid(nc.objectType, nc.objectName)] =
       connByObject[vid(nc.objectType, nc.objectName)] || []).push(nc);
   for (const v of Object.values(vertices)) {
-    if (v.pairs.length > 0) continue;
+    const inlets = new Set(v.pairs.map(p => p.inlet));
+    const outlets = new Set(v.pairs.map(p => p.outlet));
     for (const nc of connByObject[v.id] || []) {
-      if (nc.connectionType === 'Inlet') v.pairs.push({ inlet: nc.node, outlet: null });
-      if (nc.connectionType === 'Outlet') v.pairs.push({ inlet: null, outlet: nc.node });
+      if (nc.connectionType === 'Inlet' && !inlets.has(nc.node))
+        v.pairs.push({ inlet: nc.node, outlet: null });
+      if (nc.connectionType === 'Outlet' && !outlets.has(nc.node))
+        v.pairs.push({ inlet: null, outlet: nc.node });
     }
   }
 
