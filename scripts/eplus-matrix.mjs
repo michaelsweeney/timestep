@@ -52,6 +52,12 @@ function idfVersion(idfText) {
 }
 
 const proto = (type, name) => path.join(PROTOTYPES, type, `${name}.idf`);
+// Hospital prototypes live in a sibling stash (pnnl-commercial-prototypes
+// has no Hospital dir). Full-year RunPeriod, unlike the ExampleFiles copy,
+// whose three sample-month RunPeriods (Jan/Apr/Jul) finish deceptively fast.
+const protoHospital = (name) =>
+  path.join(HOME, 'Documents', 'energyplus-files', 'prototype-testing',
+    'prototype-models', 'ASHRAE901_Hospital_STD2022', `${name}.idf`);
 const wx = (name) => path.join(WEATHER, name);
 // ExampleFiles/WeatherData resolved against the engine actually chosen for the run
 const example = (name) => ({ example: name });
@@ -163,8 +169,9 @@ const RUNS = [
   // Very large models — scaling checks
   { name: 'large-office-ny-design-day', idf: proto('ASHRAE901_OfficeLarge', 'ASHRAE901_OfficeLarge_STD2022_NewYork'), sqlite: true, designDay: true },
   { name: 'large-office-annual-sqlite', idf: proto('ASHRAE901_OfficeLarge', 'ASHRAE901_OfficeLarge_STD2022_NewYork'), epw: wx('USA_NY_New.York-John.F.Kennedy.Intl.AP.744860_TMY3.epw'), sqlite: true },
-  { name: 'hospital-design-day', idf: example('ASHRAE901_Hospital_STD2019_Denver.idf'), designDay: true },
-  { name: 'hospital-annual-no-sql', idf: example('ASHRAE901_Hospital_STD2019_Denver.idf'), epw: bundledWx('USA_CO_Golden-NREL.724666_TMY3.epw'), sqlite: false },
+  { name: 'hospital-design-day', idf: protoHospital('ASHRAE901_Hospital_STD2022_Denver'), designDay: true },
+  // Big annual ESO with no SQLite — the "large model, .sql missing" case.
+  { name: 'hospital-annual-eso-no-sql', idf: protoHospital('ASHRAE901_Hospital_STD2022_Denver'), epw: wx('USA_CO_Denver-Aurora-Buckley.AFB.724695_TMY3.epw'), sqlite: false, appendBlock: MULTIFREQ_BLOCK },
 
   // Vitest fixtures (regenerate test-models/<name>/; explicit only)
   {
