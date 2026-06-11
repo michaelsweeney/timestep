@@ -1,0 +1,147 @@
+// UI smoke test: launch the built app, load real EnergyPlus outputs, and
+// assert a chart actually renders (or the app degrades gracefully when an
+// output has no readable series). Drives the packaged renderer via
+// playwright-core's Electron driver with the native file dialog stubbed in
+// the main process.
+//
+// Prereqs: `yarn build` (app/main.prod.js + app/dist), app/node_modules
+// installed (native sqlite3), and the local test-matrix outputs
+// (regenerate with `yarn eplus-matrix`). Run: `yarn smoke-ui`
+//
+// Cases cover the ISSUE#23 matrix: timeseries volume, sparse prototype
+// outputs, design-day-only, in-app .eso conversion, and an
+// empty-dictionary .sql that must not crash the app.
+
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
+
+const require_ = createRequire(import.meta.url);
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const { _electron } = require_(path.join(ROOT, 'node_modules', 'playwright-core'));
+const electronPath = require_(path.join(ROOT, 'node_modules', 'electron'));
+
+const M = p => path.join(ROOT, 'test-matrix', p);
+
+// An output with Time/dictionary tables present but zero series — the
+// "tabular-only, nothing chartable" shape. Built from a real file so the
+// schema is authentic.
+async function makeEmptySql() {
+  const src = M('small-office-design-day/eplusout.sql');
+  const dst = path.join(os.tmpdir(), `timestep-smoke-empty-${process.pid}.sql`);
+  fs.copyFileSync(src, dst);
+  const sqlite3 = require_(path.join(ROOT, 'app', 'node_modules', 'sqlite3'));
+  const db = new sqlite3.Database(dst);
+  await new Promise((res, rej) =>
+    db.exec('DELETE FROM ReportData; DELETE FROM ReportDataDictionary;', e =>
+      e ? rej(e) : res()
+    )
+  );
+  await new Promise(res => db.close(res));
+  return dst;
+}
+
+const CASES = [
+  { name: 'volume: zone-uncontrolled annual (172 vars, 1.27M rows)',
+    files: [M('zone-uncontrolled-sqlite/eplusout.sql')], expectSeries: true },
+  { name: 'sparse: large office prototype (2 environment vars)',
+    files: [M('large-office-annual-sqlite/eplusout.sql')], expectSeries: true },
+  { name: 'design-day only: small office (96 rows)',
+    files: [M('small-office-design-day/eplusout.sql')], expectSeries: true },
+  { name: 'eso: in-app conversion (33MB multifreq .eso)',
+    files: [M('small-office-multifreq-eso/eplusout.eso')], expectSeries: true },
+  { name: 'edge: empty dictionary — must not crash', expectSeries: false }
+];
+
+const log = (s, ...a) => console.log(s, ...a);
+
+async function paintedPixels(page) {
+  return page.evaluate(() => {
+    const c = document.querySelector('.canvas-svg-container canvas');
+    if (!c) return -1;
+    const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
+    return n;
+  });
+}
+
+async function waitFor(fn, timeoutMs, label) {
+  const t0 = Date.now();
+  for (;;) {
+    const v = await fn();
+    if (v) return v;
+    if (Date.now() - t0 > timeoutMs) throw new Error(`timeout: ${label}`);
+    await new Promise(r => setTimeout(r, 500));
+  }
+}
+
+const missing = CASES.flatMap(c => c.files || []).filter(f => !fs.existsSync(f));
+if (missing.length) {
+  console.error('missing fixtures (run `yarn eplus-matrix`):\n  ' + missing.join('\n  '));
+  process.exit(2);
+}
+CASES[CASES.length - 1].files = [await makeEmptySql()];
+
+const app = await _electron.launch({
+  executablePath: electronPath,
+  args: [path.join(ROOT, 'app')]
+});
+const page = await app.firstWindow();
+const pageErrors = [];
+page.on('pageerror', e => pageErrors.push(String(e)));
+
+await page.waitForLoadState('domcontentloaded');
+if ((await page.title()) !== 'timestep') throw new Error('unexpected window title');
+
+const results = [];
+for (const c of CASES) {
+  const errBefore = pageErrors.length;
+  try {
+    await app.evaluate(({ dialog }, filePaths) => {
+      dialog.showOpenDialog = async () => ({ canceled: false, filePaths });
+    }, c.files);
+
+    await page.getByText('Load Files', { exact: true }).click();
+    // sidebar replaces the landing page once files land (eso conversion
+    // can take a while on first run)
+    await page.getByText('Multiline', { exact: true }).waitFor({ timeout: 120000 });
+    await page.getByText('Multiline', { exact: true }).click();
+
+    const combo = page.getByRole('combobox').first();
+    await combo.click();
+
+    if (c.expectSeries) {
+      await page.keyboard.press('ArrowDown');
+      await page.keyboard.press('Enter');
+      const px = await waitFor(
+        async () => ((await paintedPixels(page)) > 1000 ? await paintedPixels(page) : 0),
+        120000,
+        'chart canvas painted'
+      );
+      results.push({ name: c.name, pass: true, detail: `${px} painted px` });
+    } else {
+      await page.getByText('No options').waitFor({ timeout: 15000 });
+      // app still alive and responsive after the empty load
+      await page.keyboard.press('Escape');
+      if ((await page.title()) !== 'timestep') throw new Error('window lost');
+      results.push({ name: c.name, pass: true, detail: 'graceful: No options, no crash' });
+    }
+    if (pageErrors.length > errBefore)
+      throw new Error('renderer errors: ' + pageErrors.slice(errBefore).join(' | '));
+  } catch (e) {
+    results.push({ name: c.name, pass: false, detail: String(e.message || e) });
+  }
+}
+
+await app.close();
+
+let failed = 0;
+for (const r of results) {
+  log(`${r.pass ? 'PASS' : 'FAIL'}  ${r.name} — ${r.detail}`);
+  if (!r.pass) failed++;
+}
+log(`\n${results.length - failed}/${results.length} smoke cases passed`);
+process.exit(failed ? 1 : 0);

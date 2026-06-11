@@ -1,7 +1,7 @@
 {
   "name": "timestep",
   "productName": "timestep",
-  "version": "0.2.0",
+  "version": "2.0.0",
   "description": "SQL-based Timeseries Viewer for EnergyPlus",
   "scripts": {
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
@@ -12,6 +12,7 @@
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "ts": "tsc",
     "eplus-matrix": "node scripts/eplus-matrix.mjs",
+    "smoke-ui": "node scripts/ui-smoke.mjs",
     "lint": "cross-env NODE_ENV=development eslint . --cache --ext .js,.jsx,.ts,.tsx",
     "lint-fix": "yarn --silent lint --fix; exit 0",
     "lint-styles": "stylelint --ignore-path .eslintignore '**/*.*(css|scss)' --syntax scss",
@@ -54,7 +55,7 @@
   },
   "build": {
     "productName": "timestep",
-    "appId": "timestep",
+    "appId": "io.github.michaelsweeney.timestep",
     "files": [
       "dist/",
       "node_modules/",
@@ -235,6 +236,7 @@
     "lint-staged": "^10.0.2",
     "mini-css-extract-plugin": "^2.10.0",
     "opencollective-postinstall": "^2.0.2",
+    "playwright-core": "^1.60.0",
     "prettier": "^1.19.1",
     "react-test-renderer": "^16.12.0",
     "redux-logger": "^3.0.6",
