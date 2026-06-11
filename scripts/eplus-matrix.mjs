@@ -122,6 +122,15 @@ Output:Meter,Heating:NaturalGas,Hourly;
 Output:Meter,Cooling:Electricity,Hourly;
 `;
 
+// Minimal zone-timestep-frequency outputs — without these, a Timestep
+// override changes simulation granularity but not ESO volume (stock
+// variables are Hourly), so the timestep variants would be no-ops for
+// the reader.
+const ZTS_BLOCK = `
+Output:Variable,*,Site Outdoor Air Drybulb Temperature,Timestep;
+Output:Variable,*,Zone Mean Air Temperature,Timestep;
+`;
+
 // ---------------------------------------------------------------------------
 // Run matrix
 //
@@ -138,8 +147,8 @@ const RUNS = [
   // Minimal smoke model — fast, no HVAC, few reports (EnergyPlus 25.2)
   { name: 'zone-uncontrolled-annual', idf: example('1ZoneUncontrolled.idf'), epw: bundledWx('USA_IL_Chicago-OHare.Intl.AP.725300_TMY3.epw') },
   { name: 'zone-uncontrolled-sqlite', idf: example('1ZoneUncontrolled.idf'), epw: bundledWx('USA_IL_Chicago-OHare.Intl.AP.725300_TMY3.epw'), sqlite: true },
-  { name: 'zone-uncontrolled-timestep-1', idf: example('1ZoneUncontrolled.idf'), epw: bundledWx('USA_IL_Chicago-OHare.Intl.AP.725300_TMY3.epw'), timestep: 1 },
-  { name: 'zone-uncontrolled-timestep-60', idf: example('1ZoneUncontrolled.idf'), epw: bundledWx('USA_IL_Chicago-OHare.Intl.AP.725300_TMY3.epw'), timestep: 60 },
+  { name: 'zone-uncontrolled-timestep-1', idf: example('1ZoneUncontrolled.idf'), epw: bundledWx('USA_IL_Chicago-OHare.Intl.AP.725300_TMY3.epw'), timestep: 1, appendBlock: ZTS_BLOCK },
+  { name: 'zone-uncontrolled-timestep-60', idf: example('1ZoneUncontrolled.idf'), epw: bundledWx('USA_IL_Chicago-OHare.Intl.AP.725300_TMY3.epw'), timestep: 60, appendBlock: ZTS_BLOCK },
   { name: 'zone-uncontrolled-design-day', idf: example('1ZoneUncontrolled.idf'), designDay: true },
 
   // Simple prototype workhorse (PNNL 90.1, EnergyPlus 22.1)
@@ -147,6 +156,9 @@ const RUNS = [
   { name: 'small-office-annual-sqlite', idf: proto('ASHRAE901_OfficeSmall', 'ASHRAE901_OfficeSmall_STD2022_Seattle'), epw: wx('USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw'), sqlite: true },
   { name: 'small-office-timestep-1', idf: proto('ASHRAE901_OfficeSmall', 'ASHRAE901_OfficeSmall_STD2022_Seattle'), epw: wx('USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw'), sqlite: true, timestep: 1 },
   { name: 'small-office-design-day', idf: proto('ASHRAE901_OfficeSmall', 'ASHRAE901_OfficeSmall_STD2022_Seattle'), sqlite: true, designDay: true },
+  // Stock prototypes ship with every Output:Variable commented out (no ESO);
+  // append the multifreq block to get a real prototype ESO for the viewer.
+  { name: 'small-office-multifreq-eso', idf: proto('ASHRAE901_OfficeSmall', 'ASHRAE901_OfficeSmall_STD2022_Seattle'), epw: wx('USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw'), sqlite: true, appendBlock: MULTIFREQ_BLOCK },
 
   // Very large models — scaling checks
   { name: 'large-office-ny-design-day', idf: proto('ASHRAE901_OfficeLarge', 'ASHRAE901_OfficeLarge_STD2022_NewYork'), sqlite: true, designDay: true },
@@ -340,10 +352,21 @@ await Promise.all(
   })
 );
 
-results.sort((a, b) => a.name.localeCompare(b.name));
+// Merge into any existing results.json so partial (--only) runs update
+// their rows without dropping the rest of the inventory.
+const resultsPath = path.join(MATRIX_DIR, 'results.json');
+let merged = results;
+try {
+  const prior = JSON.parse(fs.readFileSync(resultsPath, 'utf8')).results ?? [];
+  const fresh = new Set(results.map((r) => r.name));
+  merged = [...prior.filter((r) => !fresh.has(r.name)), ...results];
+} catch {
+  /* no prior results */
+}
+merged.sort((a, b) => a.name.localeCompare(b.name));
 fs.writeFileSync(
-  path.join(MATRIX_DIR, 'results.json'),
-  JSON.stringify({ generated: new Date().toISOString(), results }, null, 2)
+  resultsPath,
+  JSON.stringify({ generated: new Date().toISOString(), results: merged }, null, 2)
 );
 
 const failed = results.filter((r) => !r.ok);

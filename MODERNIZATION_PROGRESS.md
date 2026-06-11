@@ -102,6 +102,22 @@ Tracking the work-in-progress against `MODERNIZATION.md` (on branch
   prototype tabular `.htm` reports across building-type × climate-zone
   matrix, checked in under `test-models/`. Matching `.sql` databases
   are gitignored (binary, ~7-8 MB each).
+- **Test-data policy + EnergyPlus condition matrix** (branch
+  `claude/eplus-test-matrix`) — `test-models/` is now fully gitignored
+  except its README (one-model-per-folder naming, e.g.
+  `large-office-multifreq/`, `small-office-seattle/`); the previously
+  tracked `.htm` pairs and `eso-test/` fixtures untracked and foldered.
+  New `scripts/eplus-matrix.mjs` (`yarn eplus-matrix`) runs
+  example/prototype models under version-matched engines (22.1/25.2)
+  across conditions — timestep overrides, `Output:SQLite` on/off,
+  design-day-only — into gitignored `test-matrix/`, checks
+  `eplusout.end`/`.err`, and writes `results.json`. The two vitest
+  fixture folders regenerate from stock PNNL prototypes + an inlined
+  multi-frequency output block (curated IDFs no longer need tracking);
+  16 runs verified green, 8/8 core tests pass against regenerated
+  fixtures. Notable: stock PNNL prototypes ship with every
+  `Output:Variable` commented out — no ESO at all — so prototype
+  baselines double as the "SQL/tabular only, ESO missing" edge case.
 
 ## What now actually builds
 
