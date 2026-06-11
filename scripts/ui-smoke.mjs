@@ -94,25 +94,43 @@ const pageErrors = [];
 page.on('pageerror', e => pageErrors.push(String(e)));
 
 await page.waitForLoadState('domcontentloaded');
-if ((await page.title()) !== 'timestep') throw new Error('unexpected window title');
+if ((await page.title()) !== 'Timestep') throw new Error('unexpected window title');
 
 const results = [];
+let caseIndex = 0;
 for (const c of CASES) {
+  caseIndex++;
   const errBefore = pageErrors.length;
   try {
     await app.evaluate(({ dialog }, filePaths) => {
       dialog.showOpenDialog = async () => ({ canceled: false, filePaths });
     }, c.files);
 
-    await page.getByText('Load Files', { exact: true }).click();
+    // close any popper/menu left over from the previous case
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
+
+    // "Load Files" lives inside the FILES menu
+    await page.getByText('FILES', { exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Load Files' }).click();
     // sidebar replaces the landing page once files land (eso conversion
     // can take a while on first run)
     await page.getByText('Multiline', { exact: true }).waitFor({ timeout: 120000 });
+
+    // the app auto-opens a "Loaded Files" summary modal once the file
+    // summary query lands — dismiss it before driving the sidebar
+    try {
+      await page.getByText('Loaded Files').waitFor({ timeout: 10000 });
+      await page.keyboard.press('Escape');
+      await page.getByText('Loaded Files').waitFor({ state: 'hidden', timeout: 5000 });
+    } catch { /* no modal (e.g. empty outputs) — fine */ }
+
     await page.getByText('Multiline', { exact: true }).click();
 
     const combo = page.getByRole('combobox').first();
     await combo.click();
 
+    let detail;
     if (c.expectSeries) {
       await page.keyboard.press('ArrowDown');
       await page.keyboard.press('Enter');
@@ -121,18 +139,23 @@ for (const c of CASES) {
         120000,
         'chart canvas painted'
       );
-      results.push({ name: c.name, pass: true, detail: `${px} painted px` });
-    } else {
-      await page.getByText('No options').waitFor({ timeout: 15000 });
-      // app still alive and responsive after the empty load
       await page.keyboard.press('Escape');
-      if ((await page.title()) !== 'timestep') throw new Error('window lost');
-      results.push({ name: c.name, pass: true, detail: 'graceful: No options, no crash' });
+      detail = `${px} painted px`;
+    } else {
+      // graceful empty state: sidebar renders with the no-data message and
+      // an empty series select; no crash (verified visually 2026-06-11)
+      await page.getByText('No data selected').waitFor({ timeout: 15000 });
+      await page.keyboard.press('Escape');
+      if ((await page.title()) !== 'Timestep') throw new Error('window lost');
+      detail = 'graceful: No data selected, no crash';
     }
     if (pageErrors.length > errBefore)
       throw new Error('renderer errors: ' + pageErrors.slice(errBefore).join(' | '));
+    results.push({ name: c.name, pass: true, detail });
   } catch (e) {
-    results.push({ name: c.name, pass: false, detail: String(e.message || e) });
+    const shot = path.join(os.tmpdir(), `timestep-smoke-fail-${caseIndex}.png`);
+    await page.screenshot({ path: shot }).catch(() => {});
+    results.push({ name: c.name, pass: false, detail: `${String(e.message || e).split('\n')[0]} [${shot}]` });
   }
 }
 
