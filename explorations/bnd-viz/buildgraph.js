@@ -154,7 +154,8 @@ function buildGraph(model) {
     const key = `${source}→${target}→${label}`;
     if (source === target || seenEdges.has(key)) return;
     seenEdges.add(key);
-    edges.push({ source, target, label, kind });
+    const n = model.nodes[label.split(' ⇒ ')[0]];
+    edges.push({ source, target, label, kind, fluid: n ? n.fluidType : '' });
   };
 
   for (const node of Object.keys(byOutlet)) {
@@ -206,11 +207,11 @@ function buildGraph(model) {
   for (const e of edges) {
     if (!vertices[e.source] || !vertices[e.target]) continue;
     elements.push({
-      data: { id: `e${i++}`, source: e.source, target: e.target, label: e.label, kind: e.kind }
+      data: { id: `e${i++}`, source: e.source, target: e.target, label: e.label, kind: e.kind, fluid: e.fluid }
     });
   }
 
-  return { elements, vertices, connectionsByNode };
+  return { elements, vertices, connectionsByNode, loopKind, branchLoop };
 }
 
 if (typeof module !== 'undefined') module.exports = { buildGraph };
