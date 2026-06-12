@@ -19,6 +19,12 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
 
+    env:
+      # Pin the MSVC toolset for node-gyp's sqlite3 rebuild on Windows so it
+      # targets the runner's VS2022 directly (ignored on macOS/Linux).
+      npm_config_msvs_version: '2022'
+      GYP_MSVS_VERSION: '2022'
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
