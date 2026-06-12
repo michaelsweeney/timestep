@@ -7,11 +7,18 @@
 export interface EsoDictEntry {
   id: number;
   nitems: number;
-  keyValue: string;
+  /**
+   * The report key (zone/node/surface/object name). `null` for meters, which
+   * have no key field — matching how the native E+ .sql stores meter rows
+   * (KeyValue = NULL, IsMeter = 1).
+   */
+  keyValue: string | null;
   name: string;
   units: string;
   /** SQL-style ReportingFrequency, matching the E+ .sql schema values. */
   reportingFrequency: string;
+  /** True for meter dictionary lines (the keyless `<Name> [units] !freq` form). */
+  isMeter: boolean;
 }
 
 export interface EsoTimeRow {
@@ -102,27 +109,34 @@ function parseDictionaryLine(line: string): EsoDictEntry | null {
   if (!Number.isInteger(id) || id <= RESERVED_MAX_ID) return null;
   const nitems = Number(line.slice(first + 1, second));
 
+  // The text after id,nitems is one of two shapes:
+  //   report variable: "<KeyValue>,<Name> [units] !freq[ [min/max cols]]"
+  //   meter:           "<Name> [units] !freq[ [min/max cols]]"   (no key field)
+  // Match the "[units] !freq" tail first, then decide by whether the head
+  // before it carries a key (a comma) or is a bare meter name.
   const rest = line.slice(second + 1);
-  const keyEnd = rest.indexOf(',');
-  if (keyEnd < 0) return null;
-  const keyValue = rest.slice(0, keyEnd).trim();
-
-  // "<name> [<units>] !<freq tag>[ [min/max columns]]"
-  const m = rest
-    .slice(keyEnd + 1)
-    .match(/^(.*?)\s*\[([^\]]*)\]\s*!(.+?)(?:\s*\[.*)?$/);
+  const m = rest.match(/^(.*?)\s*\[([^\]]*)\]\s*!(.+?)(?:\s*\[.*)?$/);
   if (!m) return null;
 
   const frequency = FREQUENCY_MAP[m[3].trim()];
   if (!frequency) return null;
 
+  const head = m[1];
+  const keyEnd = head.indexOf(',');
+  // No comma in the head -> meter (keyless). Native E+ .sql stores meter rows
+  // with KeyValue = NULL and IsMeter = 1; mirror that here.
+  const isMeter = keyEnd < 0;
+  const keyValue = isMeter ? null : head.slice(0, keyEnd).trim();
+  const name = isMeter ? head.trim() : head.slice(keyEnd + 1).trim();
+
   return {
     id,
     nitems,
     keyValue,
-    name: m[1].trim(),
+    name,
     units: m[2].trim(),
-    reportingFrequency: frequency
+    reportingFrequency: frequency,
+    isMeter
   };
 }
 

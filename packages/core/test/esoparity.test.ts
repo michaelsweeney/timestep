@@ -89,4 +89,47 @@ d('ESO/SQL parity on the multifreq fixture', () => {
     const converted = (await engine.allRows(convertedPath, q)) as any[];
     expect(converted[0].n).toBe(native[0].n);
   }, 60_000);
+
+  // Meters embedded in the .eso must now convert with full parity. Asserted by
+  // index against the native rows (not a blanket equality) because the native
+  // .sql can also carry .mtr-only meters the .eso never contained — recovering
+  // those is the separate .mtr-ingestion question (see DESIGN-variable-model.md).
+  it('recovers .eso-embedded meters with dictionary parity', async () => {
+    const converted = (await engine.allRows(
+      convertedPath,
+      'SELECT ReportDataDictionaryIndex AS id, IsMeter, KeyValue, Name, ' +
+        'ReportingFrequency, Units FROM ReportDataDictionary WHERE IsMeter = 1 ' +
+        'ORDER BY id'
+    )) as any[];
+    expect(converted.length).toBeGreaterThan(0); // previously meters were dropped
+
+    const ids = converted.map(r => r.id).join(',');
+    const native = (await engine.allRows(
+      annualSql,
+      'SELECT ReportDataDictionaryIndex AS id, IsMeter, KeyValue, Name, ' +
+        `ReportingFrequency, Units FROM ReportDataDictionary WHERE ` +
+        `ReportDataDictionaryIndex IN (${ids}) ORDER BY id`
+    )) as any[];
+
+    expect(converted).toEqual(native);
+    // sanity: the recovered rows really are meters with a NULL key
+    expect(converted.every(r => r.IsMeter === 1 && r.KeyValue === null)).toBe(true);
+  }, 60_000);
+
+  it('answers the getseries join identically for an .eso-embedded meter', async () => {
+    const [meter] = (await engine.allRows(
+      convertedPath,
+      'SELECT ReportDataDictionaryIndex AS id FROM ReportDataDictionary ' +
+        'WHERE IsMeter = 1 ORDER BY id LIMIT 1'
+    )) as any[];
+
+    const native = (await engine.allRows(annualSql, GETSERIES_JOIN(meter.id))) as any[];
+    const converted = (await engine.allRows(convertedPath, GETSERIES_JOIN(meter.id))) as any[];
+
+    expect(converted.length).toBe(native.length);
+    expect(converted[0]).toEqual(native[0]);
+    expect(converted.at(-1)).toEqual(native.at(-1));
+    const sum = (rows: any[]) => rows.reduce((a, r) => a + r.Value, 0);
+    expect(sum(converted)).toBeCloseTo(sum(native), 6);
+  }, 60_000);
 });

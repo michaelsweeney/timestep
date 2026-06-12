@@ -32,3 +32,25 @@ export const MINI_ESO_DATA = `${MINI_ESO}1,DENVER CENTENNIAL  GOLDEN   N ANN HTG
 50,-30412800.0,-316800.0,21, 1,15,-316800.0,21, 1,15
 End of Data
 `;
+
+// A fixture with both a report variable (id 7) and meters (ids 65, 1992) — the
+// keyless "<Name> [units] !freq" dictionary form. A monthly meter carries the
+// Daily/Monthly min/max companion columns. Exercises meter recovery without
+// needing a real EnergyPlus run.
+export const MINI_ESO_METER = `Program Version,EnergyPlus, Version 25.2.0-cf7368216c, YMD=2026.06.11 06:00
+2,8,Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],Hour[],StartMinute[],EndMinute[],DayType
+4,2,Cumulative Days of Simulation[],Month[]  ! When Monthly Report Variables Requested
+7,1,Environment,Site Outdoor Air Drybulb Temperature [C] !Hourly
+65,1,Electricity:Facility [J] !Hourly
+1992,9,NaturalGas:Facility [J] !Monthly [Value,Min,Day,Hour,Minute,Max,Day,Hour,Minute]
+End of Data Dictionary
+`;
+
+export const MINI_ESO_METER_DATA = `${MINI_ESO_METER}1,DENVER CENTENNIAL  GOLDEN   N ANN HTG 99% CONDNS DB,  39.74,-105.18,  -7.00,1829.00
+2,1,12,21, 0, 1, 0.00,60.00,WinterDesignDay
+7,-15.5
+65,123456.0
+4,1,12
+1992,7890123.0,0.0,21, 1,15,500000.0,21, 1,15
+End of Data
+`;

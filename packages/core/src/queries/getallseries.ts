@@ -64,10 +64,13 @@ export async function getAllSeries(engine: Engine, sqlfiles: string[]) {
           }
         }
       }
-      row.name_ip_multi = `${row.file_short}, ${row.KeyValue}: ${row.Name} (${row.units_ip}) - ${row.ReportingFrequency}`;
-      row.name_si_multi = `${row.file_short}, ${row.KeyValue}: ${row.Name} (${row.units_si}) - ${row.ReportingFrequency}`;
-      row.name_ip_single = `${row.KeyValue}: ${row.Name} (${row.units_ip}) - ${row.ReportingFrequency}`;
-      row.name_si_single = `${row.KeyValue}: ${row.Name} (${row.units_si}) - ${row.ReportingFrequency}`;
+      // Meters have no KeyValue (NULL in the E+ .sql); label them by Name
+      // alone rather than "null: Name".
+      const keyPrefix = row.KeyValue ? `${row.KeyValue}: ` : '';
+      row.name_ip_multi = `${row.file_short}, ${keyPrefix}${row.Name} (${row.units_ip}) - ${row.ReportingFrequency}`;
+      row.name_si_multi = `${row.file_short}, ${keyPrefix}${row.Name} (${row.units_si}) - ${row.ReportingFrequency}`;
+      row.name_ip_single = `${keyPrefix}${row.Name} (${row.units_ip}) - ${row.ReportingFrequency}`;
+      row.name_si_single = `${keyPrefix}${row.Name} (${row.units_si}) - ${row.ReportingFrequency}`;
 
       const row_filtered = {
         name_ip_multi: row.name_ip_multi,

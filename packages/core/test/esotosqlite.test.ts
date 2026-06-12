@@ -5,7 +5,7 @@ import path from 'path';
 import sqlite3 from 'sqlite3';
 import { esoToSqlite } from '../src/eso/esotosqlite';
 import { Sqlite3Engine } from '../src/engine/sqlite3';
-import { MINI_ESO_DATA } from './esofixtures';
+import { MINI_ESO_DATA, MINI_ESO_METER_DATA } from './esofixtures';
 
 // Converts the synthetic ESO into a real SQLite file, then queries it
 // through the same Sqlite3Engine + SQL the app's query layer uses.
@@ -73,5 +73,50 @@ describe('esoToSqlite', () => {
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({ CompletedSuccessfully: 1 });
     expect(rows[0].EnergyPlusVersion).toContain('25.2.0');
+  });
+});
+
+describe('esoToSqlite meters', () => {
+  let meterDb: string;
+  let meterEngine: Sqlite3Engine;
+
+  beforeAll(async () => {
+    meterDb = path.join(os.tmpdir(), `timestep-esometer-${process.pid}.sql`);
+    fs.rmSync(meterDb, { force: true });
+    await esoToSqlite(MINI_ESO_METER_DATA, meterDb, sqlite3);
+    meterEngine = new Sqlite3Engine(sqlite3);
+  });
+
+  afterAll(() => {
+    fs.rmSync(meterDb, { force: true });
+  });
+
+  it('writes meter rows as the native E+ schema does (IsMeter=1, KeyValue=NULL)', async () => {
+    const meters = (await meterEngine.allRows(
+      meterDb,
+      'SELECT ReportDataDictionaryIndex AS id, IsMeter, KeyValue, Name, Units ' +
+        'FROM ReportDataDictionary WHERE IsMeter = 1 ORDER BY id'
+    )) as any[];
+
+    expect(meters).toEqual([
+      { id: 65, IsMeter: 1, KeyValue: null, Name: 'Electricity:Facility', Units: 'J' },
+      { id: 1992, IsMeter: 1, KeyValue: null, Name: 'NaturalGas:Facility', Units: 'J' }
+    ]);
+    // the report variable is still a non-meter
+    const vars = (await meterEngine.allRows(
+      meterDb,
+      'SELECT IsMeter, KeyValue FROM ReportDataDictionary WHERE ReportDataDictionaryIndex = 7'
+    )) as any[];
+    expect(vars[0]).toMatchObject({ IsMeter: 0, KeyValue: 'Environment' });
+  });
+
+  it('makes meter timeseries queryable via the getseries join', async () => {
+    const rows = (await meterEngine.allRows(
+      meterDb,
+      "SELECT ReportData.Value, Time.Hour FROM 'ReportData' INNER JOIN Time ON " +
+        'ReportData.TimeIndex = Time.TimeIndex WHERE ' +
+        'ReportData.ReportDataDictionaryIndex = 65'
+    )) as any[];
+    expect(rows).toEqual([{ Value: 123456.0, Hour: 1 }]);
   });
 });

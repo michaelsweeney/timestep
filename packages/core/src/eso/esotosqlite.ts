@@ -143,11 +143,16 @@ export async function esoToSqlite(
     // Fresh build artifact: durability pragmas off for insert speed.
     await exec('PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF;');
     await exec(`${SCHEMA}BEGIN;`);
+    // IsMeter and KeyValue track the parsed entry so meters land as the native
+    // E+ .sql writes them (IsMeter = 1, KeyValue = NULL); variables keep their
+    // key. (Type/IndexGroup/TimestepType/ScheduleName aren't recoverable from
+    // the .eso and stay empty — see DESIGN-variable-model.md F2.)
     await insertAll(
       db,
-      'INSERT INTO ReportDataDictionary VALUES (?,0,?,?,?,?,?,?,?,?)',
+      'INSERT INTO ReportDataDictionary VALUES (?,?,?,?,?,?,?,?,?,?)',
       parsed.dictionary.map(d => [
-        d.id, '', '', '', d.keyValue, d.name, d.reportingFrequency, '', d.units
+        d.id, d.isMeter ? 1 : 0, '', '', '', d.keyValue, d.name,
+        d.reportingFrequency, '', d.units
       ])
     );
     await insertAll(

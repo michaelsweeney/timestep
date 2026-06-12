@@ -1,6 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { parseEso } from '../src/eso/parseeso';
-import { MINI_ESO, MINI_ESO_DATA } from './esofixtures';
+import {
+  MINI_ESO,
+  MINI_ESO_DATA,
+  MINI_ESO_METER,
+  MINI_ESO_METER_DATA
+} from './esofixtures';
 
 describe('parseEso data section', () => {
   it('creates Time rows per stamp using the E+ SQL end-time conventions', () => {
@@ -84,5 +89,53 @@ describe('parseEso dictionary', () => {
     for (const reserved of [1, 2, 3, 4, 5, 6]) {
       expect(ids).not.toContain(reserved);
     }
+  });
+
+  it('tags report variables as non-meters', () => {
+    const byId = new Map(parseEso(MINI_ESO).dictionary.map(d => [d.id, d]));
+    expect(byId.get(7)).toMatchObject({ isMeter: false, keyValue: 'Environment' });
+  });
+});
+
+describe('parseEso meters', () => {
+  it('recovers keyless meter lines as isMeter with null keyValue', () => {
+    const byId = new Map(parseEso(MINI_ESO_METER).dictionary.map(d => [d.id, d]));
+
+    // the report variable is unaffected
+    expect(byId.get(7)).toMatchObject({
+      keyValue: 'Environment',
+      name: 'Site Outdoor Air Drybulb Temperature',
+      isMeter: false
+    });
+    // hourly meter: no key field
+    expect(byId.get(65)).toMatchObject({
+      keyValue: null,
+      name: 'Electricity:Facility',
+      units: 'J',
+      reportingFrequency: 'Hourly',
+      isMeter: true
+    });
+    // monthly meter, with Daily/Monthly min/max companion columns, still parses
+    expect(byId.get(1992)).toMatchObject({
+      keyValue: null,
+      name: 'NaturalGas:Facility',
+      units: 'J',
+      reportingFrequency: 'Monthly',
+      isMeter: true
+    });
+  });
+
+  it('binds meter values to their frequency stamp, dropping min/max extras', () => {
+    const { dictionary, data } = parseEso(MINI_ESO_METER_DATA);
+    // meters made it into the dictionary (previously dropped entirely)
+    expect(dictionary.filter(d => d.isMeter).map(d => d.id).sort((a, b) => a - b)).toEqual([65, 1992]);
+
+    const rows = Array.from({ length: data.length }, (_, i) => ({
+      dictId: data.dictIds[i],
+      value: data.values[i]
+    }));
+    // hourly meter value and the monthly meter's leading Value (extras dropped)
+    expect(rows).toContainEqual({ dictId: 65, value: 123456.0 });
+    expect(rows).toContainEqual({ dictId: 1992, value: 7890123.0 });
   });
 });
