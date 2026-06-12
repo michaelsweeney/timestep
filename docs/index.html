@@ -101,37 +101,28 @@
     <div class="section-header">Install and Setup</div>
     <ol>
       <li>
-        Download the current build for
-        <a id="mac-download-link" href="https://www.dropbox.com/s/pjhyppc8hkg1b3g/timestep-0.2.0-mac.zip?dl=1">Mac</a>
-        or
-        <a id="pc-download-link"
-          href="https://www.dropbox.com/sh/0xuntmd2aql84we/AACwhg3192AAEfx3Ak69hnjea?dl=1">PC</a>.
+        Download the installer for your platform from the
+        <a id="download-link" href="https://github.com/michaelsweeney/timestep/releases/latest"
+          target="_blank">latest GitHub Release</a>
+        — macOS (.dmg), Windows (.exe or .msi), or Linux (.AppImage, .deb,
+        .rpm).
       </li>
+      <li>Run the installer and launch "timestep".</li>
       <li>
-        (Optional): Download the
-        <a id="sample-sql-link" href="https://www.dropbox.com/sh/0f9kreh5on3p6jb/AACcoFnaRFtf483rPmRSovTEa?dl=1">sample
-          SQL file</a>.
-      </li>
-      <li>Unzip the file and place it in its own directory.</li>
-      <li>Double-click "timestep" (timestep.exe on Windows)</li>
-      <li>
-        If experiencing issues running the program on Windows, select "More
-        Info" at the "Windows Protected Your PC" at the pop-up and then select
-        "Run Away."
-      </li>
-      <li>
-        If experiencing issues running the program on Mac, check out
+        The app is not yet code-signed: on Windows, select "More Info" then
+        "Run Anyway" at the "Windows Protected Your PC" pop-up; on Mac, see
         <a href="https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac"
-          target="_blank">this link</a>
-        to open packages from unidentified developers.
+          target="_blank">opening apps from unidentified developers</a>
+        (right-click the app and choose Open).
       </li>
       <li>
-        Ensure that any desired EnergyPlus simulations have been run with the
-        following command in the IDF file: "Output:SQLite, SimpleAndTabular"
+        Point it at an EnergyPlus run: either the eplusout.sql written with
+        "Output:SQLite, SimpleAndTabular" in the IDF, or the raw eplusout.eso
+        directly — no re-run needed.
       </li>
       <li>
-        Click the "Load Files button", or drag a valid SQL file (or multiple
-        SQL files) over the load files button.
+        Click the "Load Files" button, or drag .sql / .eso files (with their
+        sibling .bnd for cfm/gpm units) onto it.
       </li>
       <li>Start exploring your model results!</li>
     </ol>

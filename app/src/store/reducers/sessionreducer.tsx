@@ -1,3 +1,8 @@
+// Single source of truth for the displayed version: the app package.json
+// (webpack bundles the JSON import). Was a hardcoded 'v0.2.0' that shipped
+// stale across releases.
+import { version as appVersion } from '../../../package.json';
+
 const initialState = {
   units: 'si',
   files: [],
@@ -10,7 +15,7 @@ const initialState = {
   },
   sessionIncrement: 1,
   isLoadingFromFile: false,
-  version: 'v0.2.0',
+  version: `v${appVersion}`,
   notification: null
 };
 
