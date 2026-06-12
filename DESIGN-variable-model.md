@@ -184,17 +184,31 @@ labels (`kg/m3` was `lb/cfm` → `lb/ft3`; `m3/kg` `cfm/lb` → `ft3/lb`), fille
 achievable factors. *(One deliberate unit-choice change: `Pa` → inH2O.)*
 `conversions.test.ts` covers the honesty contract.
 
-**P2 — Fluid resolution robustness (closes F3, F4; F6 deferred). ✅ DONE — commit `a224973`.**
+**P2 — Fluid resolution robustness (closes F3, F4). ✅ DONE — commit `a224973`.**
 `readBnd` hardened (node-list lines only — integer node-number guard; trims).
 `resolveFluidType` adds a name-based fallback for non-node `m3/s`: a watery name
 → gpm, else cfm. New `water-flows-design-day` fixture (5ZoneVAV-ChilledWaterStorage)
 is the first to exercise any of this — 132 node + 10 non-node `WaterUse:Equipment`
-m3/s. *F6 (SCFM vs ACFM) deferred — low value for the name-parsing it adds.*
+m3/s.
 
-**P2.5 — `Type`/`IsMeter` fidelity (closes F2). ⬜ NOT DONE.**
-ESO conversion still writes `Type=''`. `IsMeter` is now correct (P0/.mtr), but
-the Avg/Sum `Type` isn't recovered from the `.eso`. Open — derive from variable
-semantics or accept and document the gap.
+**F6 — SCFM vs ACFM. ✅ DONE — commit `10cee3f`.**
+`resolveUnit` takes the variable name; a "Standard Density … Volume Flow Rate"
+air flow labels `scfm`, actual stays `cfm` (same factor — label only). Water
+stays gpm. *(Plain air flow kept as `cfm`, not relabeled `acfm` — least
+surprising; flag if you'd rather actual flows read acfm.)*
+
+**P2.5 — `Type`/`IsMeter` fidelity (closes F2). ✅ DONE — commit `97e5750`.**
+Meters are always Sum (free, authoritative); report-variable Avg/Sum Type comes
+from a sibling/co-dropped `.rdd` (`parseRdd`, verified row-for-row vs native
+`.sql`). Without a `.rdd`, report-variable Type stays empty — honest, and a
+data-quality signal. *(`data.type` is read by nothing in the renderer today, so
+this is parity/fidelity + #29 plumbing, not a live render fix.)*
+
+**#29 — Data-quality warnings on load. ✅ DONE — commits `b661390` (core),
+`ca83dce` (UI).** `getDataQuality` returns per-file load-time fidelity warnings
+(empty, no-bnd-flows-cfm, fluid-name-guessed, units-si-only), surfaced in the
+Loaded Files modal. Also fixed identity units (W, hr, %, …) being mis-flagged
+as "shown in SI" — they're known IP units (factor 1).
 
 ---
 
@@ -204,15 +218,17 @@ Resolved (built — review the choices):
 - **`.mtr` ingestion** — built (merge sibling/co-dropped `.mtr`). ✅
 - **Honest units** — built the "never show a false IP label" path; filled the
   achievable conversions rather than chasing exhaustive IP coverage. Unknown
-  units now show SI. ✅ (revisit if you want fuller IP coverage)
+  units show SI; identity units (W, hr, …) are known-IP. ✅
 - **Non-node `m3/s` policy** — built the name-based water/air fallback. ✅
   (heuristic — flag if you'd rather it stay conservatively cfm)
+- **SCFM/ACFM (F6)** — built: standard-density air → scfm, actual → cfm. ✅
+  (plain air kept cfm, not acfm — flag if you'd rather relabel actual)
+- **Avg/Sum on ESO (F2)** — built via sibling `.rdd` + meters-always-Sum. ✅
 - **`Pa` unit** — switched to inH2O (HVAC convention) from the old atm.
 
-Still your call:
-- **SCFM/ACFM** — deferred (F6). Worth splitting standard-density flows, or is
-  plain cfm fine?
-- **Avg/Sum on ESO** — derive `Type`, or document the gap? (F2 / P2.5 — not done)
+Nothing left open in this design note — the variable-identity & unit model is
+fully addressed. Future polish (fuller IP coverage, `.mtr`/`.rdd`-missing
+warnings post-conversion) is incremental, not a gap.
 
 ---
 
