@@ -156,15 +156,16 @@ Principles to design toward:
 
 ## 4. Proposed plan (sequenced)
 
-**P0 — ESO meter recovery (closes F1, most of F8).**
-Teach `parseDictionaryLine` the keyless meter form: if the post-`id,nitems`
-remainder matches `…[units] !freq` with no comma before `[`, it's a meter —
-`keyValue = null`, `name =` the text before `[units]`, tag `isMeter`. Carry
-`isMeter` through `esoToSqlite` (`IsMeter=1`, `KeyValue=NULL`) so converted files
-match native. Label meters as `Name` only.
-*Test:* extend `esoparity.test.ts` to include meters — assert the meter
-dictionary row and a meter series join match native `.sql` row-for-row. (This
-test currently exists but is scoped to non-meters; widening it is the guard.)
+**P0 — ESO meter recovery (closes F1, most of F8). ✅ DONE — commit `12e22ed`.**
+`parseDictionaryLine` now matches the `[units] !freq` tail first and decides
+meter-vs-variable by whether the head carries a key (a comma); meters parse as
+`keyValue=null, isMeter=true`. `esoToSqlite` writes them as native
+(`IsMeter=1, KeyValue=NULL`); `getAllSeries`/`getSeriesIndex` label keyless rows
+by `Name` alone. `esoparity.test.ts` widened to assert `.eso`-embedded meters
+convert with dictionary + getseries parity (by index — see Fixture findings on
+why not blanket equality). 35/35 core tests pass.
+**Does not** recover `.mtr`-only meters (see §7) — tracked under the `.mtr`
+question below.
 
 **P1 — Honest units + single resolver (closes F5, F7; frames F3/F6).**
 Extract one `resolveUnits(row, bnd)`; replace the duplicated blocks. Make the
@@ -188,19 +189,12 @@ from variable semantics or accept a known gap and document it.
 
 ## 5. Open questions
 
-Resolvable by checking (I can just do these):
-- Which output objects in representative IDFs emit **non-node `m3/s`** variables,
-  and what their `KeyValue` looks like — to set the F3 fallback policy on
-  evidence. (The current fixtures that output `m3/s` are node flows; need one
-  with water-use / plant volume flows.)
-- The real **fluid-type vocabulary** in your `.bnd` files beyond Air/Water.
-- Whether meters typically land in your `.eso` or only `.mtr` in practice —
-  decides whether P0 alone is enough or we also ingest `.mtr`.
-
 Needs your call:
-- **`.mtr` ingestion** — P0 recovers meters *embedded* in the `.eso`;
-  `MeterFileOnly` setups still need a `.mtr` reader (shares the ESO format —
-  modest, but new file plumbing through the `Engine`).
+- **`.mtr` ingestion** — quantified in §7: P0 recovers `.eso`-embedded meters,
+  but a real fixture still loses one meter (`ElectricityNet:Facility`) that's in
+  the native `.sql`/`.mtr` but never in the `.eso`. Full meter parity needs a
+  `.mtr` reader (shares the ESO format — modest, but new file plumbing through
+  the `Engine`). Worth it, or is `.eso`-embedded recovery enough?
 - **Unit completeness vs. just-stop-lying** — chase full IP coverage, or only
   guarantee we never show a false IP label?
 - **SCFM/ACFM** — worth splitting, or is plain cfm acceptable for your users?
@@ -213,3 +207,31 @@ Needs your call:
 Not touching the chart/render layer, the Engine/IPC/sql.js boundary, or the
 on-disk SQLite schema (the native E+ subset stays the contract). This is purely
 the dictionary→identity→units derivation inside `@timestep/core`.
+
+---
+
+## 7. Fixture findings (the checkable questions, answered)
+
+Surveyed every `.bnd`/`.sql`/`.eso` in `test-matrix/` + `test-models/`:
+
+- **Fluid-type vocabulary** is only `Air` (1892), `Water` (1346), and `blank`
+  (10) across all `.bnd` Node lines — no `Steam`/refrigerant. So F4's exotic-fluid
+  concern is theoretical for these fixtures; the one real gap is the 10 blank-type
+  nodes, which fall to the cfm default. (Still want to harden the parser, but the
+  Air/Water/else branching matches the observed data.)
+- **Non-node `m3/s` doesn't occur** in any fixture — none output a `System Node …
+  Volume Flow Rate` (or other `m3/s`) variable whose `KeyValue` isn't a `.bnd`
+  node. Consequence: **F3 is currently unexercised by any test or fixture**, and
+  the `m3/s`→cfm/gpm path has no real-data coverage (only the fixture-free
+  `getallseries.test.ts` fake-engine). Validating/fixing F3 needs a purpose-built
+  fixture that outputs node flows *and* water-use/plant volume flows. This raises
+  the priority of generating that fixture before P2.
+- **`.eso`-embedded vs `.mtr`-only meters** — the multifreq fixture's native
+  `.sql` has 6 meters; the `.eso` embeds 5 (`Cooling:Electricity`,
+  `Electricity:Facility`, `Heating:Electricity`, `Heating:NaturalGas`,
+  `NaturalGas:Facility`). The 6th, `ElectricityNet:Facility`, is in the `.sql`
+  (and the sibling `.mtr`) but **not** in the `.eso` — classic
+  `Output:Meter:MeterFileOnly` (or net-meter) behavior. So P0 recovers 5/6 here;
+  closing the last meter is exactly the `.mtr`-ingestion decision above. The
+  parity test asserts meters *by index* precisely so this `.sql`-superset case
+  doesn't make it fail spuriously.
