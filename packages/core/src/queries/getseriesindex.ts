@@ -1,5 +1,5 @@
 import type { Engine } from '../engine/types';
-import { readBnd } from './readbnd';
+import { readBnd, resolveFluidType } from './readbnd';
 import { resolveUnit } from './conversions';
 
 export async function getSeriesIndex(engine: Engine, file: string, idx: any) {
@@ -24,11 +24,14 @@ export async function getSeriesIndex(engine: Engine, file: string, idx: any) {
     row.file_short = file_short;
     row.key = key;
 
-    // For m3/s, the IP unit (cfm vs gpm) comes from the node fluid type in the
-    // .bnd; every other unit resolves from the SI string alone. (Mirrors
-    // getAllSeries — same resolver, so the list and the plotted series agree.)
+    // For m3/s, cfm vs gpm comes from the fluid: the .bnd node type when the
+    // key is a node, else a name-based fallback. Every other unit resolves from
+    // the SI string alone. (Mirrors getAllSeries — same resolvers, so the list
+    // and the plotted series agree.)
     const fluidType =
-      row.Units === 'm3/s' && bnd_dict ? bnd_dict[row.KeyValue] : undefined;
+      row.Units === 'm3/s'
+        ? resolveFluidType(row.KeyValue, row.Name, bnd_dict)
+        : undefined;
     const u = resolveUnit(row.Units, fluidType);
     row.units_si = u.units_si;
     row.units_ip = u.units_ip;

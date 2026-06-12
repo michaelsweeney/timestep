@@ -28,6 +28,18 @@ export const annualDir = path.join(
 export const annualSql = path.join(annualDir, 'eplusout.sql');
 export const annualBnd = path.join(annualDir, 'eplusout.bnd');
 
+// Design-day run of 5ZoneVAV-ChilledWaterStorage: a VAV air loop, a chilled
+// water loop, and service hot water. The only fixture with m3/s flows — node
+// flows (air + water nodes, resolved via the .bnd) and non-node
+// WaterUse:Equipment flows — for cfm/gpm fluid-resolution coverage.
+export const waterFlowsDir = path.join(
+  REPO_ROOT,
+  'test-models',
+  'water-flows-design-day'
+);
+export const waterFlowsSql = path.join(waterFlowsDir, 'eplusout.sql');
+export const waterFlowsBnd = path.join(waterFlowsDir, 'eplusout.bnd');
+
 export function fixtureExists(p: string): boolean {
   try {
     return fs.statSync(p).isFile();

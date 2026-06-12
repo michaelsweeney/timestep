@@ -137,6 +137,15 @@ Output:Variable,*,Site Outdoor Air Drybulb Temperature,Timestep;
 Output:Variable,*,Zone Mean Air Temperature,Timestep;
 `;
 
+// m3/s flows for cfm/gpm fluid-resolution coverage: node-keyed flows (air and
+// water nodes, resolved via the .bnd) AND the non-node WaterUse:Equipment case
+// (keyed by the equipment, not a node — must resolve to gpm by name).
+const WATER_FLOWS_BLOCK = `
+Output:Variable,*,System Node Standard Density Volume Flow Rate,Hourly;
+Output:Variable,*,Water Use Equipment Hot Water Volume Flow Rate,Hourly;
+Output:Variable,*,Water Use Equipment Total Volume Flow Rate,Hourly;
+`;
+
 // ---------------------------------------------------------------------------
 // Run matrix
 //
@@ -189,6 +198,18 @@ const RUNS = [
     idf: proto('ASHRAE901_OfficeLarge', 'ASHRAE901_OfficeLarge_STD2022_PortAngeles'),
     sqlite: true,
     designDay: true,
+  },
+  // Air + water node flows AND non-node WaterUse:Equipment flows — the only
+  // fixture that exercises m3/s cfm/gpm fluid resolution (incl. the F3 non-node
+  // case). 5ZoneVAV-ChilledWaterStorage has a VAV air loop, a chilled-water
+  // loop, and service hot water equipment.
+  {
+    name: 'water-flows-design-day',
+    fixture: true,
+    idf: example('5ZoneVAV-ChilledWaterStorage-Stratified.idf'),
+    sqlite: true,
+    designDay: true,
+    appendBlock: WATER_FLOWS_BLOCK,
   },
 ];
 

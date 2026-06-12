@@ -36,6 +36,11 @@ const DICT = [
     ReportingFrequency: 'Hourly', TimestepType: 'Zone' },
   { ReportDataDictionaryIndex: 5, KeyValue: 'Environment',
     Name: 'Site Outdoor Air Drybulb Temperature', Units: 'C',
+    ReportingFrequency: 'Hourly', TimestepType: 'Zone' },
+  // A non-node water flow: keyed by the water-use equipment, not a .bnd node,
+  // so it resolves by name (the F3 case) rather than the node lookup.
+  { ReportDataDictionaryIndex: 6, KeyValue: 'SWH WATER EQUIP',
+    Name: 'Water Use Equipment Hot Water Volume Flow Rate', Units: 'm3/s',
     ReportingFrequency: 'Hourly', TimestepType: 'Zone' }
 ];
 
@@ -70,6 +75,13 @@ describe('getAllSeries m3/s -> cfm/gpm resolution', () => {
   it('falls back to cfm when the m3/s key is not found in the .bnd', async () => {
     const rows = await getAllSeries(fakeEngine({ bndExists: true }), ['/x/eplusout.sql']);
     expect(byKey(rows)['4'].units_ip).toBe('cfm');
+  });
+
+  it('resolves a non-node water flow to gpm by name (F3)', async () => {
+    // SWH WATER EQUIP isn't a .bnd node, but "Water Use Equipment Hot Water…"
+    // names water, so it should be gpm rather than the blind cfm default.
+    const rows = await getAllSeries(fakeEngine({ bndExists: true }), ['/x/eplusout.sql']);
+    expect(byKey(rows)['6'].units_ip).toBe('gpm');
   });
 
   it('falls back to cfm for m3/s when no .bnd is present at all', async () => {

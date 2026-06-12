@@ -1,7 +1,7 @@
 import type { Engine } from '../engine/types';
 import { resolveUnit } from './conversions';
 import { checkArray } from './checkarray';
-import { readBnd } from './readbnd';
+import { readBnd, resolveFluidType } from './readbnd';
 
 export async function getAllSeries(engine: Engine, sqlfiles: string[]) {
   checkArray(sqlfiles);
@@ -30,10 +30,13 @@ export async function getAllSeries(engine: Engine, sqlfiles: string[]) {
         .split('.')[0];
       row.key = key;
 
-      // For m3/s, the IP unit (cfm vs gpm) comes from the node fluid type in
-      // the .bnd; every other unit resolves from the SI string alone.
+      // For m3/s, cfm vs gpm comes from the fluid: the .bnd node type when the
+      // key is a node, else a name-based fallback. Every other unit resolves
+      // from the SI string alone.
       const fluidType =
-        row.Units === 'm3/s' && bnd_dict ? bnd_dict[row.KeyValue] : undefined;
+        row.Units === 'm3/s'
+          ? resolveFluidType(row.KeyValue, row.Name, bnd_dict)
+          : undefined;
       const u = resolveUnit(row.Units, fluidType);
       row.units_si = u.units_si;
       row.units_ip = u.units_ip;
