@@ -8,14 +8,10 @@ import { annualSql, fixtureExists } from './fixtures';
 // each must surface as a distinct ReportDataDictionary entry. The annual
 // fixture deliberately requests "Site Outdoor Air Drybulb Temperature" at
 // Zone Timestep / Hourly / Daily / Monthly so this stays exercised.
-describe('multi-frequency dictionary', () => {
+// Requires the gitignored large-office-multifreq fixture; skips when absent
+// (e.g. CI). Regenerate with: node scripts/eplus-matrix.mjs --only large-office-multifreq
+describe.skipIf(!fixtureExists(annualSql))('multi-frequency dictionary', () => {
   it('surfaces the same variable name at four distinct frequencies', async () => {
-    if (!fixtureExists(annualSql)) {
-      throw new Error(
-        `Fixture missing: ${annualSql}. Regenerate with: node scripts/eplus-matrix.mjs --only large-office-multifreq`
-      );
-    }
-
     const engine = new Sqlite3Engine(sqlite3);
     const rows = (await engine.allRows(
       annualSql,
@@ -36,9 +32,6 @@ describe('multi-frequency dictionary', () => {
   });
 
   it('returns a healthy report count for the annual fixture', async () => {
-    if (!fixtureExists(annualSql)) {
-      throw new Error(`Fixture missing: ${annualSql}.`);
-    }
     const engine = new Sqlite3Engine(sqlite3);
     const rows = (await engine.allRows(
       annualSql,

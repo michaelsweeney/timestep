@@ -4,14 +4,10 @@ import { Sqlite3Engine } from '../src/engine/sqlite3';
 import { getFileSummary } from '../src/queries/getfilesummary';
 import { designDaySql, fixtureExists } from './fixtures';
 
-describe('getFileSummary', () => {
+// Requires the gitignored large-office design-day fixture; skips when absent
+// (e.g. CI). Populate test-models/large-office-design-day/ to run locally.
+describe.skipIf(!fixtureExists(designDaySql))('getFileSummary', () => {
   it('returns shape + counts for the design-day .sql', async () => {
-    if (!fixtureExists(designDaySql)) {
-      throw new Error(
-        `Fixture missing: ${designDaySql}. Populate test-models/large-office-design-day/ first (see test-models/README.md).`
-      );
-    }
-
     const engine = new Sqlite3Engine(sqlite3);
     const summary = await getFileSummary(engine, [designDaySql]);
 

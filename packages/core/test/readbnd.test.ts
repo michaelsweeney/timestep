@@ -4,14 +4,10 @@ import { Sqlite3Engine } from '../src/engine/sqlite3';
 import { readBnd } from '../src/queries/readbnd';
 import { designDayBnd, fixtureExists } from './fixtures';
 
-describe('readBnd', () => {
+// Requires the gitignored large-office design-day fixture; skips when absent
+// (e.g. CI). Populate test-models/large-office-design-day/ to run locally.
+describe.skipIf(!fixtureExists(designDayBnd))('readBnd', () => {
   it('parses the design-day .bnd into a node→fluid map', async () => {
-    if (!fixtureExists(designDayBnd)) {
-      throw new Error(
-        `Fixture missing: ${designDayBnd}. Populate test-models/large-office-design-day/ first (see test-models/README.md).`
-      );
-    }
-
     const engine = new Sqlite3Engine(sqlite3);
     const bnd = await readBnd(engine, designDayBnd);
 
