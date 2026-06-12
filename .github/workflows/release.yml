@@ -16,7 +16,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        # windows-2022 (not windows-latest): the latter rolled to Server 2025 /
+        # Visual Studio 18, which node-gyp 11.x doesn't yet recognize, breaking
+        # the sqlite3 native rebuild. windows-2022 ships VS2022 that node-gyp
+        # supports. Revisit once node-gyp gains VS18 support.
+        os: [ubuntu-latest, macos-latest, windows-2022]
     runs-on: ${{ matrix.os }}
 
     env:
