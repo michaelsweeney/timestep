@@ -50,6 +50,9 @@ const CASES = [
     files: [M('large-office-annual-sqlite/eplusout.sql')], expectSeries: true },
   { name: 'design-day only: small office (96 rows)',
     files: [M('small-office-design-day/eplusout.sql')], expectSeries: true },
+  { name: 'heatmap: design-day fills width (dynamic range, not a sliver)',
+    files: [M('small-office-design-day/eplusout.sql')], expectSeries: true,
+    view: 'Heatmap', minXSpanFrac: 0.5 },
   { name: 'eso: in-app conversion (33MB multifreq .eso)',
     files: [M('small-office-multifreq-eso/eplusout.eso')], expectSeries: true },
   { name: 'edge: empty dictionary — must not crash', expectSeries: false }
@@ -65,6 +68,22 @@ async function paintedPixels(page) {
     let n = 0;
     for (let i = 3; i < d.length; i += 4) if (d[i] > 0) n++;
     return n;
+  });
+}
+
+// Fraction of the canvas width spanned by painted pixels. Guards the heatmap
+// dynamic-range fix: a sub-annual run (design day) used to collapse into a
+// left-edge sliver under the old hard-coded [0,365] domain.
+async function paintedXSpanFrac(page) {
+  return page.evaluate(() => {
+    const c = document.querySelector('.canvas-svg-container canvas');
+    if (!c) return 0;
+    const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+    let minX = Infinity, maxX = -1;
+    for (let y = 0; y < c.height; y++)
+      for (let x = 0; x < c.width; x++)
+        if (d[(y * c.width + x) * 4 + 3] > 0) { if (x < minX) minX = x; if (x > maxX) maxX = x; }
+    return maxX < 0 ? 0 : (maxX - minX) / c.width;
   });
 }
 
@@ -125,7 +144,7 @@ for (const c of CASES) {
       await page.getByText('Loaded Files').waitFor({ state: 'hidden', timeout: 5000 });
     } catch { /* no modal (e.g. empty outputs) — fine */ }
 
-    await page.getByText('Multiline', { exact: true }).click();
+    await page.getByText(c.view || 'Multiline', { exact: true }).click();
 
     const combo = page.getByRole('combobox').first();
     await combo.click();
@@ -139,8 +158,14 @@ for (const c of CASES) {
         120000,
         'chart canvas painted'
       );
-      await page.keyboard.press('Escape');
       detail = `${px} painted px`;
+      if (c.minXSpanFrac) {
+        const frac = await paintedXSpanFrac(page);
+        if (frac < c.minXSpanFrac)
+          throw new Error(`x-span ${(frac * 100).toFixed(1)}% < required ${(c.minXSpanFrac * 100).toFixed(0)}% (sliver regression)`);
+        detail += `, x-span ${(frac * 100).toFixed(1)}% of width`;
+      }
+      await page.keyboard.press('Escape');
     } else {
       // graceful empty state: sidebar renders with the no-data message and
       // an empty series select; no crash (verified visually 2026-06-11)
