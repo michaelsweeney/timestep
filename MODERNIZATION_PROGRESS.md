@@ -1,8 +1,9 @@
 # Modernization progress
 
-Tracking the work-in-progress against `MODERNIZATION.md` (on branch
-`copilot/2026-modernize`). All work below lives on
-`claude/review-modernize-suggestions-iz1Vo`.
+Tracking the v2.0.0 modernization. Work landed across several
+`claude/*` branches and is consolidated on
+`claude/eso-sqlite-preprocessing-mMrKc`, the branch proposed for merge
+to `master`.
 
 ## Done
 
