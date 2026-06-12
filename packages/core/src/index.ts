@@ -15,6 +15,12 @@ export { getSeries } from './queries/getseries';
 export { getSeriesIndex } from './queries/getseriesindex';
 export { getAllSeries } from './queries/getallseries';
 export { getFileSummary } from './queries/getfilesummary';
+export { getDataQuality } from './queries/getdataquality';
+export type {
+  FileDataQuality,
+  DataQualityWarning,
+  DataQualitySeverity
+} from './queries/getdataquality';
 export { getSeriesKeys, getSeriesLookupObj } from './queries/formatseries';
 export { resolveUnit } from './queries/conversions';
 export type { UnitResolution } from './queries/conversions';

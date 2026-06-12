@@ -34,22 +34,44 @@ export async function readBnd(
 //      a name that clearly names water resolves to Water (gpm); everything else
 //      stays the air default (cfm). This is a heuristic, not authoritative —
 //      the .bnd node lookup is preferred whenever it resolves.
-// Returns 'Water' | 'Air' | undefined (undefined → caller's cfm default).
 const WATERY = /\b(water|chilled|condenser|steam|hot\s*water)\b/i;
 const AIRY = /\bair\b/i;
 
+export interface FluidResolution {
+  /** 'Water' | 'Air' | undefined (undefined → the caller's cfm default). */
+  fluid: 'Water' | 'Air' | undefined;
+  /**
+   * How `fluid` was decided:
+   *   'bnd'     — authoritative, from the node's .bnd fluid type
+   *   'name'    — inferred from the variable name (a guess; may be wrong)
+   *   'default' — neither resolved; falls to the cfm default
+   */
+  source: 'bnd' | 'name' | 'default';
+}
+
+// Detailed resolution that also reports *how* the fluid was decided — used by
+// the data-quality layer to flag name-guessed (non-authoritative) flows.
+export function resolveFluidTypeDetailed(
+  keyValue: string | null | undefined,
+  name: string | null | undefined,
+  bndDict?: Record<string, string>
+): FluidResolution {
+  if (bndDict && keyValue) {
+    const fluid = bndDict[keyValue];
+    if (fluid === 'Water') return { fluid: 'Water', source: 'bnd' };
+    if (fluid === 'Air') return { fluid: 'Air', source: 'bnd' };
+    // present-but-blank or other → fall through to the name heuristic
+  }
+  const n = name ?? '';
+  if (WATERY.test(n) && !AIRY.test(n)) return { fluid: 'Water', source: 'name' };
+  return { fluid: undefined, source: 'default' };
+}
+
+// Returns 'Water' | 'Air' | undefined (undefined → caller's cfm default).
 export function resolveFluidType(
   keyValue: string | null | undefined,
   name: string | null | undefined,
   bndDict?: Record<string, string>
 ): 'Water' | 'Air' | undefined {
-  if (bndDict && keyValue) {
-    const fluid = bndDict[keyValue];
-    if (fluid === 'Water') return 'Water';
-    if (fluid === 'Air') return 'Air';
-    // present-but-blank or other → fall through to the name heuristic
-  }
-  const n = name ?? '';
-  if (WATERY.test(n) && !AIRY.test(n)) return 'Water';
-  return undefined;
+  return resolveFluidTypeDetailed(keyValue, name, bndDict).fluid;
 }
