@@ -23,7 +23,7 @@ const BND = [
 // One dictionary row per scenario we want to assert.
 const DICT = [
   { ReportDataDictionaryIndex: 1, KeyValue: 'SUPPLY AIR NODE',
-    Name: 'System Node Standard Density Volume Flow Rate', Units: 'm3/s',
+    Name: 'System Node Volume Flow Rate', Units: 'm3/s',
     ReportingFrequency: 'Hourly', TimestepType: 'Zone' },
   { ReportDataDictionaryIndex: 2, KeyValue: 'CHILLED WATER NODE',
     Name: 'System Node Volume Flow Rate', Units: 'm3/s',

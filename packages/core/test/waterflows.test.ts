@@ -30,14 +30,17 @@ describe.skipIf(!present)('m3/s fluid resolution on a real run', () => {
     expect(wue.every(r => r.units_ip === 'gpm')).toBe(true);
 
     // Node-keyed flows resolve from the .bnd fluid type: chilled-water nodes
-    // → gpm, air nodes → cfm. Both fluids are present in this model.
+    // → gpm; air nodes → scfm here, because the requested variable is the
+    // *Standard Density* volume flow (F6). Both fluids are present.
     const nodeFlows = m3s.filter(r =>
       /System Node Standard Density Volume Flow Rate/.test(r.name_si_single)
     );
-    expect(nodeFlows.some(r => r.units_ip === 'gpm')).toBe(true);
-    expect(nodeFlows.some(r => r.units_ip === 'cfm')).toBe(true);
+    expect(nodeFlows.some(r => r.units_ip === 'gpm')).toBe(true); // water nodes
+    expect(nodeFlows.some(r => r.units_ip === 'scfm')).toBe(true); // air, standard density
+    expect(nodeFlows.every(r => r.units_ip !== 'cfm')).toBe(true); // none plain cfm
 
     // Nothing in this set should be left mislabeled as a raw m3/s IP unit.
-    expect(m3s.every(r => r.units_ip === 'gpm' || r.units_ip === 'cfm')).toBe(true);
+    const ok = new Set(['gpm', 'cfm', 'scfm']);
+    expect(m3s.every(r => ok.has(r.units_ip))).toBe(true);
   });
 });

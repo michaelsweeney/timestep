@@ -11,10 +11,11 @@ export async function getSeries(engine: Engine, filetag: string) {
 
   // Resolve the unit once for the whole series via the same resolver that built
   // the label in getSeriesIndex, so the plotted values and the displayed unit
-  // can't disagree. For m3/s the IP unit was already decided there (cfm/gpm);
-  // recover the fluid hint from it so the converter matches.
+  // can't disagree. For m3/s the IP unit was already decided there
+  // (cfm/scfm/gpm); recover the fluid hint from it and pass the name so the
+  // cfm-vs-scfm (standard-density) label matches too.
   const fluidType = series_obj.units_ip === 'gpm' ? 'Water' : undefined;
-  const unit = resolveUnit(series_obj.Units, fluidType);
+  const unit = resolveUnit(series_obj.Units, fluidType, series_obj.Name);
 
   const long_name_single_ip = series_obj.name_ip_single;
   const long_name_multi_ip = series_obj.name_ip_multi;

@@ -52,27 +52,40 @@ const TABLE: Record<string, Entry> = {
 };
 
 // m3/s volumetric flow: pure unit choice, not a density correction. The fluid
-// only decides whether to present cfm (air convention) or gpm (water).
+// decides cfm (air) vs gpm (water); for air, a "Standard Density … Volume Flow
+// Rate" variable is at standard density (SCFM) vs the actual-density default
+// (plain cfm). Same m3/s→ft3/min factor either way — the distinction is the
+// label, which mechanical reviewers rely on.
 const M3S_AIR: Entry = { ip: 'cfm', convert: factor(2118.88) };
+const M3S_AIR_STD: Entry = { ip: 'scfm', convert: factor(2118.88) };
 const M3S_WATER: Entry = { ip: 'gpm', convert: factor(15850.32314) };
+
+const STANDARD_DENSITY = /standard density/i;
 
 /**
  * Resolve an EnergyPlus SI unit to its IP label and value converter.
  *
- * @param siUnit    the raw `Units` string from ReportDataDictionary
- * @param fluidType for m3/s only: `'Water'` → gpm, anything else → cfm (the
- *                  air-default; callers pass the `.bnd` node fluid type)
+ * @param siUnit       the raw `Units` string from ReportDataDictionary
+ * @param fluidType    for m3/s only: `'Water'` → gpm, anything else → cfm (the
+ *                     air-default; callers pass the `.bnd` node fluid type)
+ * @param variableName for m3/s air only: a "Standard Density …" name → scfm
  */
 export function resolveUnit(
   siUnit: string | null | undefined,
-  fluidType?: string | null
+  fluidType?: string | null,
+  variableName?: string | null
 ): UnitResolution {
   const si = siUnit ?? '';
   if (si === '') {
     return { units_si: '', units_ip: '', toIp: identity, ipKnown: false };
   }
   if (si === 'm3/s') {
-    const e = fluidType === 'Water' ? M3S_WATER : M3S_AIR;
+    const e =
+      fluidType === 'Water'
+        ? M3S_WATER
+        : STANDARD_DENSITY.test(variableName ?? '')
+          ? M3S_AIR_STD
+          : M3S_AIR;
     return { units_si: si, units_ip: e.ip, toIp: e.convert, ipKnown: true };
   }
   const e = TABLE[si];

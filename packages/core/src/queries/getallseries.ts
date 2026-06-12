@@ -37,7 +37,7 @@ export async function getAllSeries(engine: Engine, sqlfiles: string[]) {
         row.Units === 'm3/s'
           ? resolveFluidType(row.KeyValue, row.Name, bnd_dict)
           : undefined;
-      const u = resolveUnit(row.Units, fluidType);
+      const u = resolveUnit(row.Units, fluidType, row.Name);
       row.units_si = u.units_si;
       row.units_ip = u.units_ip;
 

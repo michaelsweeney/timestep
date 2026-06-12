@@ -21,6 +21,21 @@ describe('resolveUnit', () => {
     }
   });
 
+  it('labels a standard-density air flow scfm, actual-density cfm (F6)', () => {
+    const std = resolveUnit('m3/s', 'Air', 'System Node Standard Density Volume Flow Rate');
+    expect(std.units_ip).toBe('scfm');
+    const act = resolveUnit('m3/s', 'Air', 'System Node Volume Flow Rate');
+    expect(act.units_ip).toBe('cfm');
+    // same m3/s -> ft3/min factor; only the label differs
+    expect(std.toIp(1)).toBeCloseTo(act.toIp(1), 6);
+  });
+
+  it('keeps water gpm even for a standard-density name', () => {
+    // scfm is an air-side notion; a water flow stays gpm regardless of name
+    const u = resolveUnit('m3/s', 'Water', 'Standard Density Volume Flow Rate');
+    expect(u.units_ip).toBe('gpm');
+  });
+
   it('converts temperature with the offset (C -> F)', () => {
     const u = resolveUnit('C');
     expect(u.units_ip).toBe('F');
