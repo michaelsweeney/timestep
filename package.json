@@ -99,8 +99,8 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate",
+      "owner": "michaelsweeney",
+      "repo": "timestep",
       "private": false
     }
   },
@@ -127,7 +127,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
+    "url": "https://github.com/michaelsweeney/timestep/issues"
   },
   "keywords": [
     "electron",
@@ -141,9 +141,15 @@
     "hot",
     "reload"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
+  "homepage": "https://github.com/michaelsweeney/timestep#readme",
   "jest": {
     "testURL": "http://localhost/",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/release/",
+      "/.claude/",
+      "/packages/"
+    ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
       "\\.(css|less|sass|scss)$": "identity-obj-proxy"
