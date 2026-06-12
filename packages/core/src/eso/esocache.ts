@@ -22,20 +22,24 @@ export async function convertEsoCached(
   const resolved = path.resolve(esoPath);
   const stat = await fs.promises.stat(resolved);
 
-  // A sibling .mtr carries meters EnergyPlus didn't write to the .eso
-  // (MeterFileOnly, *Net:Facility). Fold its identity into the cache key so
-  // editing/re-running busts the cache the same way the .eso does.
+  // Sibling files fold into the conversion: a .mtr carries meters not in the
+  // .eso (MeterFileOnly, *Net:Facility), and a .rdd carries the Avg/Sum Type.
+  // Fold their identity into the cache key so editing/re-running busts the
+  // cache the same way the .eso does.
   const stem = path.basename(resolved, path.extname(resolved));
-  const siblingMtr = path.join(path.dirname(resolved), `${stem}.mtr`);
-  const mtrStat = fs.existsSync(siblingMtr)
-    ? await fs.promises.stat(siblingMtr)
-    : null;
+  const siblingStat = async (ext: string) => {
+    const p = path.join(path.dirname(resolved), `${stem}.${ext}`);
+    return fs.existsSync(p) ? { p, stat: await fs.promises.stat(p) } : null;
+  };
+  const mtr = await siblingStat('mtr');
+  const rdd = await siblingStat('rdd');
+  const keyPart = (s: typeof mtr) =>
+    s ? `\n${s.p}\n${s.stat.size}\n${s.stat.mtimeMs}` : '';
 
   const key = crypto
     .createHash('sha256')
     .update(
-      `${resolved}\n${stat.size}\n${stat.mtimeMs}` +
-        (mtrStat ? `\n${siblingMtr}\n${mtrStat.size}\n${mtrStat.mtimeMs}` : '')
+      `${resolved}\n${stat.size}\n${stat.mtimeMs}` + keyPart(mtr) + keyPart(rdd)
     )
     .digest('hex')
     .slice(0, 16);
@@ -50,10 +54,9 @@ export async function convertEsoCached(
     const building = `${sqlPath}.building`;
     await fs.promises.rm(building, { force: true });
     const esoText = await fs.promises.readFile(resolved, 'utf8');
-    const mtrText = mtrStat
-      ? await fs.promises.readFile(siblingMtr, 'utf8')
-      : undefined;
-    await esoToSqlite(esoText, building, sqlite3, mtrText);
+    const mtrText = mtr ? await fs.promises.readFile(mtr.p, 'utf8') : undefined;
+    const rddText = rdd ? await fs.promises.readFile(rdd.p, 'utf8') : undefined;
+    await esoToSqlite(esoText, building, sqlite3, mtrText, rddText);
     await fs.promises.rename(building, sqlPath);
   }
 

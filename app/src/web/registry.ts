@@ -137,12 +137,15 @@ export async function convertEso(key: string): Promise<string> {
   const esoText = await file.text();
   // Surface a parse error early with the same shape the renderer logs.
   parseEso(esoText); // throws on a malformed header before we build anything
-  // A co-dropped sibling .mtr recovers meters not embedded in the .eso (the
-  // browser can't reach sibling files by path, so it must be dropped too).
+  // Co-dropped siblings (the browser can't reach files by path, so they must
+  // be dropped too): a .mtr recovers meters not embedded in the .eso, a .rdd
+  // supplies the Avg/Sum Type.
   const mtrFile = files.get(key.replace(/\.eso$/i, '.mtr'));
   const mtrText = mtrFile ? await mtrFile.text() : undefined;
+  const rddFile = files.get(key.replace(/\.eso$/i, '.rdd'));
+  const rddText = rddFile ? await rddFile.text() : undefined;
   const sink: { db?: SqlJsDatabase } = {};
-  await esoToSqlite(esoText, key, makeSqlite3Adapter(SQL, sink), mtrText);
+  await esoToSqlite(esoText, key, makeSqlite3Adapter(SQL, sink), mtrText, rddText);
   if (!sink.db) throw new Error('eso conversion produced no database');
   const sqlKey = key.replace(/\.eso$/i, '.sql');
   dbs.set(sqlKey, sink.db);

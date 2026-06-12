@@ -8,7 +8,8 @@ import { Sqlite3Engine } from '../src/engine/sqlite3';
 import {
   MINI_ESO_DATA,
   MINI_ESO_METER_DATA,
-  MINI_MTR_DATA
+  MINI_MTR_DATA,
+  MINI_RDD
 } from './esofixtures';
 
 // Converts the synthetic ESO into a real SQLite file, then queries it
@@ -163,5 +164,64 @@ describe('esoToSqlite with a sibling .mtr', () => {
         'ReportData.ReportDataDictionaryIndex = 1652'
     )) as any[];
     expect(rows).toEqual([{ Value: 777.0, Month: 12, Hour: 1 }]);
+  });
+});
+
+describe('esoToSqlite variable Type (F2)', () => {
+  const typeByName = async (db: string, eng: Sqlite3Engine) => {
+    const rows = (await eng.allRows(
+      db,
+      'SELECT Name, Type, IsMeter FROM ReportDataDictionary'
+    )) as any[];
+    return Object.fromEntries(rows.map(r => [r.Name, r.Type]));
+  };
+
+  it('derives report-variable Type from a sibling .rdd; meters are always Sum', async () => {
+    const db = path.join(os.tmpdir(), `timestep-rdd-${process.pid}.sql`);
+    fs.rmSync(db, { force: true });
+    try {
+      // MINI_ESO_METER_DATA has a variable (id 7) + meters (65, 1992); pair it
+      // with a .rdd that types the variable.
+      const rdd =
+        'Output:Variable,*,Site Outdoor Air Drybulb Temperature,hourly; !- Zone Average [C]\n';
+      await esoToSqlite(MINI_ESO_METER_DATA, db, sqlite3, undefined, rdd);
+      const eng = new Sqlite3Engine(sqlite3);
+      const t = await typeByName(db, eng);
+      expect(t['Site Outdoor Air Drybulb Temperature']).toBe('Avg'); // from .rdd
+      expect(t['Electricity:Facility']).toBe('Sum'); // meter, always Sum
+      expect(t['NaturalGas:Facility']).toBe('Sum');
+    } finally {
+      fs.rmSync(db, { force: true });
+    }
+  });
+
+  it('leaves report-variable Type empty without a .rdd, but meters still Sum', async () => {
+    const db = path.join(os.tmpdir(), `timestep-nordd-${process.pid}.sql`);
+    fs.rmSync(db, { force: true });
+    try {
+      await esoToSqlite(MINI_ESO_METER_DATA, db, sqlite3); // no .mtr, no .rdd
+      const eng = new Sqlite3Engine(sqlite3);
+      const t = await typeByName(db, eng);
+      expect(t['Site Outdoor Air Drybulb Temperature']).toBe(''); // unknown -> honest empty
+      expect(t['Electricity:Facility']).toBe('Sum'); // meter, derivable without any file
+    } finally {
+      fs.rmSync(db, { force: true });
+    }
+  });
+
+  it('uses the full MINI_RDD map and leaves omitted variables empty', async () => {
+    const db = path.join(os.tmpdir(), `timestep-rddfull-${process.pid}.sql`);
+    fs.rmSync(db, { force: true });
+    try {
+      await esoToSqlite(MINI_ESO_DATA, db, sqlite3, undefined, MINI_RDD);
+      const eng = new Sqlite3Engine(sqlite3);
+      const t = await typeByName(db, eng);
+      expect(t['Other Equipment Total Heating Energy']).toBe('Sum');
+      expect(t['Zone Mean Air Temperature']).toBe('Avg');
+      // "Site Total Sky Cover" is intentionally absent from MINI_RDD
+      expect(t['Site Total Sky Cover']).toBe('');
+    } finally {
+      fs.rmSync(db, { force: true });
+    }
   });
 });

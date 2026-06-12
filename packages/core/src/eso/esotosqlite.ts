@@ -12,6 +12,7 @@
 
 import { parseEso, type ParsedEso } from './parseeso';
 import { mergeMeterFile } from './mergemtr';
+import { parseRdd } from './parserdd';
 
 type Sqlite3Module = typeof import('sqlite3');
 type Database = InstanceType<Sqlite3Module['Database']>;
@@ -138,10 +139,15 @@ export async function esoToSqlite(
   // Optional sibling .mtr text. When given, meters present only in the meter
   // file (MeterFileOnly, *Net:Facility, …) are merged in so the converted DB
   // carries the same meter set the native .sql would.
-  mtrText?: string
+  mtrText?: string,
+  // Optional sibling .rdd text. When given, report variables get their Avg/Sum
+  // Type from it (the .eso doesn't carry Type); meters are always Sum. Without
+  // it, report-variable Type stays empty (see DESIGN-variable-model.md F2).
+  rddText?: string
 ): Promise<void> {
   let parsed = parseEso(esoText);
   if (mtrText) parsed = mergeMeterFile(parsed, parseEso(mtrText));
+  const rddTypes = rddText ? parseRdd(rddText) : undefined;
   const db = new sqlite3.Database(dbPath);
   const { exec, close } = promisify(db);
 
@@ -151,13 +157,16 @@ export async function esoToSqlite(
     await exec(`${SCHEMA}BEGIN;`);
     // IsMeter and KeyValue track the parsed entry so meters land as the native
     // E+ .sql writes them (IsMeter = 1, KeyValue = NULL); variables keep their
-    // key. (Type/IndexGroup/TimestepType/ScheduleName aren't recoverable from
-    // the .eso and stay empty — see DESIGN-variable-model.md F2.)
+    // key. Type: meters are always Sum; report variables come from the .rdd
+    // when supplied, else empty (IndexGroup/TimestepType/ScheduleName aren't
+    // recoverable from the .eso and stay empty — see DESIGN-variable-model.md F2).
     await insertAll(
       db,
       'INSERT INTO ReportDataDictionary VALUES (?,?,?,?,?,?,?,?,?,?)',
       parsed.dictionary.map(d => [
-        d.id, d.isMeter ? 1 : 0, '', '', '', d.keyValue, d.name,
+        d.id, d.isMeter ? 1 : 0,
+        d.isMeter ? 'Sum' : (rddTypes?.[d.name] ?? ''),
+        '', '', d.keyValue, d.name,
         d.reportingFrequency, '', d.units
       ])
     );

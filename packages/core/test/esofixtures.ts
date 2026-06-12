@@ -3,6 +3,18 @@
 // min/max companion columns on Daily/Monthly, hourly values following
 // their own full-hour stamp.
 
+// .rdd for MINI_ESO_DATA's variables: the Avg/Sum Type the .eso doesn't carry.
+// The energy variable is Sum; the rest are Average. "Site Total Sky Cover" is
+// deliberately omitted to exercise the "variable not in the .rdd -> Type stays
+// empty" path.
+export const MINI_RDD = `! Program Version,EnergyPlus, Version 25.2.0-cf7368216c
+! Output:Variable Objects (applicable to this run)
+Output:Variable,*,Site Outdoor Air Drybulb Temperature,hourly; !- Zone Average [C]
+Output:Variable,*,Zone Mean Air Temperature,timestep; !- Zone Average [C]
+Output:Variable,*,Surface Inside Face Temperature,hourly; !- Zone Average [C]
+Output:Variable,*,Other Equipment Total Heating Energy,hourly; !- Zone Sum [J]
+`;
+
 export const MINI_ESO = `Program Version,EnergyPlus, Version 25.2.0-cf7368216c, YMD=2026.06.11 06:00
 1,5,Environment Title[],Latitude[deg],Longitude[deg],Time Zone[],Elevation[m]
 2,8,Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],Hour[],StartMinute[],EndMinute[],DayType

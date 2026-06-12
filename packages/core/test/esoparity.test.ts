@@ -164,4 +164,39 @@ d('ESO/SQL parity on the multifreq fixture', () => {
       fs.rmSync(withMtr, { force: true });
     }
   }, 60_000);
+
+  // With the sibling .rdd supplied, the converted report-variable Type (Avg/Sum)
+  // should match native row-for-row (F2). Meters are always Sum regardless.
+  it('reproduces the Avg/Sum Type when the sibling .rdd is supplied', async () => {
+    const annualRdd = path.join(annualDir, 'eplusout.rdd');
+    if (!fixtureExists(annualRdd)) return; // .rdd optional for the fixture
+
+    const withRdd = path.join(os.tmpdir(), `timestep-rddparity-${process.pid}.sql`);
+    fs.rmSync(withRdd, { force: true });
+    try {
+      const esoText = await fs.promises.readFile(annualEso, 'utf8');
+      const rddText = await fs.promises.readFile(annualRdd, 'utf8');
+      await esoToSqlite(esoText, withRdd, sqlite3, undefined, rddText);
+
+      const TYPE_Q =
+        'SELECT ReportDataDictionaryIndex AS id, Name, Type FROM ' +
+        'ReportDataDictionary WHERE IsMeter = 0 ORDER BY id';
+      const native = (await engine.allRows(annualSql, TYPE_Q)) as any[];
+      const converted = (await engine.allRows(withRdd, TYPE_Q)) as any[];
+
+      // both Avg and Sum are represented in this fixture, so this is a real test
+      const types = new Set(native.map(r => r.Type));
+      expect(types.has('Avg') && types.has('Sum')).toBe(true);
+      expect(converted).toEqual(native);
+
+      // and meters are Sum without needing the .rdd at all
+      const meterTypes = (await engine.allRows(
+        withRdd,
+        'SELECT DISTINCT Type FROM ReportDataDictionary WHERE IsMeter = 1'
+      )) as any[];
+      expect(meterTypes).toEqual([{ Type: 'Sum' }]);
+    } finally {
+      fs.rmSync(withRdd, { force: true });
+    }
+  }, 60_000);
 });
