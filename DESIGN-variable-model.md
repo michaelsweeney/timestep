@@ -167,38 +167,52 @@ why not blanket equality). 35/35 core tests pass.
 **Does not** recover `.mtr`-only meters (see §7) — tracked under the `.mtr`
 question below.
 
-**P1 — Honest units + single resolver (closes F5, F7; frames F3/F6).**
-Extract one `resolveUnits(row, bnd)`; replace the duplicated blocks. Make the
-`tbd`/missing path return an explicit "no IP conversion" state so the label can't
-claim a unit it didn't compute. Fill the achievable `tbd` factors.
-*Test:* table-driven unit-resolution cases (extends the fixture-free
-`getallseries.test.ts` fake-engine pattern), incl. every `tbd` unit and an
-unknown unit.
+**.mtr ingestion (closes the §7 gap). ✅ DONE — commit `3b7a956`.**
+`mergeMeterFile(eso, mtr)` appends meters whose global id the `.eso` didn't
+define (EnergyPlus uses one index space across files, so this is a clean id-set
+diff). `esoToSqlite` takes an optional `.mtr` text; `esocache` reads the sibling
+automatically (desktop), the web registry reads a co-dropped `.mtr`, and
+`filehandler` accepts co-dropped `.bnd`/`.mtr` companions. Parity test: the
+large-office fixture goes from 5 `.eso`-embedded meters to 7 = full native
+parity. Verified in-browser (co-drop recovers `ElectricityNet:Facility`).
 
-**P2 — Fluid resolution robustness (closes F3, F4, F6).**
-Harden `readBnd` (section-scoped, fluid vocab beyond Air/Water). Decide the
-non-node `m3/s` policy (P2 needs the Open Questions answered first). Optionally
-split SCFM/ACFM by variable name.
-*Test:* BND fixtures exercising Water/Air/Steam/blank and a non-node `m3/s` key.
+**P1 — Honest units + single resolver (closes F5, F7). ✅ DONE — commit `c22a87e`.**
+One `resolveUnit(siUnit, fluidType)` returns label + converter together, used by
+all three consumers. Units carry an IP label only with a real conversion;
+unknown/former-`tbd` units resolve to SI honestly (`ipKnown=false`). Fixed wrong
+labels (`kg/m3` was `lb/cfm` → `lb/ft3`; `m3/kg` `cfm/lb` → `ft3/lb`), filled
+achievable factors. *(One deliberate unit-choice change: `Pa` → inH2O.)*
+`conversions.test.ts` covers the honesty contract.
 
-**P2.5 — `Type`/`IsMeter` fidelity (closes F2).**
-Populate `Type` in ESO conversion. ESO doesn't label Avg/Sum directly; derive
-from variable semantics or accept a known gap and document it.
+**P2 — Fluid resolution robustness (closes F3, F4; F6 deferred). ✅ DONE — commit `a224973`.**
+`readBnd` hardened (node-list lines only — integer node-number guard; trims).
+`resolveFluidType` adds a name-based fallback for non-node `m3/s`: a watery name
+→ gpm, else cfm. New `water-flows-design-day` fixture (5ZoneVAV-ChilledWaterStorage)
+is the first to exercise any of this — 132 node + 10 non-node `WaterUse:Equipment`
+m3/s. *F6 (SCFM vs ACFM) deferred — low value for the name-parsing it adds.*
+
+**P2.5 — `Type`/`IsMeter` fidelity (closes F2). ⬜ NOT DONE.**
+ESO conversion still writes `Type=''`. `IsMeter` is now correct (P0/.mtr), but
+the Avg/Sum `Type` isn't recovered from the `.eso`. Open — derive from variable
+semantics or accept and document the gap.
 
 ---
 
 ## 5. Open questions
 
-Needs your call:
-- **`.mtr` ingestion** — quantified in §7: P0 recovers `.eso`-embedded meters,
-  but a real fixture still loses one meter (`ElectricityNet:Facility`) that's in
-  the native `.sql`/`.mtr` but never in the `.eso`. Full meter parity needs a
-  `.mtr` reader (shares the ESO format — modest, but new file plumbing through
-  the `Engine`). Worth it, or is `.eso`-embedded recovery enough?
-- **Unit completeness vs. just-stop-lying** — chase full IP coverage, or only
-  guarantee we never show a false IP label?
-- **SCFM/ACFM** — worth splitting, or is plain cfm acceptable for your users?
-- **Avg/Sum on ESO** — derive it, or document the gap?
+Resolved (built — review the choices):
+- **`.mtr` ingestion** — built (merge sibling/co-dropped `.mtr`). ✅
+- **Honest units** — built the "never show a false IP label" path; filled the
+  achievable conversions rather than chasing exhaustive IP coverage. Unknown
+  units now show SI. ✅ (revisit if you want fuller IP coverage)
+- **Non-node `m3/s` policy** — built the name-based water/air fallback. ✅
+  (heuristic — flag if you'd rather it stay conservatively cfm)
+- **`Pa` unit** — switched to inH2O (HVAC convention) from the old atm.
+
+Still your call:
+- **SCFM/ACFM** — deferred (F6). Worth splitting standard-density flows, or is
+  plain cfm fine?
+- **Avg/Sum on ESO** — derive `Type`, or document the gap? (F2 / P2.5 — not done)
 
 ---
 
