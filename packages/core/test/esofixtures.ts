@@ -54,3 +54,19 @@ export const MINI_ESO_METER_DATA = `${MINI_ESO_METER}1,DENVER CENTENNIAL  GOLDEN
 1992,7890123.0,0.0,21, 1,15,500000.0,21, 1,15
 End of Data
 `;
+
+// A sibling .mtr for MINI_ESO_METER_DATA. It re-states meter 65
+// (Electricity:Facility — already in the .eso, must be skipped on merge) and
+// adds meter 1652 (ElectricityNet:Facility) which the .eso never carried —
+// exactly the MeterFileOnly / *Net:Facility case. Same global ids as the .eso.
+export const MINI_MTR_DATA = `Program Version,EnergyPlus, Version 25.2.0-cf7368216c, YMD=2026.06.11 06:00
+2,8,Day of Simulation[],Month[],Day of Month[],DST Indicator[1=yes 0=no],Hour[],StartMinute[],EndMinute[],DayType
+65,1,Electricity:Facility [J] !Hourly
+1652,1,ElectricityNet:Facility [J] !Hourly
+End of Data Dictionary
+1,DENVER CENTENNIAL  GOLDEN   N ANN HTG 99% CONDNS DB,  39.74,-105.18,  -7.00,1829.00
+2,1,12,21, 0, 1, 0.00,60.00,WinterDesignDay
+65,123456.0
+1652,777.0
+End of Data
+`;

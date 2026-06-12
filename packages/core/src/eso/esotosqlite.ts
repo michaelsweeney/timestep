@@ -11,6 +11,7 @@
 // sql.js-backed adapter against this same conversion logic.
 
 import { parseEso, type ParsedEso } from './parseeso';
+import { mergeMeterFile } from './mergemtr';
 
 type Sqlite3Module = typeof import('sqlite3');
 type Database = InstanceType<Sqlite3Module['Database']>;
@@ -133,9 +134,14 @@ function simulationsRow(parsed: ParsedEso): unknown[] {
 export async function esoToSqlite(
   esoText: string,
   dbPath: string,
-  sqlite3: Sqlite3Module
+  sqlite3: Sqlite3Module,
+  // Optional sibling .mtr text. When given, meters present only in the meter
+  // file (MeterFileOnly, *Net:Facility, …) are merged in so the converted DB
+  // carries the same meter set the native .sql would.
+  mtrText?: string
 ): Promise<void> {
-  const parsed = parseEso(esoText);
+  let parsed = parseEso(esoText);
+  if (mtrText) parsed = mergeMeterFile(parsed, parseEso(mtrText));
   const db = new sqlite3.Database(dbPath);
   const { exec, close } = promisify(db);
 

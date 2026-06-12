@@ -21,13 +21,25 @@ export async function convertEsoCached(
 ): Promise<string> {
   const resolved = path.resolve(esoPath);
   const stat = await fs.promises.stat(resolved);
+
+  // A sibling .mtr carries meters EnergyPlus didn't write to the .eso
+  // (MeterFileOnly, *Net:Facility). Fold its identity into the cache key so
+  // editing/re-running busts the cache the same way the .eso does.
+  const stem = path.basename(resolved, path.extname(resolved));
+  const siblingMtr = path.join(path.dirname(resolved), `${stem}.mtr`);
+  const mtrStat = fs.existsSync(siblingMtr)
+    ? await fs.promises.stat(siblingMtr)
+    : null;
+
   const key = crypto
     .createHash('sha256')
-    .update(`${resolved}\n${stat.size}\n${stat.mtimeMs}`)
+    .update(
+      `${resolved}\n${stat.size}\n${stat.mtimeMs}` +
+        (mtrStat ? `\n${siblingMtr}\n${mtrStat.size}\n${mtrStat.mtimeMs}` : '')
+    )
     .digest('hex')
     .slice(0, 16);
 
-  const stem = path.basename(resolved, path.extname(resolved));
   const outDir = path.join(cacheDir, key);
   const sqlPath = path.join(outDir, `${stem}.sql`);
 
@@ -38,7 +50,10 @@ export async function convertEsoCached(
     const building = `${sqlPath}.building`;
     await fs.promises.rm(building, { force: true });
     const esoText = await fs.promises.readFile(resolved, 'utf8');
-    await esoToSqlite(esoText, building, sqlite3);
+    const mtrText = mtrStat
+      ? await fs.promises.readFile(siblingMtr, 'utf8')
+      : undefined;
+    await esoToSqlite(esoText, building, sqlite3, mtrText);
     await fs.promises.rename(building, sqlPath);
   }
 

@@ -132,4 +132,36 @@ d('ESO/SQL parity on the multifreq fixture', () => {
     const sum = (rows: any[]) => rows.reduce((a, r) => a + r.Value, 0);
     expect(sum(converted)).toBeCloseTo(sum(native), 6);
   }, 60_000);
+
+  // With the sibling .mtr merged, the converted DB should carry the *full*
+  // native meter set — including meters the .eso never embedded
+  // (ElectricityNet:Facility), the gap quantified in DESIGN-variable-model.md §7.
+  it('reaches full meter parity when the sibling .mtr is merged', async () => {
+    const annualMtr = path.join(annualDir, 'eplusout.mtr');
+    if (!fixtureExists(annualMtr)) return; // .mtr optional for the fixture
+
+    const withMtr = path.join(os.tmpdir(), `timestep-esomtrparity-${process.pid}.sql`);
+    fs.rmSync(withMtr, { force: true });
+    try {
+      const esoText = await fs.promises.readFile(annualEso, 'utf8');
+      const mtrText = await fs.promises.readFile(annualMtr, 'utf8');
+      await esoToSqlite(esoText, withMtr, sqlite3, mtrText);
+
+      const METER_Q =
+        'SELECT ReportDataDictionaryIndex AS id, IsMeter, KeyValue, Name, ' +
+        'ReportingFrequency, Units FROM ReportDataDictionary WHERE IsMeter = 1 ' +
+        'ORDER BY id';
+      const native = (await engine.allRows(annualSql, METER_Q)) as any[];
+      const withMtrMeters = (await engine.allRows(withMtr, METER_Q)) as any[];
+      // the .eso-only conversion (built in beforeAll) recovered a strict subset
+      const esoOnly = (await engine.allRows(convertedPath, METER_Q)) as any[];
+
+      // merging the .mtr recovers meters the .eso never embedded...
+      expect(withMtrMeters.length).toBeGreaterThan(esoOnly.length);
+      // ...up to the full native meter set, row-for-row.
+      expect(withMtrMeters).toEqual(native);
+    } finally {
+      fs.rmSync(withMtr, { force: true });
+    }
+  }, 60_000);
 });

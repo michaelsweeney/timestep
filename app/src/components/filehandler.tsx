@@ -51,8 +51,20 @@ const FileHandler = props => {
     return resolved;
   };
 
+  // .sql/.eso are loaded directly; .bnd/.mtr are companion files read
+  // alongside the primary (the .bnd for unit resolution, the .mtr for meters
+  // not embedded in the .eso). In the browser build they must be supplied
+  // together so the engine can find them; on desktop they're read by sibling
+  // path and any co-selected copies are simply ignored here.
   const loadFiles = files => {
-    resolveFiles(files)
+    const primaries = files.filter(f => /\.(sql|eso)$/i.test(f));
+    if (primaries.length === 0) {
+      props.actions.setNotification(
+        'File loading error: select at least one .sql or .eso file.'
+      );
+      return;
+    }
+    resolveFiles(primaries)
       .then(resolved => handleFileChange(resolved))
       .catch(err => {
         props.actions.setNotification(`File loading error: ${err.message}`);
@@ -63,7 +75,7 @@ const FileHandler = props => {
     window.api.dialog
       .openFiles({
         filters: [
-          { name: 'EnergyPlus Outputs', extensions: ['sql', 'eso'] },
+          { name: 'EnergyPlus Outputs', extensions: ['sql', 'eso', 'bnd', 'mtr'] },
           { name: 'EP SQLite Files', extensions: ['sql'] },
           { name: 'EP ESO Files', extensions: ['eso'] },
           { name: 'All Files', extensions: ['*'] }
@@ -93,22 +105,22 @@ const FileHandler = props => {
     setIsActive('inactive');
   };
   const handleDrop = e => {
-    let files = Object.values(e.dataTransfer.files).map(f =>
+    // Register every dropped file (the browser build keys companions —
+    // .bnd/.mtr — by name here so the engine can find them); loadFiles then
+    // loads the .sql/.eso primaries and ignores the rest.
+    const files = Object.values(e.dataTransfer.files).map(f =>
       window.api.getPathForFile(f as File)
     );
+    setIsActive('inactive');
 
-    // handle error alert for non-sql/eso files
-    const errflag = files.some(f => !/\.(sql|eso)$/i.test(f));
-
-    if (!errflag) {
-      loadFiles(files);
-      setIsActive('inactive');
-    } else {
+    const known = files.filter(f => /\.(sql|eso|bnd|mtr)$/i.test(f));
+    if (known.length === 0) {
       props.actions.setNotification(
-        'File loading error: only .sql or .eso files allowed.'
+        'File loading error: drop .sql or .eso files (optionally with sibling .bnd/.mtr).'
       );
-      setIsActive('inactive');
+      return;
     }
+    loadFiles(files);
   };
   return (
     <div className={classes.root}>

@@ -5,7 +5,11 @@ import path from 'path';
 import sqlite3 from 'sqlite3';
 import { esoToSqlite } from '../src/eso/esotosqlite';
 import { Sqlite3Engine } from '../src/engine/sqlite3';
-import { MINI_ESO_DATA, MINI_ESO_METER_DATA } from './esofixtures';
+import {
+  MINI_ESO_DATA,
+  MINI_ESO_METER_DATA,
+  MINI_MTR_DATA
+} from './esofixtures';
 
 // Converts the synthetic ESO into a real SQLite file, then queries it
 // through the same Sqlite3Engine + SQL the app's query layer uses.
@@ -118,5 +122,46 @@ describe('esoToSqlite meters', () => {
         'ReportData.ReportDataDictionaryIndex = 65'
     )) as any[];
     expect(rows).toEqual([{ Value: 123456.0, Hour: 1 }]);
+  });
+});
+
+describe('esoToSqlite with a sibling .mtr', () => {
+  let db: string;
+  let engine: Sqlite3Engine;
+
+  beforeAll(async () => {
+    db = path.join(os.tmpdir(), `timestep-esomtr-${process.pid}.sql`);
+    fs.rmSync(db, { force: true });
+    await esoToSqlite(MINI_ESO_METER_DATA, db, sqlite3, MINI_MTR_DATA);
+    engine = new Sqlite3Engine(sqlite3);
+  });
+
+  afterAll(() => {
+    fs.rmSync(db, { force: true });
+  });
+
+  it('merges in a .mtr-only meter (ElectricityNet:Facility) at its global id', async () => {
+    const meters = (await engine.allRows(
+      db,
+      'SELECT ReportDataDictionaryIndex AS id, IsMeter, KeyValue, Name ' +
+        'FROM ReportDataDictionary WHERE IsMeter = 1 ORDER BY id'
+    )) as any[];
+    // .eso meters 65 + 1992, plus the .mtr-only 1652 — and no duplicate 65
+    expect(meters.map(m => m.id)).toEqual([65, 1992, 1652].sort((a, b) => a - b));
+    expect(meters.find(m => m.id === 1652)).toMatchObject({
+      IsMeter: 1,
+      KeyValue: null,
+      Name: 'ElectricityNet:Facility'
+    });
+  });
+
+  it('makes the merged meter queryable with its value and time', async () => {
+    const rows = (await engine.allRows(
+      db,
+      "SELECT ReportData.Value, Time.Month, Time.Hour FROM 'ReportData' INNER JOIN " +
+        'Time ON ReportData.TimeIndex = Time.TimeIndex WHERE ' +
+        'ReportData.ReportDataDictionaryIndex = 1652'
+    )) as any[];
+    expect(rows).toEqual([{ Value: 777.0, Month: 12, Hour: 1 }]);
   });
 });
