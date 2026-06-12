@@ -7,6 +7,10 @@
     "build": "concurrently \"yarn build-main\" \"yarn build-renderer\"",
     "build-main": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.main.prod.js",
     "build-renderer": "cross-env NODE_ENV=production webpack --config ./configs/webpack.config.renderer.prod.js",
+    "build-web": "rm -rf app/dist-web && cross-env NODE_ENV=production webpack --config ./configs/webpack.config.web.prod.js && cp app/web.html app/dist-web/index.html",
+    "start-web": "python3 -m http.server 8080 --directory app/dist-web",
+    "web": "yarn build-web && yarn start-web",
+    "smoke-web": "node scripts/web-smoke.mjs",
     "dev": "cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "ts": "tsc",
@@ -280,7 +284,8 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "source-map-support": "^0.5.16"
+    "source-map-support": "^0.5.16",
+    "sql.js": "^1.14.1"
   },
   "collective": {
     "url": "https://opencollective.com/electron-react-boilerplate-594"

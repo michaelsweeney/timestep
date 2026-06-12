@@ -17,6 +17,10 @@
     "./eso-sqlite": {
       "types": "./src/eso/esotosqlite.ts",
       "default": "./src/eso/esotosqlite.ts"
+    },
+    "./eso-cache": {
+      "types": "./src/eso/esocache.ts",
+      "default": "./src/eso/esocache.ts"
     }
   },
   "license": "MIT",

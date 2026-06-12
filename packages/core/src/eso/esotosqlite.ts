@@ -3,12 +3,14 @@
 // ReportDataDictionary, ReportData, Simulations), so every existing query
 // works unchanged against ESO-sourced files.
 //
-// Node-only (creates a database file via an injected sqlite3 module, same
-// pattern as Sqlite3Engine) — lives behind a subpath export, not the barrel.
+// The sqlite3 module is *injected*, and the only runtime import here is the
+// pure `parseEso` (the sqlite3 import below is type-only, erased at compile).
+// So this module is environment-neutral at load time: the Node path injects
+// node-sqlite3 (via the cached `convertEsoCached` wrapper, behind the
+// `@timestep/core/eso-cache` subpath), and a browser build injects a
+// sql.js-backed adapter against this same conversion logic.
 
 import { parseEso, type ParsedEso } from './parseeso';
-
-export { convertEsoCached } from './esocache';
 
 type Sqlite3Module = typeof import('sqlite3');
 type Database = InstanceType<Sqlite3Module['Database']>;

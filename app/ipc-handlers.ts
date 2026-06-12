@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import sqlite3 from 'sqlite3';
 import { Sqlite3Engine } from '@timestep/core/sqlite3';
-import { convertEsoCached } from '@timestep/core/eso-sqlite';
+import { convertEsoCached } from '@timestep/core/eso-cache';
 
 const engine = new Sqlite3Engine(sqlite3);
 

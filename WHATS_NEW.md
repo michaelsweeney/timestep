@@ -78,11 +78,33 @@ independently tested piece — the *core*. Two reasons that matters:
 1. **It's where the trust comes from.** The row-for-row checking described above
    lives in the core, run on every update.
 2. **It's reusable.** Because the EnergyPlus-reading engine now stands on its
-   own, the same tested logic can later power things beyond this one desktop
-   app — batch processing, a notebook workflow, or a browser-based version —
-   without anyone re-implementing the file parsing (and re-introducing the bugs
-   that come with it). The desktop app is the first thing built on it, not the
-   only possible thing.
+   own, the same tested logic can power things beyond this one desktop app —
+   batch processing, a notebook workflow, or a browser-based version — without
+   anyone re-implementing the file parsing (and re-introducing the bugs that
+   come with it). The desktop app is the first thing built on it, not the only
+   thing: the browser version described below is the second.
+
+## Use it in a browser — no install
+
+Timestep also runs as a plain web page. It's the exact same app, with the same
+charts, but nothing to download or install: open the page, drop an `.sql` or
+`.eso` onto it, and explore. Everything happens **locally in your browser** —
+your output files are never uploaded anywhere; the page reads them right on your
+machine.
+
+This is handy when you just want a quick look, want to send a colleague a link
+instead of an installer, or are on a machine where you can't install software.
+
+Two things to know about the browser version specifically:
+
+- For air- and water-flow units in **cfm / gpm**, drop the `.bnd` file *together
+  with* the `.sql`/`.eso` (the browser can't reach over and find it on its own
+  the way the desktop app can). Without it, those flows stay in cfm.
+- Very large annual runs load entirely into the browser's memory, so for
+  multi-gigabyte outputs the desktop app is still the smoother choice.
+
+For everyday files, the browser version is the fastest way to get from an
+EnergyPlus run to a chart.
 
 ## Getting it
 
