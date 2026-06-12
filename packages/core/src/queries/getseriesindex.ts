@@ -1,6 +1,6 @@
 import type { Engine } from '../engine/types';
 import { readBnd } from './readbnd';
-import { unitdict } from './conversions';
+import { resolveUnit } from './conversions';
 
 export async function getSeriesIndex(engine: Engine, file: string, idx: any) {
   const loadedobj: Record<string, any> = {};
@@ -23,39 +23,15 @@ export async function getSeriesIndex(engine: Engine, file: string, idx: any) {
     row.file = file;
     row.file_short = file_short;
     row.key = key;
-    row.units_si = row.Units;
 
-    // handle ip units
-    //if m3/s (try to read bnd, get gpm or cfm)
-    if (row.Units == 'm3/s') {
-      if (bndexists && bnd_dict) {
-        const fluidtype = bnd_dict[row.KeyValue];
-        if (fluidtype == 'Air') {
-          row.units_ip = 'cfm';
-        } else if (fluidtype == 'Water') {
-          row.units_ip = 'gpm';
-        } else {
-          row.units_ip = 'cfm';
-        }
-      } else {
-        // can put some logic in here to try and parse without bnd...
-        row.units_ip = 'cfm';
-      }
-    } else {
-      try {
-        row.units_ip = unitdict[row.Units.replace('/', '_').replace('%', 'pct')]
-          .replace('_', '/')
-          .replace('pct', '%');
-      } catch {
-        if (row.Units == '') {
-          row.units_ip = '';
-        } else {
-          console.log('Processing Error. Check Console Log for Details');
-          console.log(row);
-          row.units_ip = row.units_si;
-        }
-      }
-    }
+    // For m3/s, the IP unit (cfm vs gpm) comes from the node fluid type in the
+    // .bnd; every other unit resolves from the SI string alone. (Mirrors
+    // getAllSeries — same resolver, so the list and the plotted series agree.)
+    const fluidType =
+      row.Units === 'm3/s' && bnd_dict ? bnd_dict[row.KeyValue] : undefined;
+    const u = resolveUnit(row.Units, fluidType);
+    row.units_si = u.units_si;
+    row.units_ip = u.units_ip;
 
     // Meters have no KeyValue (NULL in the E+ .sql); label them by Name alone
     // rather than "null: Name". Mirrors getAllSeries.

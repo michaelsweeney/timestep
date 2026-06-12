@@ -1,5 +1,5 @@
 import type { Engine } from '../engine/types';
-import { unitdict } from './conversions';
+import { resolveUnit } from './conversions';
 import { checkArray } from './checkarray';
 import { readBnd } from './readbnd';
 
@@ -29,41 +29,15 @@ export async function getAllSeries(engine: Engine, sqlfiles: string[]) {
         .pop()!
         .split('.')[0];
       row.key = key;
-      row.units_si = row.Units;
 
-      // handle ip units
-      //if m3/s (try to read bnd, get gpm or cfm)
-      if (row.Units == 'm3/s') {
-        if (bndexists && bnd_dict) {
-          const fluidtype = bnd_dict[row.KeyValue];
-          if (fluidtype == 'Air') {
-            row.units_ip = 'cfm';
-          } else if (fluidtype == 'Water') {
-            row.units_ip = 'gpm';
-          } else {
-            row.units_ip = 'cfm';
-          }
-        } else {
-          // can put some logic in here to try and parse without bnd...
-          row.units_ip = 'cfm';
-        }
-      } else {
-        try {
-          row.units_ip = unitdict[
-            row.Units.replace('/', '_').replace('%', 'pct')
-          ]
-            .replace('_', '/')
-            .replace('pct', '%');
-        } catch {
-          if (row.Units == '') {
-            row.units_ip = '';
-          } else {
-            console.warn('Processing Error. Check Console Log for Details');
-            console.warn(row);
-            row.units_ip = row.units_si;
-          }
-        }
-      }
+      // For m3/s, the IP unit (cfm vs gpm) comes from the node fluid type in
+      // the .bnd; every other unit resolves from the SI string alone.
+      const fluidType =
+        row.Units === 'm3/s' && bnd_dict ? bnd_dict[row.KeyValue] : undefined;
+      const u = resolveUnit(row.Units, fluidType);
+      row.units_si = u.units_si;
+      row.units_ip = u.units_ip;
+
       // Meters have no KeyValue (NULL in the E+ .sql); label them by Name
       // alone rather than "null: Name".
       const keyPrefix = row.KeyValue ? `${row.KeyValue}: ` : '';

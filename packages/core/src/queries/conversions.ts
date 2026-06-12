@@ -1,85 +1,82 @@
-// SI → IP unit mapping and conversion factors. Used by getSeries (to compute
-// IP values) and getSeriesIndex / getAllSeries (to label units).
-export const unitdict: Record<string, string> = {
-  deg: 'deg',
-  m: 'ft',
-  m2: 'ft2',
-  m3: 'ft3',
-  s: 's',
-  Hz: 'Hz',
-  C: 'F',
-  K: 'K',
-  deltaC: 'deltaF',
-  m_s: 'fpm',
-  J: 'btu',
-  W: 'W',
-  kg: 'lb',
-  N: 'N',
-  kg_s: 'lb_s',
-  m3_s: 'cfm',
-  Pa: 'atm',
-  J_kg: 'btu/lb',
-  kg_m3: 'lb/cfm',
-  W_m2: 'w/ft2',
-  J_kg_K: 'J/kg-K',
-  W_m_K: 'W/m-K',
-  W_m2_K: 'W/m2-K',
-  m2_K_W: 'm2-K/W',
-  V: 'V',
-  A: 'A',
-  lx: 'lx',
-  lm: 'lm',
-  cd: 'cd',
-  cd_m2: 'cd/ft2',
-  m2_s: 'ft2/s',
-  kg_m_s: 'lb/ft-min',
-  N_s_m2: 'N-s/m2',
-  kg_kg_K: 'kg/kg-K',
-  m3_kg: 'cfm/lb',
-  ach: 'ach',
-  hr: 'hr',
-  pct: 'pct',
-  W_W: 'W/W'
+// SI → IP unit resolution. ONE source of truth for both the displayed unit
+// label and the value conversion, so a series can never show an IP label for a
+// number that wasn't actually converted.
+//
+// This replaces the old split between a `unitdict` (labels) and a `unitconvert`
+// (factors): that split let the two disagree — a unit with an IP label but a
+// `'tbd'` factor rendered the IP label while the value stayed SI (and a couple
+// labels like `kg/m3 -> lb/cfm` were simply wrong). Here a unit is in the table
+// only when it has a real, correct conversion; everything else resolves to "SI,
+// no conversion" — honest by construction.
+
+export interface UnitResolution {
+  /** SI unit, as written by EnergyPlus. */
+  units_si: string;
+  /** IP label to display. Equals units_si when no IP conversion is known. */
+  units_ip: string;
+  /** Value converter (identity when no IP conversion is known). */
+  toIp: (v: number) => number;
+  /** Whether a genuine SI→IP conversion was applied. */
+  ipKnown: boolean;
+}
+
+type Converter = (v: number) => number;
+const identity: Converter = v => v;
+const factor = (f: number): Converter => v => v * f;
+const cToF: Converter = v => v * 1.8 + 32;
+
+interface Entry {
+  ip: string;
+  convert: Converter;
+}
+
+// Keyed by the raw EnergyPlus SI unit string. Only units with a real, correct
+// IP conversion belong here; anything absent resolves to SI (ipKnown=false).
+// m3/s is handled separately (its IP unit depends on the fluid — see below).
+const TABLE: Record<string, Entry> = {
+  C: { ip: 'F', convert: cToF },
+  deltaC: { ip: 'deltaF', convert: factor(1.8) }, // a temperature *difference*: scale only, no +32
+  m: { ip: 'ft', convert: factor(3.28084) },
+  m2: { ip: 'ft2', convert: factor(10.7639) },
+  m3: { ip: 'ft3', convert: factor(35.3147) },
+  'm/s': { ip: 'fpm', convert: factor(196.85) },
+  'm2/s': { ip: 'ft2/s', convert: factor(10.7639) },
+  J: { ip: 'btu', convert: factor(0.000947817) },
+  'J/kg': { ip: 'Btu/lb', convert: factor(0.000429923) },
+  kg: { ip: 'lb', convert: factor(2.20462) },
+  'kg/s': { ip: 'lb/s', convert: factor(2.20462) },
+  'kg/m3': { ip: 'lb/ft3', convert: factor(0.0624278) },
+  'm3/kg': { ip: 'ft3/lb', convert: factor(16.0185) },
+  Pa: { ip: 'inH2O', convert: factor(0.00401865) }, // pressure in inches of water (HVAC convention)
+  'W/m2': { ip: 'W/ft2', convert: factor(0.092903) }
 };
 
-export const unitconvert: Record<string, number | string> = {
-  deg: 1,
-  m: 3.28,
-  m2: 10.7639,
-  m3: 35.3147,
-  s: 1,
-  Hz: 1,
-  C: 'cToF',
-  K: 1,
-  deltaC: 'cToF',
-  m_s: 196.85,
-  J: 0.000947817,
-  W: 1,
-  kg: 2.20462,
-  N: 1.0,
-  kg_s: 2.205,
-  m3_s: 2118.88,
-  Pa: 9.86923e-6,
-  J_kg: 'tbd',
-  kg_m3: 'tbd',
-  W_m2: 0.0929,
-  J_kg_K: 1,
-  W_m_K: 1,
-  m2_s: 10.7639,
-  W_m2_K: 1,
-  m2_K_W: 1,
-  V: 1,
-  A: 1,
-  lx: 1,
-  lm: 1,
-  cd: 1,
-  cd_m2: 1,
-  kg_m_s: 'tbd',
-  N_s_m2: 'tbd',
-  kg_kg_K: 1,
-  m3_kg: 'tbd',
-  ach: 1,
-  hr: 1,
-  pct: 1,
-  W_W: 1
-};
+// m3/s volumetric flow: pure unit choice, not a density correction. The fluid
+// only decides whether to present cfm (air convention) or gpm (water).
+const M3S_AIR: Entry = { ip: 'cfm', convert: factor(2118.88) };
+const M3S_WATER: Entry = { ip: 'gpm', convert: factor(15850.32314) };
+
+/**
+ * Resolve an EnergyPlus SI unit to its IP label and value converter.
+ *
+ * @param siUnit    the raw `Units` string from ReportDataDictionary
+ * @param fluidType for m3/s only: `'Water'` → gpm, anything else → cfm (the
+ *                  air-default; callers pass the `.bnd` node fluid type)
+ */
+export function resolveUnit(
+  siUnit: string | null | undefined,
+  fluidType?: string | null
+): UnitResolution {
+  const si = siUnit ?? '';
+  if (si === '') {
+    return { units_si: '', units_ip: '', toIp: identity, ipKnown: false };
+  }
+  if (si === 'm3/s') {
+    const e = fluidType === 'Water' ? M3S_WATER : M3S_AIR;
+    return { units_si: si, units_ip: e.ip, toIp: e.convert, ipKnown: true };
+  }
+  const e = TABLE[si];
+  if (e) return { units_si: si, units_ip: e.ip, toIp: e.convert, ipKnown: true };
+  // No known IP conversion — show SI honestly rather than a label we can't back.
+  return { units_si: si, units_ip: si, toIp: identity, ipKnown: false };
+}

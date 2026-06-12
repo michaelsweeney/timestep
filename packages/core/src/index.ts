@@ -16,5 +16,6 @@ export { getSeriesIndex } from './queries/getseriesindex';
 export { getAllSeries } from './queries/getallseries';
 export { getFileSummary } from './queries/getfilesummary';
 export { getSeriesKeys, getSeriesLookupObj } from './queries/formatseries';
-export { unitdict, unitconvert } from './queries/conversions';
+export { resolveUnit } from './queries/conversions';
+export type { UnitResolution } from './queries/conversions';
 export { checkArray } from './queries/checkarray';

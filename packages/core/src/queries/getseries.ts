@@ -1,6 +1,6 @@
 import type { Engine } from '../engine/types';
 import { getSeriesIndex } from './getseriesindex';
-import { unitconvert } from './conversions';
+import { resolveUnit } from './conversions';
 
 export async function getSeries(engine: Engine, filetag: string) {
   const sqlfile = filetag.split(',')[0];
@@ -8,6 +8,13 @@ export async function getSeries(engine: Engine, filetag: string) {
 
   const series_index = await getSeriesIndex(engine, sqlfile, idx);
   const series_obj: any = Object.values(series_index)[0];
+
+  // Resolve the unit once for the whole series via the same resolver that built
+  // the label in getSeriesIndex, so the plotted values and the displayed unit
+  // can't disagree. For m3/s the IP unit was already decided there (cfm/gpm);
+  // recover the fluid hint from it so the converter matches.
+  const fluidType = series_obj.units_ip === 'gpm' ? 'Water' : undefined;
+  const unit = resolveUnit(series_obj.Units, fluidType);
 
   const long_name_single_ip = series_obj.name_ip_single;
   const long_name_multi_ip = series_obj.name_ip_multi;
@@ -51,9 +58,10 @@ export async function getSeries(engine: Engine, filetag: string) {
     data.name_si_multi = long_name_multi_si;
 
     data.value_si = row.Value;
+    data.value_ip = unit.toIp(row.Value);
     data.time = time;
-    data.units_si = series_obj.units_si;
-    data.units_ip = series_obj.units_ip;
+    data.units_si = unit.units_si;
+    data.units_ip = unit.units_ip;
     data.type = series_obj.Type;
 
     data.day = row.Day;
@@ -63,35 +71,6 @@ export async function getSeries(engine: Engine, filetag: string) {
     data.year = year;
     data.simulationday = row.SimulationDays;
     data.key = filetag;
-
-    if (series_obj.units_si == 'C') {
-      data.value_ip = row.Value * 1.8 + 32;
-    } else if (series_obj.Units == 'm3/s') {
-      if (series_obj.units_ip == 'gpm') {
-        data.value_ip = row.Value * 15850.32314;
-      } else if (series_obj.units_ip == 'cfm') {
-        data.value_ip = row.Value * 2118.88;
-      } else {
-        console.warn('m3/s conversion error:');
-        console.warn(row);
-        console.warn(series_obj);
-        data.value_ip = row.Value;
-      }
-    } else {
-      data.value_ip =
-        row.Value *
-        (unitconvert[
-          series_obj.units_si.replace('/', '_').replace('%', 'pct')
-        ] as number);
-
-      if (isNaN(data.value_ip)) {
-        console.warn('unit_dict conversion error:');
-        console.warn(row);
-        console.warn(series_obj);
-        data.value_ip = row.Value;
-      } else {
-      }
-    }
 
     data_array.push(data);
   });
