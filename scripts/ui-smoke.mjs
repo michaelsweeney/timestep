@@ -71,6 +71,23 @@ async function paintedPixels(page) {
   });
 }
 
+// Wait until the chart canvas has painted AND the pixel count has settled
+// (two consecutive samples agree). The chart draws axes first and the data
+// series a frame or two later, so a bare `> 1000` check can return mid-paint
+// on a slow/loaded machine — yielding a tiny count or, for the data line,
+// missing it entirely. Returns the settled pixel count.
+async function waitForStablePaint(page, timeoutMs, label) {
+  const t0 = Date.now();
+  let prev = -1;
+  for (;;) {
+    const n = await paintedPixels(page);
+    if (n > 1000 && n === prev) return n;
+    prev = n;
+    if (Date.now() - t0 > timeoutMs) throw new Error(`timeout: ${label}`);
+    await new Promise(r => setTimeout(r, 500));
+  }
+}
+
 // Fraction of the canvas width spanned by painted pixels. Guards the heatmap
 // dynamic-range fix: a sub-annual run (design day) used to collapse into a
 // left-edge sliver under the old hard-coded [0,365] domain.
@@ -85,16 +102,6 @@ async function paintedXSpanFrac(page) {
         if (d[(y * c.width + x) * 4 + 3] > 0) { if (x < minX) minX = x; if (x > maxX) maxX = x; }
     return maxX < 0 ? 0 : (maxX - minX) / c.width;
   });
-}
-
-async function waitFor(fn, timeoutMs, label) {
-  const t0 = Date.now();
-  for (;;) {
-    const v = await fn();
-    if (v) return v;
-    if (Date.now() - t0 > timeoutMs) throw new Error(`timeout: ${label}`);
-    await new Promise(r => setTimeout(r, 500));
-  }
 }
 
 const missing = CASES.flatMap(c => c.files || []).filter(f => !fs.existsSync(f));
@@ -153,11 +160,7 @@ for (const c of CASES) {
     if (c.expectSeries) {
       await page.keyboard.press('ArrowDown');
       await page.keyboard.press('Enter');
-      const px = await waitFor(
-        async () => ((await paintedPixels(page)) > 1000 ? await paintedPixels(page) : 0),
-        120000,
-        'chart canvas painted'
-      );
+      const px = await waitForStablePaint(page, 120000, 'chart canvas painted');
       detail = `${px} painted px`;
       if (c.minXSpanFrac) {
         const frac = await paintedXSpanFrac(page);
@@ -181,6 +184,76 @@ for (const c of CASES) {
     const shot = path.join(os.tmpdir(), `timestep-smoke-fail-${caseIndex}.png`);
     await page.screenshot({ path: shot }).catch(() => {});
     results.push({ name: c.name, pass: false, detail: `${String(e.message || e).split('\n')[0]} [${shot}]` });
+  }
+}
+
+// --- Session save/load round-trip ---------------------------------------
+// Drives Save Session -> a temp .tss on disk (real fs via the IPC bridge),
+// then Load Session back from it, and asserts the restored view re-renders.
+// Both dialogs are stubbed in main, same as the file-open cases.
+{
+  const name = 'session: .tss save/load round-trip restores a rendering view';
+  const errBefore = pageErrors.length;
+  const tss = path.join(os.tmpdir(), `timestep-smoke-session-${process.pid}.tss`);
+  try {
+    fs.rmSync(tss, { force: true });
+    const sqlFile = M('small-office-design-day/eplusout.sql');
+
+    // load fresh + select a series so there's something to persist
+    await app.evaluate(({ dialog }, filePaths) => {
+      dialog.showOpenDialog = async () => ({ canceled: false, filePaths });
+    }, [sqlFile]);
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
+    await page.getByText('FILES', { exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Load Files' }).click();
+    await page.getByText('Multiline', { exact: true }).waitFor({ timeout: 120000 });
+    try {
+      await page.getByText('Loaded Files').waitFor({ timeout: 10000 });
+      await page.keyboard.press('Escape');
+      await page.getByText('Loaded Files').waitFor({ state: 'hidden', timeout: 5000 });
+    } catch {}
+    await page.getByText('Multiline', { exact: true }).click();
+    await page.getByRole('combobox').first().click();
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await waitForStablePaint(page, 120000, 'pre-save chart painted');
+    await page.keyboard.press('Escape');
+
+    // Save Session -> temp .tss
+    await app.evaluate(({ dialog }, filePath) => {
+      dialog.showSaveDialog = async () => ({ canceled: false, filePath });
+    }, tss);
+    await page.getByText('FILES', { exact: true }).click();
+    await page.getByText('Save Session', { exact: true }).click();
+    await page.waitForTimeout(800);
+    await page.keyboard.press('Escape');
+
+    if (!fs.existsSync(tss)) throw new Error('Save Session wrote no .tss file');
+    const parsed = JSON.parse(fs.readFileSync(tss, 'utf8'));
+    if (!parsed.session || !parsed.views)
+      throw new Error('.tss missing session/views keys');
+
+    // Load Session <- temp .tss; the restored view must re-render. Do NOT
+    // re-click the chart-type selector — that races the restore.
+    await app.evaluate(({ dialog }, filePath) => {
+      dialog.showOpenDialog = async () => ({ canceled: false, filePaths: [filePath] });
+    }, tss);
+    await page.getByText('FILES', { exact: true }).click();
+    await page.getByText('Load Session', { exact: true }).click();
+    await page.waitForTimeout(500);
+    await page.keyboard.press('Escape');
+
+    const px = await waitForStablePaint(page, 60000, 'post-load chart painted');
+    if (pageErrors.length > errBefore)
+      throw new Error('renderer errors: ' + pageErrors.slice(errBefore).join(' | '));
+    results.push({ name, pass: true, detail: `saved ${Object.keys(parsed.views).length} view(s), restored ${px} painted px` });
+  } catch (e) {
+    const shot = path.join(os.tmpdir(), `timestep-smoke-fail-session.png`);
+    await page.screenshot({ path: shot }).catch(() => {});
+    results.push({ name, pass: false, detail: `${String(e.message || e).split('\n')[0]} [${shot}]` });
+  } finally {
+    fs.rmSync(tss, { force: true });
   }
 }
 
