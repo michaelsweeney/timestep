@@ -236,6 +236,11 @@ Still to drive in the UI:
   with no shape; add prop interfaces incrementally.
 - **Remove the Babel `export X from '...'` proposal** in
   `app/src/store/index.tsx` (also fixes the 3 standing tsc errors).
+- **Variable identity & unit model** — ESO ingestion drops meters,
+  `m3/s`→cfm/gpm resolution is node-keyed (misses non-node water
+  flows), and unit gaps can show false IP labels. Audit + sequenced
+  plan in [`DESIGN-variable-model.md`](DESIGN-variable-model.md);
+  affects desktop and web equally.
 
 ## Architecture notes
 
