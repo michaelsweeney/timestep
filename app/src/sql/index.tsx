@@ -4,7 +4,8 @@
 import {
   getSeries as getSeriesCore,
   getAllSeries as getAllSeriesCore,
-  getFileSummary as getFileSummaryCore
+  getFileSummary as getFileSummaryCore,
+  getDataQuality as getDataQualityCore
 } from '@timestep/core';
 import { ipcEngine } from './engine';
 
@@ -13,5 +14,8 @@ export const getAllSeries = (sqlfiles: string[]) =>
   getAllSeriesCore(ipcEngine, sqlfiles);
 export const getFileSummary = (sqlfiles: string[]) =>
   getFileSummaryCore(ipcEngine, sqlfiles);
+export const getDataQuality = (sqlfiles: string[]) =>
+  getDataQualityCore(ipcEngine, sqlfiles);
 
 export { getSeriesKeys, getSeriesLookupObj } from '@timestep/core';
+export type { FileDataQuality, DataQualityWarning } from '@timestep/core';

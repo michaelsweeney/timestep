@@ -62,7 +62,17 @@ describe('resolveUnit', () => {
     expect(u.toIp(1_000_000)).toBeCloseTo(947.817, 3);
   });
 
-  // The honesty contract: no IP label without a real conversion.
+  it('treats identity units (same in IP and SI) as known, factor 1', () => {
+    for (const si of ['W', 'hr', '%', 'Hz', 'V', 'A', 'K', 'ach', 'W/W']) {
+      const u = resolveUnit(si);
+      expect(u.units_ip).toBe(si);
+      expect(u.ipKnown).toBe(true); // known IP unit — NOT a "shown in SI" issue
+      expect(u.toIp(5)).toBe(5);
+    }
+  });
+
+  // The honesty contract: no IP label without a real conversion, AND identity
+  // units don't masquerade as quality issues.
   it('shows SI honestly for units with no known IP conversion', () => {
     for (const si of ['kg/m-s', 'kmol/s', 'ppm', 'someUnknownUnit']) {
       const u = resolveUnit(si);

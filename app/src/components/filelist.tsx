@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
 import {connect} from 'src/store';
-import { getFileSummary } from 'src/sql';
+import { getFileSummary, getDataQuality } from 'src/sql';
+import type { FileDataQuality } from 'src/sql';
 
 import {
   Button,
@@ -35,23 +36,40 @@ const useStyles = makeStyles(
         padding: theme.spacing(2, 4, 3)
       },
       table: {},
-      title: { fontSize: 20, margin: '5px', textAlign: 'center' }
+      title: { fontSize: 20, margin: '5px', textAlign: 'center' },
+      dqSection: { marginTop: 18 },
+      dqHeading: { fontSize: 16, fontWeight: 600, marginBottom: 6 },
+      dqFile: { fontSize: 13, fontWeight: 600, marginTop: 10 },
+      dqList: { margin: '2px 0 0 0', paddingLeft: 18 },
+      dqOk: { fontSize: 13, color: theme.palette.success?.main || '#2e7d32' },
+      dqWarn: { fontSize: 13, color: theme.palette.warning?.main || '#b26a00' },
+      dqInfo: { fontSize: 13, color: theme.palette.text.secondary },
+      dqDetail: { fontSize: 12, color: theme.palette.text.secondary, fontStyle: 'italic' }
     }),
   {
     name: 'file-info'
   }
 );
 
+// Drop the directory; keep just the filename for display.
+const baseName = (p: string) => p.replace(/\\/g, '/').split('/').pop() || p;
+
 function FileList(props) {
   const { files, fileInfo } = props;
   const [modalStyle] = useState(getModalStyle);
   const [controlledOpen, setControlledOpen] = useState(false);
+  const [dataQuality, setDataQuality] = useState<FileDataQuality[]>([]);
   const classes = useStyles();
 
   useEffect(() => {
     getFileSummary(files).then(f => {
       props.actions.changeFileInfo(f);
     });
+    // Load-time fidelity warnings (cfm-default flows, name-guessed fluids,
+    // SI-only units, …). Non-blocking — failures just leave the section empty.
+    getDataQuality(files)
+      .then(setDataQuality)
+      .catch(() => setDataQuality([]));
   }, [files]);
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -111,6 +129,36 @@ function FileList(props) {
               </TableBody>
             </Table>
           </TableContainer>
+
+          {dataQuality.length > 0 && (
+            <div className={classes.dqSection}>
+              <div className={classes.dqHeading}>Data quality</div>
+              {dataQuality.map(fq => (
+                <div key={fq.filename}>
+                  <div className={classes.dqFile}>{baseName(fq.filename)}</div>
+                  {fq.warnings.length === 0 ? (
+                    <div className={classes.dqOk}>✓ No issues detected</div>
+                  ) : (
+                    <ul className={classes.dqList}>
+                      {fq.warnings.map((w, i) => (
+                        <li
+                          key={i}
+                          className={
+                            w.severity === 'warning' ? classes.dqWarn : classes.dqInfo
+                          }
+                        >
+                          {w.message}
+                          {w.detail && (
+                            <div className={classes.dqDetail}>{w.detail}</div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </Modal>
     </div>

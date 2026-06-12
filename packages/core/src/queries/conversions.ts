@@ -60,6 +60,16 @@ const M3S_AIR: Entry = { ip: 'cfm', convert: factor(2118.88) };
 const M3S_AIR_STD: Entry = { ip: 'scfm', convert: factor(2118.88) };
 const M3S_WATER: Entry = { ip: 'gpm', convert: factor(15850.32314) };
 
+// Units that are the same in IP and SI (or conventionally reported unchanged):
+// power, electrical, frequency, angle, counts/ratios, time. These ARE known IP
+// units — identity, factor 1 — not "no conversion." Distinguishing them from
+// genuinely-unconvertible units (viscosities, etc.) keeps the data-quality
+// "shown in SI" signal honest: W and hr aren't quality issues; kg/m-s is.
+const IDENTITY_UNITS = new Set([
+  'W', 'K', 'Hz', 'deg', 'V', 'A', 'lux', 'lm', 'cd', 'hr', '%', 'ach', 'N',
+  's', 'W/W', 'J/kg-K', 'W/m-K', 'W/m2-K', 'm2-K/W', 'kg/kg-K'
+]);
+
 const STANDARD_DENSITY = /standard density/i;
 
 /**
@@ -90,6 +100,10 @@ export function resolveUnit(
   }
   const e = TABLE[si];
   if (e) return { units_si: si, units_ip: e.ip, toIp: e.convert, ipKnown: true };
+  // Same unit in both systems (factor 1) — a known IP unit, just trivial.
+  if (IDENTITY_UNITS.has(si)) {
+    return { units_si: si, units_ip: si, toIp: identity, ipKnown: true };
+  }
   // No known IP conversion — show SI honestly rather than a label we can't back.
   return { units_si: si, units_ip: si, toIp: identity, ipKnown: false };
 }
