@@ -1,7 +1,7 @@
 {
   "name": "timestep",
   "productName": "timestep",
-  "version": "2.0.0-rc.4",
+  "version": "2.0.0-rc.5",
   "description": "SQL-based Timeseries Viewer for EnergyPlus",
   "main": "./main.prod.js",
   "type": "commonjs",
