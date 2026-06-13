@@ -7,6 +7,7 @@ import colorscale from '../colorscaleindex';
 import { formatDate, formatDomain } from 'src/format';
 import { D3Container } from './d3container';
 import { heatmapdims } from './chartdimensions';
+import { heatmapXConfig } from './heatmaprange';
 import { NoSelectionContainer } from './noselectioncontainer';
 import { getSeriesKeys } from 'src/sql';
 
@@ -60,11 +61,13 @@ const HeatmapCanvas = props => {
     const plotwidth = width - margins.l - margins.r;
     const plotheight = height - margins.t - margins.b;
 
-    const rectwidth = plotwidth / 365;
+    const { numDays, column, ticks: xticks } = heatmapXConfig(series);
+
+    const rectwidth = plotwidth / numDays;
     const rectheight = plotheight / 23;
 
     const xScale = scaleLinear()
-      .domain([0, 365])
+      .domain([0, numDays])
       .range([0, plotwidth]);
 
     const yScale = scaleLinear()
@@ -126,7 +129,7 @@ const HeatmapCanvas = props => {
       context.clearRect(0, 0, plotwidth, plotheight);
 
       series.forEach(d => {
-        let x = xScale(d.simulationday - 1);
+        let x = xScale(column(d));
         let y = yScale(d.hour) - rectheight;
         let w = rectwidth;
         let h = rectheight;
@@ -139,30 +142,9 @@ const HeatmapCanvas = props => {
 
       /* AXES */
 
-      //
-      const monthobj = {};
-      series.forEach(d => {
-        let monthformat = {
-          1: 'Jan',
-          2: 'Feb',
-          3: 'Mar',
-          4: 'Apr',
-          5: 'May',
-          6: 'Jun',
-          7: 'Jul',
-          8: 'Aug',
-          9: 'Sep',
-          10: 'Oct',
-          11: 'Nov',
-          12: 'Dec'
-        };
-        monthobj[d['simulationday']] = monthformat[d['month']];
-      });
-      const formatMonth = d => monthobj[d];
-
       const xAxis = axisBottom(xScale)
-        .ticks(11)
-        .tickFormat(formatMonth);
+        .tickValues(xticks.map(t => t.pos))
+        .tickFormat((d, i) => xticks[i].label);
 
       const yAxis = axisLeft(yScale).ticks(24);
       const xaxisg = svg
@@ -278,7 +260,7 @@ const HeatmapCanvas = props => {
       function getClosestPoint(point, array) {
         let distances = [];
         array.forEach((d, i) => {
-          let x = xScale(d.simulationday - 1);
+          let x = xScale(column(d));
           let y = yScale(d.hour) - rectheight;
           let dist = distanceBetween(point, [x, y]);
           distances.push(dist);

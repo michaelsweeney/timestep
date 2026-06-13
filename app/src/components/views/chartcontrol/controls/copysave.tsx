@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { clipboard } from 'electron';
-import fs from 'fs';
-import { remote } from 'electron';
 import { getSeriesKeys } from 'src/sql';
 
 import { timeFormat } from 'd3';
@@ -60,7 +57,6 @@ const CopySave = props => {
       timeparsestr,
       valkey
     } = pullState(store);
-    console.log(array);
     let formatted;
     if (arraytype == 'single') {
       formatted = reformatSingleObject(array[0]);
@@ -77,12 +73,10 @@ const CopySave = props => {
 
   const handleCopy = () => {
     checkMultipleFiles();
-
     let formatstr = handleFormat();
-
-    clipboard.writeText(formatstr);
+    window.api.clipboard.writeText(formatstr);
   };
-  const handleSave = () => {
+  const handleSave = async () => {
     checkMultipleFiles();
     let formatstr = handleFormat();
 
@@ -91,24 +85,27 @@ const CopySave = props => {
       buttonLabel: 'Save to CSV',
       filters: [{ name: 'csv', extensions: ['csv'] }]
     };
-    remote.dialog.showSaveDialog(formatstr, options).then(f => {
-      let path = f.filePath;
-      if (f.filePath.split('.')[1] != 'csv') {
-        path = path + '.csv';
-      }
-      fs.writeFile(path, formatstr, err => {
-        if (err) console.log(err);
-      });
-    });
+    const f = await window.api.dialog.saveFile(options);
+    if (f.canceled || !f.filePath) return;
+    let path = f.filePath;
+    if (path.split('.')[1] != 'csv') {
+      path = path + '.csv';
+    }
+    try {
+      await window.api.fs.writeText(path, formatstr);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const checkMultipleFiles = () => {
     const { files } = pullState(store);
-
     if (files.length > 1) {
-      alert(
-        'Copy/Paste operations are currently unavailable when multiple files have been loaded'
-      );
+      store.dispatch({
+        type: 'SET_NOTIFICATION',
+        payload:
+          'Copy/Paste operations may produce unexpected output when multiple files have been loaded.'
+      });
     }
   };
 

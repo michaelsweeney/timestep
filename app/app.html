@@ -3,44 +3,36 @@
   <head>
     <meta charset="utf-8" />
     <title>Timestep</title>
-
     <script>
-      (() => {
-        if (
-          typeof process !== 'object' ||
-          (typeof process === 'object' && !process.env.START_HOT)
-        ) {
+      // Main appends ?dev=1&port=NNNN to the loaded URL when running with
+      // START_HOT. The renderer no longer has access to process.env.
+      // Block-scope so this script's top-level consts don't collide with
+      // the second script's identically-named consts (classic <script> tags
+      // share the global lexical environment).
+      {
+        const params = new URLSearchParams(location.search);
+        const isDev = params.has('dev');
+
+        if (!isDev) {
           const link = document.createElement('link');
           link.rel = 'stylesheet';
           link.href = './dist/style.css';
           document.getElementsByTagName('head')[0].appendChild(link);
         }
-      })();
+      }
     </script>
   </head>
   <body>
     <div id="root"></div>
     <script>
-      if (typeof process === 'object') {
-        const scripts = [];
-
-        if (process.env.NODE_ENV === 'development') {
-          scripts.push('../dll/renderer.dev.dll.js');
-        }
-        if (process.env.START_HOT) {
-          const port = process.env.PORT || 1212;
-          scripts.push(`http://localhost:${port}/dist/renderer.dev.js`);
-        } else {
-          scripts.push('./dist/renderer.prod.js');
-        }
-
-        if (scripts.length) {
-          document.write(
-            scripts
-              .map(script => `<script defer src="${script}"><\/script>`)
-              .join('')
-          );
-        }
+      {
+        const params = new URLSearchParams(location.search);
+        const isDev = params.has('dev');
+        const port = params.get('port') || 1212;
+        const src = isDev
+          ? `http://localhost:${port}/dist/renderer.dev.js`
+          : './dist/renderer.prod.js';
+        document.write(`<script defer src="${src}"><\/script>`);
       }
     </script>
   </body>

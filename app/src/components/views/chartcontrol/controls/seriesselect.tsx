@@ -6,7 +6,7 @@ import { useMediaQuery } from '@material-ui/core';
 import { ListSubheader } from '@material-ui/core';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 import { VariableSizeList } from 'react-window';
-import Typography from '@material-ui/core/typography';
+import Typography from '@material-ui/core/Typography';
 
 // THIS IS TAKEN FROM MATERIAL-UI AND ONLY MODIFIED SLIGHTLY;
 // THERE IS LIKELY SOME BOILERPLATE THAT CAN BE REMOVED.

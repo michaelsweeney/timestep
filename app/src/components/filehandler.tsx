@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { remote } from 'electron';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'src/store';
@@ -36,18 +35,57 @@ const FileHandler = props => {
     props.actions.changeFiles(f);
   };
 
+  // .eso files are converted to SQLite in the main process (cached on
+  // path+size+mtime, so repeat opens are instant) and swapped for the
+  // resulting .sql path; .sql files pass through untouched.
+  const resolveFiles = async files => {
+    const resolved = [];
+    for (const f of files) {
+      if (/\.eso$/i.test(f)) {
+        props.actions.setNotification(`Converting ${f} to SQLite...`);
+        resolved.push(await window.api.eso.convertToSql(f));
+      } else {
+        resolved.push(f);
+      }
+    }
+    return resolved;
+  };
+
+  // .sql/.eso are loaded directly; .bnd/.mtr/.rdd are companion files read
+  // alongside the primary (.bnd for unit resolution, .mtr for meters not
+  // embedded in the .eso, .rdd for the Avg/Sum variable Type). In the browser
+  // build they must be supplied together so the engine can find them; on
+  // desktop they're read by sibling path and any co-selected copies are
+  // simply ignored here.
+  const loadFiles = files => {
+    const primaries = files.filter(f => /\.(sql|eso)$/i.test(f));
+    if (primaries.length === 0) {
+      props.actions.setNotification(
+        'File loading error: select at least one .sql or .eso file.'
+      );
+      return;
+    }
+    resolveFiles(primaries)
+      .then(resolved => handleFileChange(resolved))
+      .catch(err => {
+        props.actions.setNotification(`File loading error: ${err.message}`);
+      });
+  };
+
   const openDialog = () => {
-    setTimeout(() => {
-      remote.dialog
-        .showOpenDialog({
-          filters: [
-            { name: 'EP SQLite Files', extensions: ['sql'] },
-            { name: 'All Files', extensions: ['*'] }
-          ],
-          properties: ['openFile', 'multiSelections']
-        })
-        .then(d => handleFileChange(d.filePaths));
-    }, 0);
+    window.api.dialog
+      .openFiles({
+        filters: [
+          { name: 'EnergyPlus Outputs', extensions: ['sql', 'eso', 'bnd', 'mtr', 'rdd'] },
+          { name: 'EP SQLite Files', extensions: ['sql'] },
+          { name: 'EP ESO Files', extensions: ['eso'] },
+          { name: 'All Files', extensions: ['*'] }
+        ],
+        properties: ['openFile', 'multiSelections']
+      })
+      .then(d => {
+        if (!d.canceled) loadFiles(d.filePaths);
+      });
   };
 
   const handleDragEnter = e => {
@@ -68,23 +106,22 @@ const FileHandler = props => {
     setIsActive('inactive');
   };
   const handleDrop = e => {
-    let files = Object.values(e.dataTransfer.files).map(f => f.path);
+    // Register every dropped file (the browser build keys companions —
+    // .bnd/.mtr/.rdd — by name here so the engine can find them); loadFiles
+    // then loads the .sql/.eso primaries and ignores the rest.
+    const files = Object.values(e.dataTransfer.files).map(f =>
+      window.api.getPathForFile(f as File)
+    );
+    setIsActive('inactive');
 
-    // handle error alert for non-sql files
-    let errflag = false;
-    files.forEach(f => {
-      if (f.split('.')[1] != 'sql') {
-        errflag = true;
-      }
-    });
-
-    if (!errflag) {
-      handleFileChange(files);
-      setIsActive('inactive');
-    } else {
-      alert('file loading error: only valid SQLite files allowed');
-      setIsActive('inactive');
+    const known = files.filter(f => /\.(sql|eso|bnd|mtr|rdd)$/i.test(f));
+    if (known.length === 0) {
+      props.actions.setNotification(
+        'File loading error: drop .sql or .eso files (optionally with sibling .bnd/.mtr/.rdd).'
+      );
+      return;
     }
+    loadFiles(files);
   };
   return (
     <div className={classes.root}>

@@ -4,7 +4,7 @@ import { TextField, useMediaQuery, ListSubheader } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 import { VariableSizeList } from 'react-window';
-import Typography from '@material-ui/core/typography';
+import Typography from '@material-ui/core/Typography';
 
 const LISTBOX_PADDING = 8;
 

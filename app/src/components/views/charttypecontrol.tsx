@@ -4,7 +4,7 @@ import { connect } from 'src/store';
 
 import HeatmapControl from './chartcontrol/heatmapcontrol';
 import HistogramControl from './chartcontrol/histogramcontrol';
-import MultilineControl from './chartcontrol/Multilinecontrol';
+import MultilineControl from './chartcontrol/multilinecontrol';
 import ScatterControl from './chartcontrol/scattercontrol';
 import StatisticsControl from './chartcontrol/statisticscontrol';
 

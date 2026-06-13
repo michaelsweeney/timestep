@@ -1,12 +1,12 @@
 // import '../wdyr';
 import React, { useState, useEffect } from 'react';
 
-import { hot } from 'react-hot-loader/root';
 import { connect } from 'src/store';
 import { makeStyles } from '@material-ui/core/styles';
 import Version from './version';
 import Header from './header';
 import MappedViews from './views/mappedviews';
+import NotificationSnackbar from './notificationsnackbar';
 import '../css/app.global.css';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -61,6 +61,7 @@ const App = props => {
           <Header />
           <MappedViews />
           <Version />
+          <NotificationSnackbar />
         </div>
       </StylesProvider>
     </ThemeProvider>
@@ -72,4 +73,4 @@ const mapStateToProps = state => {
     // files: state.session.files
   };
 };
-export default hot(connect(mapStateToProps)(App));
+export default connect(mapStateToProps)(App);

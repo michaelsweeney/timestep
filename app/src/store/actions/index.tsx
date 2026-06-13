@@ -62,6 +62,19 @@ export function changeUnits(units) {
   };
 }
 
+export function setNotification(message) {
+  return {
+    type: 'SET_NOTIFICATION',
+    payload: message
+  };
+}
+
+export function clearNotification() {
+  return {
+    type: 'CLEAR_NOTIFICATION'
+  };
+}
+
 // view level actions - all need to have viewID for future multiple view support
 
 export function changeChartType(chartType, viewID) {

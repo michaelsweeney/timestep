@@ -165,27 +165,23 @@ export default class MenuBuilder {
         {
           label: 'Learn More',
           click() {
-            shell.openExternal('https://electronjs.org');
+            shell.openExternal('https://github.com/michaelsweeney/timestep');
           }
         },
         {
-          label: 'Documentation',
+          label: 'Report an Issue',
           click() {
             shell.openExternal(
-              'https://github.com/electron/electron/tree/master/docs#readme'
+              'https://github.com/michaelsweeney/timestep/issues'
             );
           }
         },
         {
-          label: 'Community Discussions',
+          label: 'Latest Release',
           click() {
-            shell.openExternal('https://www.electronjs.org/community');
-          }
-        },
-        {
-          label: 'Search Issues',
-          click() {
-            shell.openExternal('https://github.com/electron/electron/issues');
+            shell.openExternal(
+              'https://github.com/michaelsweeney/timestep/releases/latest'
+            );
           }
         }
       ]
@@ -273,27 +269,23 @@ export default class MenuBuilder {
           {
             label: 'Learn More',
             click() {
-              shell.openExternal('https://electronjs.org');
+              shell.openExternal('https://github.com/michaelsweeney/timestep');
             }
           },
           {
-            label: 'Documentation',
+            label: 'Report an Issue',
             click() {
               shell.openExternal(
-                'https://github.com/electron/electron/tree/master/docs#readme'
+                'https://github.com/michaelsweeney/timestep/issues'
               );
             }
           },
           {
-            label: 'Community Discussions',
+            label: 'Latest Release',
             click() {
-              shell.openExternal('https://www.electronjs.org/community');
-            }
-          },
-          {
-            label: 'Search Issues',
-            click() {
-              shell.openExternal('https://github.com/electron/electron/issues');
+              shell.openExternal(
+                'https://github.com/michaelsweeney/timestep/releases/latest'
+              );
             }
           }
         ]

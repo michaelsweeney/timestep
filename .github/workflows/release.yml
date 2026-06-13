@@ -1,0 +1,59 @@
+name: Release
+
+# Tag-triggered release. Push a tag like `v2.0.0` to build installers on all
+# three platforms and publish them to a GitHub Release for michaelsweeney/timestep
+# (electron-builder `build.publish` in package.json).
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    strategy:
+      fail-fast: false
+      matrix:
+        # windows-2022 (not windows-latest): the latter rolled to Server 2025 /
+        # Visual Studio 18, which node-gyp 11.x doesn't yet recognize, breaking
+        # the sqlite3 native rebuild. windows-2022 ships VS2022 that node-gyp
+        # supports. Revisit once node-gyp gains VS18 support.
+        os: [ubuntu-latest, macos-latest, windows-2022]
+    runs-on: ${{ matrix.os }}
+
+    env:
+      # Pin the MSVC toolset for node-gyp's sqlite3 rebuild on Windows so it
+      # targets the runner's VS2022 directly (ignored on macOS/Linux).
+      npm_config_msvs_version: '2022'
+      GYP_MSVS_VERSION: '2022'
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: yarn
+
+      - name: Install rpm (Linux rpm target)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y rpm
+
+      - name: Install root dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install @timestep/core dependencies
+        run: yarn --cwd packages/core install --frozen-lockfile
+
+      - name: Build and publish installers
+        env:
+          # electron-builder reads GH_TOKEN to create/upload the GitHub Release.
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # No Apple Developer cert in CI — ship an unsigned dmg rather than
+          # failing on signing-identity discovery.
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: yarn package-ci
