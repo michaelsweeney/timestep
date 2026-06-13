@@ -33,7 +33,7 @@ export async function getSeries(engine: Engine, filetag: string) {
   try {
     result = (await engine.allRows(sqlfile, query_year)) as any[];
   } catch {
-    console.log('no year');
+    // Older ESO/SQLite outputs have no Time.Year column; fall back.
     result = (await engine.allRows(sqlfile, query_noyear)) as any[];
   }
 

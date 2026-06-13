@@ -20,7 +20,7 @@ const useStyles = makeStyles(
 );
 
 const handleLink = () => {
-  let link = 'https://timestep.herokuapp.com';
+  let link = 'https://github.com/michaelsweeney/timestep';
   window.api.shell.openExternal(link);
 };
 

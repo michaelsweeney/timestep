@@ -57,7 +57,6 @@ const CopySave = props => {
       timeparsestr,
       valkey
     } = pullState(store);
-    console.log(array);
     let formatted;
     if (arraytype == 'single') {
       formatted = reformatSingleObject(array[0]);

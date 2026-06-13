@@ -28,13 +28,8 @@ const useStyles = makeStyles(
 const Logo = () => {
   const classes = useStyles();
 
-  const handleLink = () => {
-    // let link = 'https://timestep.herokuapp.com';
-    // shell.openExternal(link);
-  };
-
   return (
-    <div onClick={handleLink} className={classes.root}>
+    <div className={classes.root}>
       <div className={classes.text}>
         <span className={classes.left}>timest</span>
         <span className={classes.right}>ep</span>
