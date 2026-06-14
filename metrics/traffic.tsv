@@ -1,0 +1,43 @@
+date	kind	key	count	uniques
+2026-05-31	clones_daily	2026-05-31	0	0
+2026-05-31	views_daily	2026-05-31	0	0
+2026-06-01	clones_daily	2026-06-01	0	0
+2026-06-01	views_daily	2026-06-01	0	0
+2026-06-02	clones_daily	2026-06-02	0	0
+2026-06-02	views_daily	2026-06-02	0	0
+2026-06-03	clones_daily	2026-06-03	1	1
+2026-06-03	views_daily	2026-06-03	0	0
+2026-06-04	clones_daily	2026-06-04	1	1
+2026-06-04	views_daily	2026-06-04	0	0
+2026-06-05	clones_daily	2026-06-05	1	1
+2026-06-05	views_daily	2026-06-05	0	0
+2026-06-06	clones_daily	2026-06-06	0	0
+2026-06-06	views_daily	2026-06-06	0	0
+2026-06-07	clones_daily	2026-06-07	0	0
+2026-06-07	views_daily	2026-06-07	0	0
+2026-06-08	clones_daily	2026-06-08	1	1
+2026-06-08	views_daily	2026-06-08	0	0
+2026-06-09	clones_daily	2026-06-09	1	1
+2026-06-09	views_daily	2026-06-09	0	0
+2026-06-10	clones_daily	2026-06-10	0	0
+2026-06-10	views_daily	2026-06-10	0	0
+2026-06-11	clones_daily	2026-06-11	112	31
+2026-06-11	views_daily	2026-06-11	0	0
+2026-06-12	clones_daily	2026-06-12	276	50
+2026-06-12	views_daily	2026-06-12	0	0
+2026-06-13	clones_daily	2026-06-13	235	22
+2026-06-13	views_daily	2026-06-13	0	0
+2026-06-14	download_cum	v2.0.0-rc.5/timestep-2.0.0-rc.5-arm64-mac.zip	0	
+2026-06-14	download_cum	v2.0.0-rc.5/timestep-2.0.0-rc.5-arm64.dmg	0	
+2026-06-14	download_cum	v2.0.0-rc.5/timestep-2.0.0-rc.5.AppImage	0	
+2026-06-14	download_cum	v2.0.0-rc.5/timestep-2.0.0-rc.5.msi	0	
+2026-06-14	download_cum	v2.0.0-rc.5/timestep-2.0.0-rc.5.x86_64.rpm	0	
+2026-06-14	download_cum	v2.0.0-rc.5/timestep-Setup-2.0.0-rc.5.exe	0	
+2026-06-14	download_cum	v2.0.0-rc.5/timestep_2.0.0-rc.5_amd64.deb	0	
+2026-06-14	download_cum	v2.0.0/timestep-2.0.0-arm64-mac.zip	0	
+2026-06-14	download_cum	v2.0.0/timestep-2.0.0-arm64.dmg	0	
+2026-06-14	download_cum	v2.0.0/timestep-2.0.0.AppImage	0	
+2026-06-14	download_cum	v2.0.0/timestep-2.0.0.msi	0	
+2026-06-14	download_cum	v2.0.0/timestep-2.0.0.x86_64.rpm	0	
+2026-06-14	download_cum	v2.0.0/timestep-Setup-2.0.0.exe	1	
+2026-06-14	download_cum	v2.0.0/timestep_2.0.0_amd64.deb	0	
