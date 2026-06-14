@@ -2,14 +2,17 @@ import React from 'react';
 import Logo from './logo';
 import FileMenu from './filemenu';
 import ViewSelector from './viewselector';
+import SettingsMenu from './settingsmenu';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(
-  {
+  theme => ({
     root: {
       padding: 10,
-      display: 'block',
-      borderBottom: '1px solid rgba(0,0,0,0.3)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      borderBottom: `1px solid ${theme.palette.divider}`,
       boxShadow: '0px 6px 7px -4px rgba(0,0,0,0.2)',
       width: '100%',
       height: 75,
@@ -17,38 +20,28 @@ const useStyles = makeStyles(
       whiteSpace: 'nowrap',
       minWidth: 700
     },
-    headerLeft: {
-      paddingTop: 10,
-      display: 'inline-block',
-      width: 'calc(100% - 150px)'
+    left: {
+      display: 'flex',
+      alignItems: 'center'
     },
-
-    headerRight: {
-      display: 'inline-block',
-      width: '150px'
+    right: {
+      display: 'flex',
+      alignItems: 'center'
+    },
+    settings: {
+      marginRight: 4
     },
     logo: {
-      display: 'inline-block',
-      verticalAlign: 'top',
-      position: 'relative',
-      bottom: 10,
-      right: 10
+      display: 'inline-block'
     },
     files: {
-      marginRight: 0,
       marginLeft: 10,
-      width: 115,
-      paddingBottom: 5,
-      display: 'inline-block',
-      verticalAlign: 'top'
+      width: 115
     },
     views: {
-      // marginLeft: 10,
-      marginRight: 10,
-      display: 'inline-block',
-      verticalAlign: 'top'
+      marginRight: 10
     }
-  },
+  }),
   {
     name: 'header'
   }
@@ -59,18 +52,20 @@ const Header = () => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.headerLeft}>
-        <div className={classes.files}>
-          <FileMenu />
+      <div className={classes.left}>
+        <div className={classes.settings}>
+          <SettingsMenu />
         </div>
-
+        <div className={classes.logo}>
+          <Logo />
+        </div>
+      </div>
+      <div className={classes.right}>
         <div className={classes.views}>
           <ViewSelector />
         </div>
-      </div>
-      <div className={classes.headerRight}>
-        <div className={classes.logo}>
-          <Logo />
+        <div className={classes.files}>
+          <FileMenu />
         </div>
       </div>
     </div>

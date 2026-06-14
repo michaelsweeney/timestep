@@ -2,16 +2,27 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(
-  {
-    root: {
-      height: '100%',
-      boxSizing: 'border-box',
-      '& path': {
-        shapeRendering: 'geometricPrecision'
-      },
-      '& .series-line, .marker-circle': {
-        pointerEvents: 'none'
-      },
+  theme => {
+    const dark = theme.palette.type === 'dark';
+    // Axis lines/text follow the theme. D3 axes set stroke via a presentation
+    // attribute (lower specificity than CSS), and series-colored text/marks use
+    // inline `.style('fill')` (higher specificity), so this recolors the axes
+    // and the panel without touching the data encodings.
+    const axis = dark ? '#cfcfcf' : 'rgba(0,0,0,0.75)';
+    return {
+      root: {
+        height: '100%',
+        boxSizing: 'border-box',
+        backgroundColor: dark ? '#2b2a2a' : '#ffffff',
+        color: axis,
+        '& .axis-text': { fill: axis },
+        '& .domain, & .tick line': { stroke: axis },
+        '& path': {
+          shapeRendering: 'geometricPrecision'
+        },
+        '& .series-line, .marker-circle': {
+          pointerEvents: 'none'
+        },
       '& .tooltip': {
         cursor: 'default',
         pointerEvents: 'none',
@@ -26,7 +37,8 @@ const useStyles = makeStyles(
           textAlign: 'center'
         }
       }
-    }
+      }
+    };
   },
   { name: `d3-container` }
 );

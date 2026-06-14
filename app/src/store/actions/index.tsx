@@ -1,5 +1,14 @@
 // session level actions
 
+// ui
+export function toggleTheme() {
+  return { type: 'TOGGLE_THEME' };
+}
+
+export function setTheme(theme) {
+  return { type: 'SET_THEME', payload: theme };
+}
+
 export function setLoadingFromFile(bool) {
   return {
     type: 'SET_LOADING_FROM_FILE',

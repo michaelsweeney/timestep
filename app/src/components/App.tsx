@@ -17,11 +17,13 @@ import {
   createGenerateClassName
 } from '@material-ui/core/styles';
 
-const theme = createMuiTheme({
-  palette: {
-    secondary: { main: grey[800] }
-  }
-});
+const makeTheme = (type: 'light' | 'dark') =>
+  createMuiTheme({
+    palette: {
+      type,
+      secondary: { main: grey[800] }
+    }
+  });
 
 const generateClassName = createGenerateClassName({
   productionPrefix: 'c',
@@ -44,6 +46,7 @@ const useStyles = makeStyles(
 
 const App = props => {
   const classes = useStyles();
+  const theme = React.useMemo(() => makeTheme(props.theme), [props.theme]);
 
   /* default ui setup for testing only*/
   // useEffect(() => {
@@ -70,7 +73,7 @@ const App = props => {
 
 const mapStateToProps = state => {
   return {
-    // files: state.session.files
+    theme: state.ui.theme
   };
 };
 export default connect(mapStateToProps)(App);
