@@ -22,7 +22,8 @@ export interface DataQualityWarning {
     | 'empty'
     | 'no-bnd-flows-cfm'
     | 'fluid-name-guessed'
-    | 'units-si-only';
+    | 'units-si-only'
+    | 'non-contiguous-time';
   severity: DataQualitySeverity;
   /** One-line, user-facing summary. */
   message: string;
@@ -120,6 +121,40 @@ export async function getDataQuality(
           `SI — no IP conversion is defined for ${names.length === 1 ? 'its' : 'their'} unit.`,
         detail: sample(names)
       });
+    }
+
+    // Temporal contiguity. Design-day or multi-environment runs aren't a single
+    // continuous timeline, so the time-series charts (heatmap, line) render with
+    // gaps or overlapping days. The Time table — with EnvironmentPeriodIndex and
+    // DayType — is written by both native .sql and the ESO converter
+    // (esotosqlite.ts), so this check is identical on both load paths. Older
+    // outputs may lack the table or those columns; degrade silently.
+    try {
+      const timeRows = (await engine.allRows(
+        sqlfile,
+        'SELECT DISTINCT EnvironmentPeriodIndex, DayType FROM Time'
+      )) as any[];
+      const envCount = new Set(timeRows.map(r => r.EnvironmentPeriodIndex)).size;
+      const designDays = dedupe(
+        timeRows
+          .map(r => r.DayType)
+          .filter(dt => dt === 'SummerDesignDay' || dt === 'WinterDesignDay')
+      );
+      if (envCount > 1 || designDays.length > 0) {
+        const bits: string[] = [];
+        if (designDays.length) bits.push(`design days (${designDays.join(', ')})`);
+        if (envCount > 1) bits.push(`${envCount} separate run periods`);
+        warnings.push({
+          code: 'non-contiguous-time',
+          severity: 'warning',
+          message:
+            'This file has design-day or non-contiguous time data — time-series ' +
+            'charts (heatmap, line) may show gaps or overlapping days.',
+          detail: bits.join('; ') || undefined
+        });
+      }
+    } catch {
+      // No Time table / missing columns on older outputs — skip the check.
     }
 
     out.push({ filename: sqlfile, warnings });

@@ -10,9 +10,21 @@ const BND = [
   ' Node,2,CHILLED WATER NODE,Water,2'
 ].join('\n');
 
-function engineWith(rows: any[], opts: { bnd: boolean }): Engine {
+// Default Time response: a single contiguous environment with an ordinary day
+// type — no temporal warning. Tests that exercise the non-contiguous-time check
+// pass their own `time` rows.
+const CONTIGUOUS_TIME = [{ EnvironmentPeriodIndex: 1, DayType: 'Monday' }];
+
+function engineWith(
+  rows: any[],
+  opts: { bnd: boolean },
+  time: any[] = CONTIGUOUS_TIME
+): Engine {
   return {
-    allRows: async () => rows.map(r => ({ ...r })),
+    allRows: async (_file?: any, query?: string) =>
+      query && /FROM\s+Time/i.test(query)
+        ? time.map(r => ({ ...r }))
+        : rows.map(r => ({ ...r })),
     readText: async () => BND,
     fileExists: async () => opts.bnd
   };
@@ -88,6 +100,69 @@ describe('getDataQuality', () => {
     ];
     const [q] = await getDataQuality(engineWith(rows, { bnd: false }), ['/x/a.sql']);
     expect(q.warnings).toHaveLength(0);
+  });
+
+  it('flags non-contiguous time when multiple environment periods exist', async () => {
+    const rows = [
+      { KeyValue: 'Env', Name: 'Site Outdoor Air Drybulb Temperature', Units: 'C' }
+    ];
+    const time = [
+      { EnvironmentPeriodIndex: 1, DayType: 'SummerDesignDay' },
+      { EnvironmentPeriodIndex: 2, DayType: 'WinterDesignDay' }
+    ];
+    const [q] = await getDataQuality(
+      engineWith(rows, { bnd: false }, time),
+      ['/x/a.sql']
+    );
+    expect(codes(q.warnings)).toContain('non-contiguous-time');
+    const w = q.warnings.find(x => x.code === 'non-contiguous-time')!;
+    expect(w.severity).toBe('warning');
+    expect(w.message).toMatch(/design-day|non-contiguous/i);
+  });
+
+  it('flags a single design-day environment', async () => {
+    const rows = [
+      { KeyValue: 'Env', Name: 'Site Outdoor Air Drybulb Temperature', Units: 'C' }
+    ];
+    const time = [{ EnvironmentPeriodIndex: 1, DayType: 'SummerDesignDay' }];
+    const [q] = await getDataQuality(
+      engineWith(rows, { bnd: false }, time),
+      ['/x/a.sql']
+    );
+    expect(codes(q.warnings)).toContain('non-contiguous-time');
+  });
+
+  it('does not flag a single contiguous run period', async () => {
+    const rows = [
+      { KeyValue: 'Env', Name: 'Site Outdoor Air Drybulb Temperature', Units: 'C' }
+    ];
+    const time = [
+      { EnvironmentPeriodIndex: 1, DayType: 'Monday' },
+      { EnvironmentPeriodIndex: 1, DayType: 'Tuesday' }
+    ];
+    const [q] = await getDataQuality(
+      engineWith(rows, { bnd: false }, time),
+      ['/x/a.sql']
+    );
+    expect(codes(q.warnings)).not.toContain('non-contiguous-time');
+  });
+
+  it('stays silent when the Time table cannot be queried (older files)', async () => {
+    const rows = [
+      { KeyValue: 'Env', Name: 'Site Outdoor Air Drybulb Temperature', Units: 'C' }
+    ];
+    const engine: Engine = {
+      allRows: async (_file?: any, query?: string) => {
+        if (query && /FROM\s+Time/i.test(query)) {
+          throw new Error('no such table: Time');
+        }
+        return rows.map(r => ({ ...r }));
+      },
+      readText: async () => BND,
+      fileExists: async () => false
+    };
+    const [q] = await getDataQuality(engine, ['/x/a.sql']);
+    expect(codes(q.warnings)).not.toContain('non-contiguous-time');
   });
 
   it('reports per-file for multiple files', async () => {
