@@ -45,7 +45,8 @@ the scheduled wrapper — keep it a local commit, push on your own cadence).
 ## Pages page-views
 
 `traffic.tsv` covers downloads + repo traffic. Visits to the **published docs
-site** (the GitHub Pages landing page) are measured separately by a privacy-light
-beacon in `docs/index.html` — planned: Cloudflare Web Analytics (no cookies, no
-consent banner), replacing the legacy Google Analytics / Tag Manager tags still
-in the page. Pending the beacon token.
+site** (the GitHub Pages landing page) are measured separately by the Cloudflare
+Web Analytics beacon in `docs/index.html` (cookieless, no consent banner). It
+replaced the legacy Google Analytics / Tag Manager tags. View it in the
+Cloudflare dashboard → Web Analytics, filtered to `/timestep/` paths (the beacon
+is registered on the shared `michaelsweeney.github.io` hostname).
