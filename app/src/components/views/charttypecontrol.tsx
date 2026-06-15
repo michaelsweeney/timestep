@@ -97,6 +97,7 @@ const ChartTypeControl = props => {
       <PaneHeader
         viewID={viewID}
         paneIndex={paneIndex}
+        multiPane={multiPane}
         onOptions={() => setForcedTab('tab-options')}
         onExport={() => setForcedTab('tab-export')}
       />

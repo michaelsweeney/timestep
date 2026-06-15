@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { connect } from 'src/store';
 import { getPlotDims } from './plotdims';
 
@@ -24,6 +24,13 @@ const MultilineControl = props => {
 
   const { viewID } = props;
 
+  // Cross-pane linking: a linked pane both broadcasts the time its cursor is
+  // over and honors hovers from other linked panes (the canvas draws the
+  // crosshair from these). hoverSource lets the canvas ignore the echo of its
+  // own hover.
+  const viewLinked = props.view.linked !== false;
+  const { hoverTime, hoverSource } = props.linked;
+
   const { files, units, isLoadingFromFile } = props.session;
   const { paneDims, forcedTab, onForcedTabHandled } = props;
 
@@ -36,7 +43,11 @@ const MultilineControl = props => {
   } = props.view;
 
   const optionArray = Object.keys(seriesOptions);
-  const seriesData = Object.values(loadedObj);
+  // Stable reference unless the loaded data actually changes. Without this a
+  // fresh array every render retriggers the chart's build effect — and a hover
+  // dispatch (linked crosshair) would rebuild the chart mid-hover, wiping the
+  // cursor the source pane just drew.
+  const seriesData = useMemo(() => Object.values(loadedObj), [loadedObj]);
 
   const [colorScheme, setColorScheme] = useState('schemeTableau10');
   const [seriesConfig, setSeriesConfig] = useState([]);
@@ -187,6 +198,15 @@ const MultilineControl = props => {
           seriesConfig={seriesConfig}
           units={units}
           seriesArray={seriesData}
+          viewID={viewID}
+          hoverTime={viewLinked ? hoverTime : null}
+          hoverSource={viewLinked ? hoverSource : null}
+          onHoverMove={
+            viewLinked ? t => props.actions.setHoverTime(t, viewID) : undefined
+          }
+          onHoverEnd={
+            viewLinked ? () => props.actions.clearHoverTime() : undefined
+          }
         />
       </ChartWrapper>
       <ControlsWrapper
@@ -232,6 +252,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     session: { ...state.session },
     view: { ...state.views[ownProps.viewID] },
+    linked: { ...state.linked },
     actions: { ...state.actions }
   };
 };

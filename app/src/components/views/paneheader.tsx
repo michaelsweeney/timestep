@@ -2,6 +2,8 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TuneIcon from '@material-ui/icons/Tune';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import LinkIcon from '@material-ui/icons/Link';
+import LinkOffIcon from '@material-ui/icons/LinkOff';
 import { connect } from 'src/store';
 
 // Per-pane header — the single place a pane's chart is configured:
@@ -88,6 +90,11 @@ const useStyles = makeStyles(
         color: 'var(--ink)',
         borderColor: 'var(--hairline-2)'
       }
+    },
+    // link toggle when active — accent so a linked pane reads at a glance
+    linkOn: {
+      color: 'var(--accent)',
+      '&:hover': { color: 'var(--accent)', borderColor: 'var(--accent)' }
     }
   },
   { name: 'pane-header' }
@@ -100,6 +107,8 @@ const PaneHeader = props => {
     viewID,
     chartType,
     timestepType,
+    linked,
+    multiPane,
     onOptions,
     onExport
   } = props;
@@ -132,6 +141,12 @@ const PaneHeader = props => {
     props.actions.changeTimestepType(e.target.value, viewID);
   };
 
+  // default (undefined, e.g. a session saved before linking existed) reads as
+  // linked — same interpretation the chart uses, so icon and behavior agree.
+  const isLinked = linked !== false;
+  const toggleLinked = () =>
+    props.actions.changeViewLinked(!isLinked, viewID);
+
   return (
     <div className={classes.head} onClick={e => e.stopPropagation()}>
       <span className={classes.label}>Pane {paneIndex + 1}</span>
@@ -162,6 +177,23 @@ const PaneHeader = props => {
         ))}
       </select>
       <div className={classes.tools}>
+        {multiPane && (
+          <button
+            className={classes.iconbtn + (isLinked ? ' ' + classes.linkOn : '')}
+            title={
+              isLinked
+                ? 'Linked — hover & zoom sync with other panes'
+                : 'Unlinked — independent hover & zoom'
+            }
+            onClick={stop(toggleLinked)}
+          >
+            {isLinked ? (
+              <LinkIcon style={{ fontSize: 16 }} />
+            ) : (
+              <LinkOffIcon style={{ fontSize: 16 }} />
+            )}
+          </button>
+        )}
         <button
           className={classes.iconbtn}
           title="Options"
@@ -185,7 +217,8 @@ const mapStateToProps = (state, ownProps) => {
   const view = state.views[ownProps.viewID];
   return {
     chartType: view.chartType,
-    timestepType: view.timestepType
+    timestepType: view.timestepType,
+    linked: view.linked
   };
 };
 

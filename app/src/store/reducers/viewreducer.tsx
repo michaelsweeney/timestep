@@ -9,7 +9,10 @@ const initialState = {
     selectedSeriesLabel: null,
     isLoading: false,
     loadingQueue: {},
-    loadedObj: {}
+    loadedObj: {},
+    // opted into cross-pane hover/zoom linking by default — comparison is the
+    // point of having more than one pane; a pane can opt out from its header.
+    linked: true
   }
 };
 
@@ -28,7 +31,8 @@ export default function viewReducer(state = initialState, action) {
             seriesOptions: seed.seriesOptions || [],
             selectedSeries: seed.selectedSeries,
             selectedSeriesLabel: seed.selectedSeriesLabel,
-            loadedObj: { ...(seed.loadedObj || {}) }
+            loadedObj: { ...(seed.loadedObj || {}) },
+            linked: seed.linked !== false
           }
         : {
             timestepType: 'Hourly',
@@ -36,7 +40,8 @@ export default function viewReducer(state = initialState, action) {
             seriesOptions: [],
             selectedSeries: [],
             selectedSeriesLabel: null,
-            loadedObj: {}
+            loadedObj: {},
+            linked: true
           };
       return {
         ...state,
@@ -66,6 +71,14 @@ export default function viewReducer(state = initialState, action) {
       return initialState;
     }
 
+    case 'CHANGE_VIEW_LINKED':
+      return {
+        ...state,
+        [action.viewID]: {
+          ...state[action.viewID],
+          linked: action.payload
+        }
+      };
     case 'CHANGE_VIEW_TYPE':
       return {
         ...state,

@@ -82,7 +82,25 @@ export function clearNotification() {
   };
 }
 
+// linked / cross-pane comparison actions. hoverTime carries its source viewID
+// so the emitting pane can tell its own hover apart from an echo.
+export function setHoverTime(time, source) {
+  return { type: 'SET_HOVER_TIME', payload: time, source };
+}
+
+export function clearHoverTime() {
+  return { type: 'CLEAR_HOVER_TIME' };
+}
+
+export function setLinkedWindow(domain) {
+  return { type: 'SET_LINKED_WINDOW', payload: domain };
+}
+
 // view level actions - all need to have viewID for future multiple view support
+
+export function changeViewLinked(linked, viewID) {
+  return { type: 'CHANGE_VIEW_LINKED', payload: linked, viewID };
+}
 
 export function changeChartType(chartType, viewID) {
   return {

@@ -45,7 +45,8 @@ const SplitButton = props => {
           selectedSeries: activeView.selectedSeries,
           selectedSeriesLabel: activeView.selectedSeriesLabel,
           loadedObj: activeView.loadedObj,
-          seriesOptions: activeView.seriesOptions
+          seriesOptions: activeView.seriesOptions,
+          linked: activeView.linked
         }
       : undefined;
     props.actions.addView(nextViewID, seed);
