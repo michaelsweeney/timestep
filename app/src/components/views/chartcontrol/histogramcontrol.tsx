@@ -18,7 +18,7 @@ const HistogramControl = props => {
 
   const { viewID } = props;
   const { files, units, isLoadingFromFile } = props.session;
-  const { paneDims } = props;
+  const { paneDims, forcedTab, onForcedTabHandled } = props;
   const {
     seriesOptions,
     isLoading,
@@ -64,6 +64,15 @@ const HistogramControl = props => {
       setActiveTab(tag);
     }
   };
+
+  // Pane-header Options/Export buttons request a tab; open it + reveal controls.
+  useEffect(() => {
+    if (!forcedTab) return;
+    setActiveTab(forcedTab);
+    setControlsVisible(true);
+    setControlsHeight(controlsVisibleHeight);
+    onForcedTabHandled && onForcedTabHandled();
+  }, [forcedTab]);
 
   const getMaxMin = series => {
     const valkey = units == 'ip' ? 'value_ip' : 'value_si';

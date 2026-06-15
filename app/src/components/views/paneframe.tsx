@@ -7,7 +7,7 @@ import ChartTypeControl from './charttypecontrol';
 // rAF-coalesced and only pushes new dims when the box actually changes, so a
 // splitter drag redraws each chart at most once per frame.
 const PaneFrame = props => {
-  const { viewID, multiPane } = props;
+  const { viewID, multiPane, paneIndex } = props;
   const ref = useRef(null);
   const [dims, setDims] = useState({ width: 0, height: 0 });
 
@@ -38,7 +38,12 @@ const PaneFrame = props => {
       ref={ref}
       style={{ flex: 1, minWidth: 0, minHeight: 0, height: '100%' }}
     >
-      <ChartTypeControl viewID={viewID} paneDims={dims} multiPane={multiPane} />
+      <ChartTypeControl
+        viewID={viewID}
+        paneDims={dims}
+        multiPane={multiPane}
+        paneIndex={paneIndex}
+      />
     </div>
   );
 };

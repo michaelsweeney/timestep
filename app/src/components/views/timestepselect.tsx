@@ -1,32 +1,23 @@
 import React from 'react';
-import { Select, InputLabel, MenuItem } from '@material-ui/core';
+import { Select, MenuItem } from '@material-ui/core';
 
 import { makeStyles } from '@material-ui/core/styles';
 
 import { connect } from 'src/store';
 
+// Interval picker. The "Interval" heading is supplied by the sidebar section,
+// so this renders just a full-width flat Select.
 const useStyles = makeStyles(
   {
     root: {
-      display: 'inline-block',
-      marginBottom: 10,
       width: '100%',
-      overflow: 'hidden',
-      whitespace: 'nowrap'
-    },
-    inputlabel: {
-      textAlign: 'center',
-      marginBottom: 10
+      overflow: 'hidden'
     },
     select: {
-      display: 'inline-block',
+      display: 'block',
+      width: '100%',
       textAlign: 'left'
     },
-    selectwrapper: {
-      display: 'block',
-      textAlign: 'center'
-    },
-
     icon: {}
   },
   {
@@ -44,41 +35,36 @@ const TimeStepSelect = props => {
   };
   return (
     <div className={classes.root}>
-      <InputLabel className={classes.inputlabel} id="label">
-        Interval
-      </InputLabel>
-      <div className={classes.selectwrapper}>
-        <Select
-          inputProps={{
-            classes: {
-              icon: classes.icon
-            }
-          }}
-          className={classes.select}
-          onChange={handleChange}
-          id="select"
-          value={type}
-        >
-          <MenuItem disableRipple={true} value="HVAC Timestep">
-            HVAC Timestep
-          </MenuItem>
-          <MenuItem disableRipple={true} value="Zone Timestep">
-            Zone Timestep
-          </MenuItem>
-          <MenuItem disableRipple={true} value="Hourly">
-            Hourly
-          </MenuItem>
-          <MenuItem disableRipple={true} value="Daily">
-            Daily
-          </MenuItem>
-          <MenuItem disableRipple={true} value="Monthly">
-            Monthly
-          </MenuItem>
-          <MenuItem disableRipple={true} value="Run Period">
-            Run Period
-          </MenuItem>
-        </Select>
-      </div>
+      <Select
+        inputProps={{
+          classes: {
+            icon: classes.icon
+          }
+        }}
+        className={classes.select}
+        onChange={handleChange}
+        id="select"
+        value={type}
+      >
+        <MenuItem disableRipple={true} value="HVAC Timestep">
+          HVAC Timestep
+        </MenuItem>
+        <MenuItem disableRipple={true} value="Zone Timestep">
+          Zone Timestep
+        </MenuItem>
+        <MenuItem disableRipple={true} value="Hourly">
+          Hourly
+        </MenuItem>
+        <MenuItem disableRipple={true} value="Daily">
+          Daily
+        </MenuItem>
+        <MenuItem disableRipple={true} value="Monthly">
+          Monthly
+        </MenuItem>
+        <MenuItem disableRipple={true} value="Run Period">
+          Run Period
+        </MenuItem>
+      </Select>
     </div>
   );
 };

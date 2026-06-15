@@ -29,7 +29,7 @@ const StatisticsControl = props => {
   const seriesData = Object.values(loadedObj);
 
   const { files, units, isLoadingFromFile } = props.session;
-  const { paneDims } = props;
+  const { paneDims, forcedTab, onForcedTabHandled } = props;
 
   const controlsVisibleHeight = 200;
   const controlsHiddenHeight = 100;
@@ -59,6 +59,15 @@ const StatisticsControl = props => {
       setActiveTab(tag);
     }
   };
+
+  // Pane-header Options/Export buttons request a tab; open it + reveal controls.
+  useEffect(() => {
+    if (!forcedTab) return;
+    setActiveTab(forcedTab);
+    setControlsVisible(true);
+    setControlsHeight(controlsVisibleHeight);
+    onForcedTabHandled && onForcedTabHandled();
+  }, [forcedTab]);
 
   const seriesLoad = (newkeys, existingkeys, labels, viewID) => {
     let keysToAdd = [];

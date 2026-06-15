@@ -26,7 +26,7 @@ const MultilineControl = props => {
   const { viewID } = props;
 
   const { files, units, isLoadingFromFile } = props.session;
-  const { paneDims } = props;
+  const { paneDims, forcedTab, onForcedTabHandled } = props;
 
   const {
     seriesOptions,
@@ -71,6 +71,15 @@ const MultilineControl = props => {
       setActiveTab(tag);
     }
   };
+
+  // Pane-header Options/Export buttons request a tab; open it + reveal controls.
+  useEffect(() => {
+    if (!forcedTab) return;
+    setActiveTab(forcedTab);
+    setControlsVisible(true);
+    setControlsHeight(getControlsVisibleHeight());
+    onForcedTabHandled && onForcedTabHandled();
+  }, [forcedTab]);
 
   const plotDims = getPlotDims(paneDims, controlsHeight);
 

@@ -22,7 +22,7 @@ const HeatmapControl = props => {
 
   const { viewID } = props;
   const { files, units, isLoadingFromFile } = props.session;
-  const { paneDims } = props;
+  const { paneDims, forcedTab, onForcedTabHandled } = props;
   const {
     seriesOptions,
     isLoading,
@@ -98,6 +98,15 @@ const HeatmapControl = props => {
     const selectedKey = seriesOptions[v];
     seriesLoad(selectedKey, v, viewID);
   };
+
+  // Pane-header Options/Export buttons request a tab; open it + reveal controls.
+  useEffect(() => {
+    if (!forcedTab) return;
+    setActiveTab(forcedTab);
+    setControlsVisible(true);
+    setControlsHeight(controlsVisibleHeight);
+    onForcedTabHandled && onForcedTabHandled();
+  }, [forcedTab]);
 
   useEffect(() => {
     if (isLoadingFromFile) {

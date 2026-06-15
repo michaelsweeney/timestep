@@ -3,18 +3,15 @@ import { Radio, InputLabel } from '@material-ui/core';
 import {connect} from 'src/store';
 import { makeStyles } from '@material-ui/core/styles';
 
+// SI/IP toggle. The "Units" heading is supplied by the sidebar section.
 const useStyles = makeStyles(
   {
     root: {
-      display: 'inline-block',
-      marginBottom: 10,
-      paddingLeft: 10,
-      overflow: 'hidden',
-      whitespace: 'nowrap'
+      display: 'flex',
+      alignItems: 'center',
+      overflow: 'hidden'
     },
     radio: { padding: 7 },
-    titleinput: { display: 'block', textAlign: 'center' },
-
     radioinput: { display: 'inline-block !important' }
   },
   {
@@ -34,7 +31,6 @@ const UnitRadio = props => {
 
   return (
     <div className={classes.root}>
-      <InputLabel className={classes.titleinput}>Units</InputLabel>
       <InputLabel className={classes.radioinput}>SI</InputLabel>
       <Radio
         className={classes.radio}

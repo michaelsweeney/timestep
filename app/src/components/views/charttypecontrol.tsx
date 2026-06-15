@@ -10,37 +10,32 @@ import StatisticsControl from './chartcontrol/statisticscontrol';
 
 import { makeStyles } from '@material-ui/core/styles';
 import { LandingPage } from './landingpage';
-import ViewSidebar from './viewsidebar';
+import PaneHeader from './paneheader';
 import { getAllSeries, getSeriesLookupObj } from 'src/sql';
+
 const useStyles = makeStyles(
   theme => ({
+    // A pane = [ paneHeader + chart ]. The shared sidebar lives at the workspace
+    // level (MappedViews). The focus ring marks the active pane, only when more
+    // than one pane is shown.
     root: {
       width: '100%',
       height: '100%',
       boxSizing: 'border-box',
       overflow: 'hidden',
-      whitespace: 'nowrap',
-      '&::-webkit-scrollbar': {
-        display: 'none'
-      }
+      display: 'flex',
+      flexDirection: 'column',
+      background: theme.palette.background.default,
+      '&::-webkit-scrollbar': { display: 'none' }
     },
-    // Focus ring marks which pane is "active" — only when more than one pane is
-    // shown, so a lone pane isn't boxed for no reason.
     focused: {
       boxShadow: `inset 0 0 0 2px ${theme.palette.primary.main}`
     },
-    sidebar: {
-      display: 'inline-block',
-      height: '100%',
-      width: '150px'
-    },
-    view: {
-      verticalAlign: 'top',
-      width: 'calc(100% - 150px)',
-      height: '100%',
-      display: 'inline-block',
-      overflow: 'hidden',
-      whitespace: 'nowrap'
+    chartArea: {
+      flex: 1,
+      minHeight: 0,
+      position: 'relative',
+      overflow: 'hidden'
     }
   }),
   { name: 'view-container' }
@@ -48,7 +43,7 @@ const useStyles = makeStyles(
 
 const ChartTypeControl = props => {
   const classes = useStyles();
-  const { viewID, paneDims, multiPane } = props;
+  const { viewID, paneDims, multiPane, paneIndex } = props;
 
   const { files, units, activeViewID } = props;
   const { timestepType, chartType } = props.view;
@@ -57,6 +52,10 @@ const ChartTypeControl = props => {
   const rootClass =
     classes.root + (viewActive && multiPane ? ' ' + classes.focused : '');
   const focusPane = () => props.actions.setActiveView(viewID);
+
+  // Per-pane Options/Export popovers (from the pane header) toggle these tabs in
+  // the chart's existing ControlsWrapper without dismantling the load wiring.
+  const [forcedTab, setForcedTab] = useState<string | null>(null);
 
   useEffect(() => {
     getAllSeries(files).then(ar => {
@@ -72,7 +71,9 @@ const ChartTypeControl = props => {
 
   const propobj = {
     viewID: viewID,
-    paneDims: paneDims
+    paneDims: paneDims,
+    forcedTab: forcedTab,
+    onForcedTabHandled: () => setForcedTab(null)
   };
 
   const chartobj = {
@@ -86,19 +87,22 @@ const ChartTypeControl = props => {
   if (files.length == 0) {
     return (
       <div className={rootClass} onClick={focusPane}>
-        {files.length == 0 ? <LandingPage /> : chartobj[chartType]}
-      </div>
-    );
-  } else {
-    return (
-      <div className={rootClass} onClick={focusPane}>
-        <div className={classes.sidebar}>
-          <ViewSidebar viewID={viewID} />
-        </div>
-        <div className={classes.view}> {chartobj[chartType]}</div>
+        <LandingPage />
       </div>
     );
   }
+
+  return (
+    <div className={rootClass} onClick={focusPane}>
+      <PaneHeader
+        paneIndex={paneIndex}
+        chartType={chartType}
+        onOptions={() => setForcedTab('tab-options')}
+        onExport={() => setForcedTab('tab-export')}
+      />
+      <div className={classes.chartArea}>{chartobj[chartType]}</div>
+    </div>
+  );
 };
 
 const mapStateToProps = (state, ownProps) => {

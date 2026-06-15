@@ -1,24 +1,46 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  IconButton,
   Menu,
   MenuItem,
   Switch,
   Divider,
   ListItemText
 } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
+import SettingsIcon from '@material-ui/icons/Settings';
 import { connect } from 'src/store';
 import AboutDialog from './aboutdialog';
 
 const REPO = 'https://github.com/michaelsweeney/timestep';
 const openUrl = (url: string) => window.api.shell.openExternal(url);
 
+// Circular gear button in the topbar (replaces the burger icon) that opens the
+// settings popover: dark-mode toggle, links, About.
 const useStyles = makeStyles(
-  {
-    root: { display: 'inline-block' }
-  },
+  theme => ({
+    root: { display: 'inline-flex', flex: 'none' },
+    gear: {
+      appearance: 'none',
+      cursor: 'pointer',
+      width: 36,
+      height: 36,
+      borderRadius: '50%',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      border: `1px solid ${theme.palette.divider}`,
+      background:
+        theme.palette.type === 'dark'
+          ? 'rgba(255,255,255,0.04)'
+          : 'rgba(0,0,0,0.02)',
+      color: theme.palette.text.secondary,
+      transition: 'color .15s, border-color .15s',
+      '&:hover': {
+        color: theme.palette.text.primary,
+        borderColor: theme.palette.primary.main
+      }
+    }
+  }),
   { name: 'settings-menu' }
 );
 
@@ -39,14 +61,15 @@ const SettingsMenu = props => {
 
   return (
     <div className={classes.root}>
-      <IconButton
+      <button
+        className={classes.gear}
         aria-label="settings"
         aria-controls="settings-menu"
         aria-haspopup="true"
         onClick={e => setAnchorEl(e.currentTarget)}
       >
-        <MenuIcon />
-      </IconButton>
+        <SettingsIcon fontSize="small" />
+      </button>
       <Menu
         id="settings-menu"
         anchorEl={anchorEl}
