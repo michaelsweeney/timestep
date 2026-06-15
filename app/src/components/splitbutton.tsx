@@ -2,9 +2,11 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'src/store';
 
-// "+ Split chart" accent button in the topbar. Adds a new pane (view) and
-// focuses it — the same add+focus path the old tab `+` used (next id =
-// max(existing)+1), now with no 4-view cap.
+// "+ Split chart" accent button in the topbar. Splits the focused pane: adds a
+// new pane seeded with a copy of the active pane's chart type, interval, series
+// selection and already-loaded data, then focuses it. So you get a working copy
+// to re-aim (swap a series for a side-by-side comparison) rather than a blank
+// pane. (next id = max(existing)+1, no view cap.)
 const useStyles = makeStyles(
   {
     btn: {
@@ -32,11 +34,21 @@ const useStyles = makeStyles(
 
 const SplitButton = props => {
   const classes = useStyles();
-  const { viewIDs } = props;
+  const { viewIDs, activeView } = props;
 
   const handleSplit = () => {
     const nextViewID = Math.max(...viewIDs) + 1;
-    props.actions.addView(nextViewID);
+    const seed = activeView
+      ? {
+          chartType: activeView.chartType,
+          timestepType: activeView.timestepType,
+          selectedSeries: activeView.selectedSeries,
+          selectedSeriesLabel: activeView.selectedSeriesLabel,
+          loadedObj: activeView.loadedObj,
+          seriesOptions: activeView.seriesOptions
+        }
+      : undefined;
+    props.actions.addView(nextViewID, seed);
     props.actions.setActiveView(nextViewID);
   };
 
@@ -47,6 +59,9 @@ const SplitButton = props => {
   );
 };
 
-const mapStateToProps = state => ({ viewIDs: state.session.viewArray });
+const mapStateToProps = state => ({
+  viewIDs: state.session.viewArray,
+  activeView: state.views[state.session.activeViewID]
+});
 
 export default connect(mapStateToProps)(SplitButton);

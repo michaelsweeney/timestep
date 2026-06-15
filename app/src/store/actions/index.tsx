@@ -29,10 +29,15 @@ export function resetViews() {
   };
 }
 
-export function addView(id) {
+// `seed` (optional) clones a source pane's config + loaded data into the new
+// pane — used by "+ Split chart" so the new pane starts as a copy of the
+// focused one rather than blank. Omitted callers (fresh load, session restore)
+// get the default blank pane.
+export function addView(id, seed) {
   return {
     type: 'ADD_VIEW',
-    payload: id
+    payload: id,
+    seed
   };
 }
 

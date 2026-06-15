@@ -16,19 +16,36 @@ const initialState = {
 export default function viewReducer(state = initialState, action) {
   switch (action.type) {
     case 'ADD_VIEW': {
+      // A seed clones a source pane (same chart type, interval, selection and
+      // already-loaded data) so "+ Split chart" yields a working copy. loadedObj
+      // is shallow-copied so per-pane add/remove can't mutate the source. No
+      // seed → the default blank pane (fresh load / session restore).
+      const seed = action.seed;
+      const config = seed
+        ? {
+            timestepType: seed.timestepType,
+            chartType: seed.chartType,
+            seriesOptions: seed.seriesOptions || [],
+            selectedSeries: seed.selectedSeries,
+            selectedSeriesLabel: seed.selectedSeriesLabel,
+            loadedObj: { ...(seed.loadedObj || {}) }
+          }
+        : {
+            timestepType: 'Hourly',
+            chartType: 'Heatmap',
+            seriesOptions: [],
+            selectedSeries: [],
+            selectedSeriesLabel: null,
+            loadedObj: {}
+          };
       return {
         ...state,
         [action.payload]: {
           viewID: action.payload,
           label: `View ${action.payload}`,
-          timestepType: 'Hourly',
-          chartType: 'Heatmap',
-          seriesOptions: [],
-          selectedSeries: [],
-          selectedSeriesLabel: null,
           loadingQueue: {},
-          loadedObj: {},
-          isLoading: false
+          isLoading: false,
+          ...config
         }
       };
     }
