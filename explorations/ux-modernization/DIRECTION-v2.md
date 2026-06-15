@@ -6,6 +6,31 @@
 > architecture (shared left sidebar + variable browser + inspector) the branch
 > deliberately abandoned. Those docs are kept as history; **this is the live steer.**
 
+## Status (2026-06-15, implemented)
+
+- **Track A — DONE** (`ce5022e`): 7 orphans + dead `containerDims` state removed;
+  `--ok`/`--warn` tokens added; chrome (landing/noselection/version/filelist) +
+  the raw Material option controls tokenized via a shared `controlstyles` hook.
+- **Track B — DONE** (`d60044a`, `a72e943`): chart colors tokenized in the *live*
+  renderers (the audit cited the SVG files, but the controls render the **canvas**
+  variants — so the dead SVG `multiline`/`heatmap`/`scatter` twins were deleted, a
+  newly-found orphan class); crosshair → accent; `alert()`-in-mousemove + `.size`
+  bug fixed; a stray `xw;` ReferenceError removed; series picker now **grouped by
+  zone/equipment** (`seriesgroup.ts`); chart-type switch **preserves the series**
+  across the compatible Heatmap↔Histogram pair. (B#3 titles / B#5 empty-state /
+  B#7 tooltip-units were found **already correct** on inspection — the critique
+  over-claimed; left as-is.)
+- **Track C #2 (duplicate-pane) — DONE** (`3c1c4fb`): "+ Split chart" now clones
+  the focused pane (type/interval/series/data) instead of opening blank.
+- **Track C remaining — NOT STARTED**: the keystone **#1 linked time-domain +
+  crosshair** (+ its D3 scaffold prerequisite), **#3 global interval**, **#4
+  variable browser**, **#5 tiling grid**, **#6 inspector**. These are the bigger
+  architectural lifts; the keystone in particular needs the scaffold split
+  (separate the static chart from the dynamic hover overlay) before a shared
+  `hoverTime`/`window` slice can drive a crosshair without redrawing each chart on
+  every mousemove. `themetokens.ts` `token()` (added in B) is the canvas-side
+  color bridge that work will reuse.
+
 ## The one-sentence finding
 
 The consolidation got the pane **container** right — per-pane ResizeObserver sizing,
