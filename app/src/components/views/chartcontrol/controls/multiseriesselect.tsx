@@ -88,11 +88,44 @@ ListboxComponent.propTypes = {
   children: PropTypes.node
 };
 
+// Visual-only flattening (virtualization untouched), mirroring seriesselect.
 const useStyles = makeStyles({
   root: {
     marginTop: 10,
     marginBottom: 10,
-    width: '100%'
+    width: '100%',
+    '& .MuiOutlinedInput-root': { borderRadius: 4 },
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'var(--hairline-2)' },
+    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'var(--accent)' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'var(--accent)',
+      borderWidth: 1
+    },
+    '& .MuiAutocomplete-input': {
+      fontFamily: 'var(--mono)',
+      fontSize: 12,
+      color: 'var(--ink)'
+    },
+    '& .MuiChip-root': {
+      fontFamily: 'var(--mono)',
+      fontSize: 11,
+      background: 'var(--panel)',
+      color: 'var(--ink)',
+      border: '1px solid var(--hairline-2)'
+    },
+    '& .MuiInputLabel-root': { fontFamily: 'var(--sans)', color: 'var(--ink-faint)' }
+  },
+  paper: {
+    background: 'var(--panel-2)',
+    border: '1px solid var(--hairline-2)',
+    borderRadius: 6,
+    color: 'var(--ink)'
+  },
+  option: { fontFamily: 'var(--mono)', fontSize: 12 },
+  groupLabel: {
+    fontFamily: 'var(--sans)',
+    color: 'var(--ink-faint)',
+    background: 'var(--panel)'
   },
   listbox: {
     boxSizing: 'border-box',

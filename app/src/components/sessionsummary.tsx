@@ -6,19 +6,20 @@ import { connect } from 'src/store';
 // mockup's monospace caption. Dataset = the focused pane's first file basename;
 // interval = the focused pane's timestepType; units are global.
 const useStyles = makeStyles(
-  theme => ({
+  {
+    // EnergyPlus data/identifiers → mono per the bnd-viz split
     root: {
       flex: 'none',
-      fontFamily: '"SF Mono", Menlo, Consolas, "Liberation Mono", monospace',
+      fontFamily: 'var(--mono)',
       fontSize: 11,
       lineHeight: 1,
-      color: theme.palette.text.secondary,
+      color: 'var(--ink-dim)',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       maxWidth: 360,
       whiteSpace: 'nowrap'
     }
-  }),
+  },
   { name: 'session-summary' }
 );
 

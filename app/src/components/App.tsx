@@ -1,5 +1,5 @@
 // import '../wdyr';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { connect } from 'src/store';
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,29 +8,38 @@ import Header from './header';
 import MappedViews from './views/mappedviews';
 import NotificationSnackbar from './notificationsnackbar';
 import '../css/app.global.css';
+import { tokensFor, SANS, ThemeName } from '../css/tokens';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import { grey } from '@material-ui/core/colors';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {
   StylesProvider,
   createGenerateClassName
 } from '@material-ui/core/styles';
 
-const makeTheme = (type: 'light' | 'dark') =>
-  createMuiTheme({
+// Theme now lives in the CSS token sets (app.global.css :root / [data-theme]).
+// Toggling ui.theme swaps the data-theme attribute on <html>, which re-points
+// every var(--...) — that drives the chrome and the d3 charts. We KEEP MUI's
+// ThemeProvider alive so the retained MUI primitives (Autocomplete, Slider,
+// Dialog/Menu/Switch) theme too, building its palette from the SAME tokens so
+// both stay in lock-step.
+const makeTheme = (type: ThemeName) => {
+  const t = tokensFor(type);
+  return createMuiTheme({
     palette: {
       type,
-      secondary: { main: grey[800] },
-      // Dark mode: a slightly warmer near-black app surface with paper (menus,
-      // dialogs) lifted above it for separation. Light mode keeps MUI defaults.
-      ...(type === 'dark'
-        ? {
-            background: { default: '#1e1e20', paper: '#2a2a2e' }
-          }
-        : {})
+      primary: { main: t.accent },
+      secondary: { main: t.accent },
+      background: { default: t.bg, paper: t.panel2 },
+      text: { primary: t.ink, secondary: t.inkDim, disabled: t.inkFaint },
+      divider: t.hairline
+    },
+    typography: { fontFamily: SANS },
+    overrides: {
+      MuiPaper: { root: { backgroundImage: 'none' } }
     }
   });
+};
 
 const generateClassName = createGenerateClassName({
   productionPrefix: 'c',
@@ -42,14 +51,16 @@ const useStyles = makeStyles(
     root: {
       display: 'flex',
       flexDirection: 'column',
-      fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+      fontFamily: SANS,
       overflowY: 'hidden',
       overflowX: 'hidden',
-      width: 'calc(100vw)',
-      height: 'calc(100vh)'
+      width: '100vw',
+      height: '100vh',
+      background: 'var(--bg)',
+      color: 'var(--ink)'
     },
     // The pane area fills the space below the fixed-height header, so each
-    // PaneFrame measures its true box (no more global "minus header" fudge).
+    // PaneFrame measures its true box.
     viewsWrap: {
       flex: 1,
       minHeight: 0
@@ -62,13 +73,10 @@ const App = props => {
   const classes = useStyles();
   const theme = React.useMemo(() => makeTheme(props.theme), [props.theme]);
 
-  /* default ui setup for testing only*/
-  // useEffect(() => {
-  // const files = ['/Users/michaelsweeney/Downloads/Sample SQL Files/sim1.sql'];
-  // props.actions.changeFiles(files);
-  // props.actions.changeChartType('Heatmap', 1);
-  // }, []);
-  /* end default ui setup for testing only */
+  // Drive the CSS token sets: data-theme on <html> repoints every var(--...).
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', props.theme);
+  }, [props.theme]);
 
   return (
     <ThemeProvider theme={theme}>

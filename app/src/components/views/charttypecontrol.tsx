@@ -14,7 +14,7 @@ import PaneHeader from './paneheader';
 import { getAllSeries, getSeriesLookupObj } from 'src/sql';
 
 const useStyles = makeStyles(
-  theme => ({
+  {
     // A pane = [ paneHeader + chart ]. The shared sidebar lives at the workspace
     // level (MappedViews). The focus ring marks the active pane, only when more
     // than one pane is shown.
@@ -25,11 +25,11 @@ const useStyles = makeStyles(
       overflow: 'hidden',
       display: 'flex',
       flexDirection: 'column',
-      background: theme.palette.background.default,
+      background: 'var(--bg)',
       '&::-webkit-scrollbar': { display: 'none' }
     },
     focused: {
-      boxShadow: `inset 0 0 0 2px ${theme.palette.primary.main}`
+      boxShadow: 'inset 0 0 0 2px var(--accent)'
     },
     chartArea: {
       flex: 1,
@@ -37,7 +37,7 @@ const useStyles = makeStyles(
       position: 'relative',
       overflow: 'hidden'
     }
-  }),
+  },
   { name: 'view-container' }
 );
 

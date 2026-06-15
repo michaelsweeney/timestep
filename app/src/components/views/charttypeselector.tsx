@@ -16,47 +16,43 @@ const TYPES: Array<[string, string]> = [
 ];
 
 const useStyles = makeStyles(
-  theme => {
-    const dark = theme.palette.type === 'dark';
-    const hover = dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
-    const onBg = dark ? 'rgba(140,158,255,0.14)' : 'rgba(63,81,181,0.10)';
-    return {
-      list: { display: 'flex', flexDirection: 'column', gap: 4 },
-      ctype: {
-        appearance: 'none',
-        textAlign: 'left',
-        background: 'transparent',
-        border: '1px solid transparent',
-        color: theme.palette.text.secondary,
-        borderRadius: 6,
-        padding: '7px 9px',
-        fontFamily: theme.typography.fontFamily,
-        fontWeight: 500,
-        fontSize: 13,
-        lineHeight: 1.2,
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        transition: 'background .12s, color .12s',
-        '&:hover': { background: hover, color: theme.palette.text.primary }
-      },
-      on: {
-        background: onBg,
-        color: theme.palette.primary.main,
-        borderColor:
-          theme.palette.type === 'dark'
-            ? 'rgba(140,158,255,0.3)'
-            : 'rgba(63,81,181,0.3)'
-      },
-      gl: {
-        width: 22,
-        textAlign: 'center',
-        opacity: 0.9,
-        fontSize: 13,
-        flex: 'none'
-      }
-    };
+  {
+    list: { display: 'flex', flexDirection: 'column', gap: 2 },
+    ctype: {
+      appearance: 'none',
+      textAlign: 'left',
+      background: 'transparent',
+      border: '1px solid transparent',
+      borderLeft: '2px solid transparent',
+      color: 'var(--ink-dim)',
+      borderRadius: 4,
+      padding: '7px 9px',
+      fontFamily: 'var(--sans)',
+      fontWeight: 500,
+      fontSize: 13,
+      lineHeight: 1.2,
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8,
+      transition: 'background .12s, color .12s',
+      '&:hover': { background: 'var(--panel-2)', color: 'var(--ink)' }
+    },
+    on: {
+      background: 'var(--panel-2)',
+      color: 'var(--accent)',
+      borderColor: 'var(--hairline-2)',
+      borderLeftColor: 'var(--accent)'
+    },
+    // glyphs are part of the UI chrome but read as data marks; keep them mono
+    gl: {
+      width: 22,
+      textAlign: 'center',
+      opacity: 0.9,
+      fontSize: 13,
+      flex: 'none',
+      fontFamily: 'var(--mono)'
+    }
   },
   { name: 'chart-type-selector' }
 );

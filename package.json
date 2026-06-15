@@ -265,6 +265,8 @@
     "yarn": "^1.21.1"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-sans": "^4",
+    "@fontsource/jetbrains-mono": "^4",
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@reduxjs/toolkit": "^1.4.0",
     "@timestep/core": "link:./packages/core",

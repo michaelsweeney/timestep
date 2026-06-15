@@ -17,7 +17,7 @@ const openUrl = (url: string) => window.api.shell.openExternal(url);
 // Circular gear button in the topbar (replaces the burger icon) that opens the
 // settings popover: dark-mode toggle, links, About.
 const useStyles = makeStyles(
-  theme => ({
+  {
     root: { display: 'inline-flex', flex: 'none' },
     gear: {
       appearance: 'none',
@@ -28,19 +28,22 @@ const useStyles = makeStyles(
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
-      border: `1px solid ${theme.palette.divider}`,
-      background:
-        theme.palette.type === 'dark'
-          ? 'rgba(255,255,255,0.04)'
-          : 'rgba(0,0,0,0.02)',
-      color: theme.palette.text.secondary,
+      border: '1px solid var(--hairline-2)',
+      background: 'var(--panel-2)',
+      color: 'var(--ink-dim)',
       transition: 'color .15s, border-color .15s',
       '&:hover': {
-        color: theme.palette.text.primary,
-        borderColor: theme.palette.primary.main
+        color: 'var(--ink)',
+        borderColor: 'var(--accent)'
       }
+    },
+    menuPaper: {
+      background: 'var(--panel-2)',
+      border: '1px solid var(--hairline-2)',
+      borderRadius: 6,
+      color: 'var(--ink)'
     }
-  }),
+  },
   { name: 'settings-menu' }
 );
 
@@ -76,6 +79,7 @@ const SettingsMenu = props => {
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
+        PaperProps={{ className: classes.menuPaper }}
       >
         <MenuItem onClick={() => actions.toggleTheme()}>
           <ListItemText primary="Dark mode" />

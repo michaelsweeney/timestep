@@ -11,7 +11,7 @@ import { connect } from 'src/store';
 // Flat "Files (N)" topbar chip (replaces the MUI contained "FILES" button) that
 // opens the same menu: load files, file list / data-quality, save/load session.
 const useStyles = makeStyles(
-  theme => ({
+  {
     root: { display: 'inline-flex', flex: 'none' },
     btn: {
       appearance: 'none',
@@ -19,26 +19,30 @@ const useStyles = makeStyles(
       display: 'inline-flex',
       alignItems: 'center',
       gap: 7,
-      borderRadius: 6,
-      border: `1px solid ${theme.palette.divider}`,
-      background:
-        theme.palette.type === 'dark'
-          ? 'rgba(255,255,255,0.04)'
-          : 'rgba(0,0,0,0.02)',
-      color: theme.palette.text.secondary,
-      fontFamily: theme.typography.fontFamily,
+      borderRadius: 4,
+      border: '1px solid var(--hairline-2)',
+      background: 'var(--panel-2)',
+      color: 'var(--ink-dim)',
+      fontFamily: 'var(--sans)',
       fontWeight: 500,
       fontSize: 13,
       lineHeight: 1,
-      padding: '7px 12px',
+      padding: '7px 11px',
       transition: 'color .15s, border-color .15s',
       '&:hover': {
-        color: theme.palette.text.primary,
-        borderColor: theme.palette.primary.main
+        color: 'var(--ink)',
+        borderColor: 'var(--accent)'
       }
     },
-    count: { color: theme.palette.text.disabled, fontWeight: 600 }
-  }),
+    // file count = a value → mono, per the bnd-viz data/chrome split
+    count: { color: 'var(--accent)', fontWeight: 600, fontFamily: 'var(--mono)' },
+    menuPaper: {
+      background: 'var(--panel-2)',
+      border: '1px solid var(--hairline-2)',
+      borderRadius: 6,
+      color: 'var(--ink)'
+    }
+  },
   { name: 'file-menu' }
 );
 
@@ -71,6 +75,7 @@ const FileMenu = props => {
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
+        PaperProps={{ className: classes.menuPaper }}
       >
         <MenuItem disableRipple={true} onClick={handleClose}>
           <FileHandler />

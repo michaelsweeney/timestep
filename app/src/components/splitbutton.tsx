@@ -6,7 +6,7 @@ import { connect } from 'src/store';
 // focuses it — the same add+focus path the old tab `+` used (next id =
 // max(existing)+1), now with no 4-view cap.
 const useStyles = makeStyles(
-  theme => ({
+  {
     btn: {
       appearance: 'none',
       cursor: 'pointer',
@@ -14,19 +14,19 @@ const useStyles = makeStyles(
       alignItems: 'center',
       gap: 7,
       flex: 'none',
-      borderRadius: 6,
-      border: `1px solid ${theme.palette.primary.main}`,
-      background: theme.palette.primary.main,
-      color: theme.palette.primary.contrastText,
-      fontFamily: theme.typography.fontFamily,
+      borderRadius: 4,
+      border: '1px solid var(--accent)',
+      background: 'transparent',
+      color: 'var(--accent)',
+      fontFamily: 'var(--sans)',
       fontWeight: 600,
       fontSize: 13,
-      padding: '7px 12px',
+      padding: '7px 11px',
       lineHeight: 1,
-      transition: 'filter .15s',
-      '&:hover': { filter: 'brightness(1.08)' }
+      transition: 'background .15s, color .15s',
+      '&:hover': { background: 'var(--accent)', color: 'var(--bg)' }
     }
-  }),
+  },
   { name: 'split-button' }
 );
 
