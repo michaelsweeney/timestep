@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useStyles } from 'react';
 import { connect } from 'src/store';
+import { getPlotDims } from './plotdims';
 
 import { getSeries } from 'src/sql';
 import { Scatter } from './charts/scatter';
@@ -19,7 +20,8 @@ const ScatterControl = props => {
   const plotContainer = useRef(null);
 
   const { viewID } = props;
-  const { containerDims, files, units, isLoadingFromFile } = props.session;
+  const { files, units, isLoadingFromFile } = props.session;
+  const { paneDims } = props;
   const {
     seriesOptions,
     isLoading,
@@ -72,10 +74,7 @@ const ScatterControl = props => {
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);
 
-  const plotDims = {
-    width: Math.max(containerDims.width, 200),
-    height: Math.max(containerDims.height - controlsHeight, 200)
-  };
+  const plotDims = getPlotDims(paneDims, controlsHeight);
 
   const domainPad = 0.05;
 

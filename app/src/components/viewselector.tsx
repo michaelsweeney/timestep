@@ -51,7 +51,6 @@ const useStyles = makeStyles(
 
 const ViewSelector = props => {
   const classes = useStyles();
-  const maxViews = 4;
 
   const { viewIDs, activeViewID } = props;
 
@@ -74,19 +73,15 @@ const ViewSelector = props => {
   };
 
   const AddButtonMarkup = () => {
-    if (viewIDs.length < maxViews) {
-      return (
-        <Button
-          className={classes.tabinactive}
-          disableRipple={true}
-          onClick={handleAddView}
-        >
-          +
-        </Button>
-      );
-    } else {
-      return <span></span>;
-    }
+    return (
+      <Button
+        className={classes.tabinactive}
+        disableRipple={true}
+        onClick={handleAddView}
+      >
+        +
+      </Button>
+    );
   };
 
   return (

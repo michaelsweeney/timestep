@@ -40,12 +40,19 @@ const generateClassName = createGenerateClassName({
 const useStyles = makeStyles(
   {
     root: {
-      display: 'block',
+      display: 'flex',
+      flexDirection: 'column',
       fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
       overflowY: 'hidden',
       overflowX: 'hidden',
       width: 'calc(100vw)',
       height: 'calc(100vh)'
+    },
+    // The pane area fills the space below the fixed-height header, so each
+    // PaneFrame measures its true box (no more global "minus header" fudge).
+    viewsWrap: {
+      flex: 1,
+      minHeight: 0
     }
   },
   { name: 'main-container' }
@@ -69,7 +76,9 @@ const App = props => {
         <CssBaseline />
         <div className={classes.root}>
           <Header />
-          <MappedViews />
+          <div className={classes.viewsWrap}>
+            <MappedViews />
+          </div>
           <Version />
           <NotificationSnackbar />
         </div>

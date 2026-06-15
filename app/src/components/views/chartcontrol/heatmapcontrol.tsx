@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'src/store';
+import { getPlotDims } from './plotdims';
 
 import { getSeries } from 'src/sql';
 
@@ -20,7 +21,8 @@ const HeatmapControl = props => {
   const plotContainer = useRef(null);
 
   const { viewID } = props;
-  const { containerDims, files, units, isLoadingFromFile } = props.session;
+  const { files, units, isLoadingFromFile } = props.session;
+  const { paneDims } = props;
   const {
     seriesOptions,
     isLoading,
@@ -48,10 +50,7 @@ const HeatmapControl = props => {
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);
 
-  const plotDims = {
-    width: Math.max(containerDims.width, 200),
-    height: Math.max(containerDims.height - controlsHeight, 200)
-  };
+  const plotDims = getPlotDims(paneDims, controlsHeight);
   const toggleHideControlsTabs = () => {
     if (controlsVisible) {
       setControlsVisible(false);

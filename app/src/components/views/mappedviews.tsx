@@ -1,62 +1,37 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 
 import { connect } from 'src/store';
-import ChartTypeControl from './charttypecontrol';
+import PaneFrame from './paneframe';
 
+// Lays the views out as side-by-side panes (a temporary equal flex row; the
+// resizable/collapsible splitter shell lands in a later phase). Each pane
+// self-measures via PaneFrame. With a single view this is one full-width pane —
+// the same as before. Sizing is now per-pane, so the old global containerDims
+// measurement/dispatch is gone.
 const MappedViews = props => {
   const { viewArray } = props;
-  const container = useRef(null);
+  const multiPane = viewArray.length > 1;
 
-  const minwidth = 300;
-  const minheight = 100;
-
-  const calculateContainerDims = node => {
-    return {
-      width: Math.max(node.getBoundingClientRect()['width'] - 175, minwidth),
-      height: Math.max(node.getBoundingClientRect()['height'] - 75, minheight)
-    };
-  };
-
-  // get initial dims after mount
-  useEffect(() => {
-    let dims = calculateContainerDims(container.current);
-    props.actions.setContainerDims(dims);
-  }, []);
-
-  // get dims on window resize
-  useEffect(() => {
-    function handleResize() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
-        let dims = calculateContainerDims(container.current);
-        props.actions.setContainerDims(dims);
-      }, 0);
-    }
-    let resizeTimer;
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  });
-
-  const mappedViews = Object.values(viewArray).map(id => {
-    return <ChartTypeControl key={id} viewID={id} />;
-  });
   return (
     <div
       style={{
         width: '100%',
-        height: '100%'
+        height: '100%',
+        minHeight: 0,
+        display: 'flex',
+        flexDirection: 'row'
       }}
-      ref={container}
     >
-      {mappedViews}
+      {viewArray.map(id => (
+        <PaneFrame key={id} viewID={id} multiPane={multiPane} />
+      ))}
     </div>
   );
 };
 
 const mapStateToProps = state => {
   return {
-    viewArray: state.session.viewArray,
-    containerDims: state.session.containerDims
+    viewArray: state.session.viewArray
   };
 };
 

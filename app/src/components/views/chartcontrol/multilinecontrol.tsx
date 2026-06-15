@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'src/store';
+import { getPlotDims } from './plotdims';
 
 import { getSeries, getSeriesKeys } from 'src/sql';
 
@@ -24,7 +25,8 @@ const MultilineControl = props => {
 
   const { viewID } = props;
 
-  const { containerDims, files, units, isLoadingFromFile } = props.session;
+  const { files, units, isLoadingFromFile } = props.session;
+  const { paneDims } = props;
 
   const {
     seriesOptions,
@@ -70,10 +72,7 @@ const MultilineControl = props => {
     }
   };
 
-  const plotDims = {
-    width: Math.max(containerDims.width, 200),
-    height: Math.max(containerDims.height - controlsHeight, 200)
-  };
+  const plotDims = getPlotDims(paneDims, controlsHeight);
 
   const seriesLoad = (newkeys, existingkeys, labels, viewID) => {
     let keysToAdd = [];
