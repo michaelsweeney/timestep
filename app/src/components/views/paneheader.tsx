@@ -5,6 +5,7 @@ import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import LinkIcon from '@material-ui/icons/Link';
 import LinkOffIcon from '@material-ui/icons/LinkOff';
 import { connect } from 'src/store';
+import { INTERVALS } from './intervals';
 
 // Per-pane header — the single place a pane's chart is configured:
 //   PANE N · [chart-type ▾] · [interval ▾]            [Options] [Export]
@@ -12,14 +13,6 @@ import { connect } from 'src/store';
 // pane's series/options/export live in its own bottom strip. Flat token-styled
 // native selects so they don't read as Material.
 const CHART_TYPES = ['Heatmap', 'Multiline', 'Scatter', 'Histogram', 'Statistics'];
-const INTERVALS = [
-  'HVAC Timestep',
-  'Zone Timestep',
-  'Hourly',
-  'Daily',
-  'Monthly',
-  'Run Period'
-];
 
 const useStyles = makeStyles(
   {

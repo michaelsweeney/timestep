@@ -69,6 +69,13 @@ export function changeUnits(units) {
   };
 }
 
+export function setGlobalInterval(interval) {
+  return {
+    type: 'SET_GLOBAL_INTERVAL',
+    payload: interval
+  };
+}
+
 export function setNotification(message) {
   return {
     type: 'SET_NOTIFICATION',

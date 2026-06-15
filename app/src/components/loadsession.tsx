@@ -38,13 +38,16 @@ const LoadSession = props => {
     const data = await window.api.fs.readText(f[0]);
     let loadobj = JSON.parse(data);
 
-    const { activeViewID, files, units } = loadobj.session;
+    const { activeViewID, files, intervalDefault, units } = loadobj.session;
     const { views } = loadobj;
 
     // reset views first
     props.actions.resetViews();
     props.actions.changeFiles(files);
     props.actions.changeUnits(units);
+    if (intervalDefault) {
+      props.actions.setGlobalInterval(intervalDefault);
+    }
 
     Object.values(views).forEach(view => {
       let {

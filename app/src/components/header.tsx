@@ -4,6 +4,7 @@ import SettingsMenu from './settingsmenu';
 import SplitButton from './splitbutton';
 import SessionSummary from './sessionsummary';
 import UnitToggle from './unittoggle';
+import IntervalSelect from './intervalselect';
 import { makeStyles } from '@material-ui/core/styles';
 
 // bnd-viz-style flat topbar driven by the CSS token set:
@@ -72,6 +73,7 @@ const Header = () => {
       <div className={classes.spacer} />
       <SessionSummary />
       <UnitToggle />
+      <IntervalSelect />
       <SettingsMenu />
     </div>
   );

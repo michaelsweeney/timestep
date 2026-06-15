@@ -5,6 +5,7 @@ import { version as appVersion } from '../../../package.json';
 
 const initialState = {
   units: 'si',
+  intervalDefault: 'Hourly',
   files: [],
   fileInfo: [],
   activeViewID: 1,
@@ -59,6 +60,11 @@ export default function sessionReducer(state = initialState, action) {
       return {
         ...state,
         units: action.payload
+      };
+    case 'SET_GLOBAL_INTERVAL':
+      return {
+        ...state,
+        intervalDefault: action.payload
       };
 
     case 'CHANGE_FILE_INFO':

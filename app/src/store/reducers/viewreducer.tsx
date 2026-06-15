@@ -95,6 +95,13 @@ export default function viewReducer(state = initialState, action) {
           timestepType: action.payload
         }
       };
+    case 'SET_GLOBAL_INTERVAL':
+      return Object.fromEntries(
+        Object.entries(state).map(([id, view]) => [
+          id,
+          { ...view, timestepType: action.payload }
+        ])
+      );
 
     case 'CHANGE_SELECTED_SERIES':
       return {

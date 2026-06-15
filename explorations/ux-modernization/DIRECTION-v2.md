@@ -42,8 +42,12 @@
   multiline-only keystone couldn't reach. Scatter and histogram still don't
   participate (scatter's x is an arbitrary series, not always time; histogram is
   value-binned).
-- **Track C remaining — NOT STARTED**: **#3 global interval**, **#4 variable
-  browser**, **#5 tiling grid**, **#6 inspector**.
+- **Track C #3 (global interval) — DONE**: topbar interval selector added next to
+  Units; `SET_GLOBAL_INTERVAL` stores the displayed default on `session` and
+  applies the interval to every pane, while the existing per-pane header select
+  remains an override until the next global set.
+- **Track C remaining — NOT STARTED**: **#4 variable browser**, **#5 tiling
+  grid**, **#6 inspector**.
 
 ## The one-sentence finding
 
