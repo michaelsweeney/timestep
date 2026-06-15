@@ -42,12 +42,33 @@
   multiline-only keystone couldn't reach. Scatter and histogram still don't
   participate (scatter's x is an arbitrary series, not always time; histogram is
   value-binned).
-- **Track C #3 (global interval) — DONE**: topbar interval selector added next to
-  Units; `SET_GLOBAL_INTERVAL` stores the displayed default on `session` and
-  applies the interval to every pane, while the existing per-pane header select
-  remains an override until the next global set.
+- **Track C #3 (global interval) — DONE** (`2787736`): topbar interval selector
+  added next to Units; `SET_GLOBAL_INTERVAL` stores the displayed default on
+  `session` and applies the interval to every pane, while the existing per-pane
+  header select remains an override until the next global set. Verified with
+  `yarn build-web` and a focused Playwright web smoke: load fixture, split to two
+  panes, set global Daily, then override one pane to Monthly with no renderer
+  page errors.
 - **Track C remaining — NOT STARTED**: **#4 variable browser**, **#5 tiling
   grid**, **#6 inspector**.
+
+## Next Work
+
+1. **Track C #6 — Inspector-on-demand** is the next best increment. It is now
+   cheaper because linked `hoverTime` exists: drive the panel from
+   `state.session.activeViewID`, reuse `statistics.tsx` summary math, read
+   selected series/units/source file from the focused view, and surface
+   `getDataQuality(files)` notes near the selected series. Recommended placement:
+   an on-demand right panel or PaneHeader popover, not a permanent sidebar.
+2. **Track C #4 — Persistent variable browser** should follow only after a
+   placement choice. Embed the existing virtualized Autocomplete and
+   `seriesgroup.ts` grouping; add units facet, recent variables, and inline DQ
+   badges. This revives the useful part of the old variable-browser idea without
+   undoing the per-pane restructure.
+3. **Track C #5 — Real tiling grid + saved arrangements** is still the largest
+   remaining lift. Replace the flat `mappedviews.tsx` flex row with nested
+   resizable panels / 2x2 presets, then persist named layouts through the
+   existing session save/load path.
 
 ## The one-sentence finding
 
@@ -175,7 +196,8 @@ is written **once**, not six times. Both #1 and the linked-crosshair gate on thi
 title-with-units, don't-wipe-series, empty-state — are prerequisites for multi-pane to
 feel coherent) → **D3 scaffold/token unification** (the enabling prerequisite) →
 **Track C #2** (duplicate-pane, the cheapest comparison primitive) → **C #1** (linked
-time-domain + crosshair, the keystone) → then C #3/#4/#5 as appetite allows.
+time-domain + crosshair, the keystone) → **C #3** (global interval) → then
+**C #6** (inspector-on-demand) → **C #4/#5** as appetite and placement decisions allow.
 
 The D3 cleanup is the highest-leverage *enabling* investment even though it shows nothing
 on its own — it's the gate for both the keystone and the visible color fixes.
