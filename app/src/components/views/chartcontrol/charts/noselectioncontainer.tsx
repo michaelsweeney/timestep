@@ -1,11 +1,11 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(
-  {
+  theme => ({
     inner: {
       textAlign: 'center',
       paddingTop: '20%',
-      color: 'rgba(0,0,0,0.8) !important',
+      color: theme.palette.text.secondary,
       boxSizing: 'border-box'
     },
     title: {
@@ -20,7 +20,7 @@ const useStyles = makeStyles(
       height: props => props.height,
       boxSizing: 'border-box'
     }
-  },
+  }),
   { name: `empty-container` }
 );
 

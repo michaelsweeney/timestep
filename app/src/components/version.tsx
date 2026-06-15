@@ -4,14 +4,14 @@ import { Typography } from '@material-ui/core';
 import { connect } from 'src/store';
 
 const useStyles = makeStyles(
-  {
+  theme => ({
     root: {
       textAlign: 'right',
       position: 'absolute',
       bottom: 10,
       // left: 5,
       right: 30,
-      color: 'rgba(0, 0, 0, 0.54)',
+      color: theme.palette.text.secondary,
       fontWeight: 400,
       // backgroundColor: 'white',
       height: 25,
@@ -21,7 +21,7 @@ const useStyles = makeStyles(
       // padding: 5
     },
     inner: {}
-  },
+  }),
   {
     name: 'version'
   }

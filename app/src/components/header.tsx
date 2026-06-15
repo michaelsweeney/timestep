@@ -3,6 +3,7 @@ import Logo from './logo';
 import FileMenu from './filemenu';
 import ViewSelector from './viewselector';
 import SettingsMenu from './settingsmenu';
+import { Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(
@@ -24,22 +25,21 @@ const useStyles = makeStyles(
       display: 'flex',
       alignItems: 'center'
     },
-    right: {
-      display: 'flex',
-      alignItems: 'center'
-    },
-    settings: {
-      marginRight: 4
-    },
-    logo: {
-      display: 'inline-block'
+    // App-level settings sit left of a divider; data controls (files, views)
+    // sit right of it — a meaningful grouping, not just decoration.
+    vdivider: {
+      height: 34,
+      alignSelf: 'center',
+      margin: '0 12px'
     },
     files: {
-      marginLeft: 10,
       width: 115
     },
     views: {
-      marginRight: 10
+      marginLeft: 16
+    },
+    logo: {
+      display: 'inline-block'
     }
   }),
   {
@@ -53,20 +53,17 @@ const Header = () => {
   return (
     <div className={classes.root}>
       <div className={classes.left}>
-        <div className={classes.settings}>
-          <SettingsMenu />
-        </div>
-        <div className={classes.logo}>
-          <Logo />
-        </div>
-      </div>
-      <div className={classes.right}>
-        <div className={classes.views}>
-          <ViewSelector />
-        </div>
+        <SettingsMenu />
+        <Divider orientation="vertical" className={classes.vdivider} />
         <div className={classes.files}>
           <FileMenu />
         </div>
+        <div className={classes.views}>
+          <ViewSelector />
+        </div>
+      </div>
+      <div className={classes.logo}>
+        <Logo />
       </div>
     </div>
   );

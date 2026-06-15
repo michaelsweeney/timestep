@@ -16,7 +16,7 @@ const useStyles = makeStyles(
         backgroundColor: dark ? '#2b2a2a' : '#ffffff',
         color: axis,
         '& .axis-text': { fill: axis },
-        '& .domain, & .tick line': { stroke: axis },
+        '& .domain, & .tick line, & .x-line': { stroke: axis },
         '& path': {
           shapeRendering: 'geometricPrecision'
         },

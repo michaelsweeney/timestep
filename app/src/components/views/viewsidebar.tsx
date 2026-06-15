@@ -7,10 +7,10 @@ import UnitRadio from './unitradio';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(
-  {
+  theme => ({
     root: {
       display: 'inline-block',
-      borderRight: '1px solid rgba(0,0,0,0.3)',
+      borderRight: `1px solid ${theme.palette.divider}`,
       boxShadow: '6px 0px 7px -4px rgba(0,0,0,0.2)',
       padding: 10,
       paddingTop: 30,
@@ -25,10 +25,10 @@ const useStyles = makeStyles(
       marginBottom: 20,
       paddingLeft: 10,
       paddingRight: 10,
-      borderBottom: '1px solid rgba(0,0,0,0.2)',
+      borderBottom: `1px solid ${theme.palette.divider}`,
       boxSizing: 'border-box'
     }
-  },
+  }),
   {
     name: 'view-sidebar'
   }

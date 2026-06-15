@@ -7,7 +7,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
 const useStyles = makeStyles(
-  {
+  theme => ({
     root: {
       paddingLeft: 55,
       transition: 'all 500ms',
@@ -16,7 +16,7 @@ const useStyles = makeStyles(
       marginTop: 10,
       paddingTop: 10,
       height: props => (props.height ? props.height : 100),
-      borderTop: '1px solid rgba(0,0,0,0.3)'
+      borderTop: `1px solid ${theme.palette.divider}`
     },
     tabs: { display: 'inline-block' },
     tab: {},
@@ -46,7 +46,7 @@ const useStyles = makeStyles(
       }
     },
     viewcontainer: { height: '100%' }
-  },
+  }),
   { name: 'controls-wrapper' }
 );
 

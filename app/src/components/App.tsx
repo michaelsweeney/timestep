@@ -21,7 +21,14 @@ const makeTheme = (type: 'light' | 'dark') =>
   createMuiTheme({
     palette: {
       type,
-      secondary: { main: grey[800] }
+      secondary: { main: grey[800] },
+      // Dark mode: a slightly warmer near-black app surface with paper (menus,
+      // dialogs) lifted above it for separation. Light mode keeps MUI defaults.
+      ...(type === 'dark'
+        ? {
+            background: { default: '#1e1e20', paper: '#2a2a2e' }
+          }
+        : {})
     }
   });
 
