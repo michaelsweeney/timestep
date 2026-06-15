@@ -3,7 +3,6 @@ import { connect } from 'src/store';
 import { getPlotDims } from './plotdims';
 
 import { getSeries } from 'src/sql';
-import { Scatter } from './charts/scatter';
 import { ScatterCanvas } from './charts/scattercanvas';
 
 import { ChartWrapper } from './chartwrapper';
@@ -228,22 +227,6 @@ const ScatterControl = props => {
         plotContainer={plotContainer}
         isLoading={isLoading ? true : false}
       >
-        {/* <Scatter
-          plotdims={plotDims}
-          files={files}
-          units={units}
-          colorfunc={colorfunc}
-          reversecolor={reverseColor}
-          xseries={xSeriesData}
-          xminrange={xMinRange}
-          xmaxrange={xMaxRange}
-          yseries={ySeriesData}
-          yminrange={yMinRange}
-          ymaxrange={yMaxRange}
-          zseries={zSeriesData}
-          zminrange={zMinRange}
-          zmaxrange={zMaxRange}
-        />         */}
         <ScatterCanvas
           plotdims={plotDims}
           files={files}

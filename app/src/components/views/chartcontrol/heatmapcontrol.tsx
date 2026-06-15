@@ -4,7 +4,6 @@ import { getPlotDims } from './plotdims';
 
 import { getSeries } from 'src/sql';
 
-import { Heatmap } from './charts/heatmap';
 import { HeatmapCanvas } from './charts/heatmapcanvas';
 
 import { ChartWrapper } from './chartwrapper';

@@ -4,7 +4,6 @@ import { getPlotDims } from './plotdims';
 
 import { getSeries, getSeriesKeys } from 'src/sql';
 
-import { Multiline } from './charts/Multiline';
 import { MultilineCanvas } from './charts/multilinecanvas';
 
 import { ChartWrapper } from './chartwrapper';

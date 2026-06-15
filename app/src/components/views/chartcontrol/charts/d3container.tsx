@@ -16,7 +16,10 @@ const useStyles = makeStyles(
       backgroundColor: 'var(--panel-2)',
       color: 'var(--ink)',
       '& .axis-text': { fill: 'var(--ink-dim)' },
-      '& .domain, & .tick line, & .x-line': { stroke: 'var(--hairline-2)' },
+      '& .domain, & .tick line': { stroke: 'var(--hairline-2)' },
+      // hover crosshair — accent so it reads clearly on either theme (this CSS
+      // rule governs; the renderer no longer hardcodes a stroke attribute)
+      '& .x-line': { stroke: 'var(--accent)' },
       '& .tick text': { fill: 'var(--ink-dim)' },
       '& path': { shapeRendering: 'geometricPrecision' },
       '& .series-line, .marker-circle': { pointerEvents: 'none' },

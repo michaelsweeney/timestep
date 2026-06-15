@@ -407,7 +407,6 @@ const MultilineCanvas = props => {
         .data([0])
         .join('line')
         .attr('class', 'x-line')
-        .attr('stroke', 'black')
         .attr('stroke-dasharray', '4, 4')
         .attr('y1', 0)
         .attr('y2', plotheight)
@@ -483,11 +482,13 @@ const MultilineCanvas = props => {
             .style('opacity', 1);
         });
 
-        // should check that all pointarray 'times' line up.
-        // if not, find first matching and then drive the rest of the series.
+        // The crosshair drives off the first series' time grid. If the hovered
+        // series don't share a grid the markers can drift; warn quietly rather
+        // than alert() in a mousemove handler (the old check also used .length
+        // on a Set, so it never fired).
         let timecheck = new Set(pointarray.map(d => d.time.getTime()));
-        if (timecheck.length > 1) {
-          alert('warning: times not aligned between arrays');
+        if (timecheck.size > 1) {
+          console.warn('timestep: hovered series are not time-aligned');
         }
 
         xline

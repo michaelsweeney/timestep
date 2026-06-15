@@ -77,7 +77,7 @@ const Histogram = props => {
       .join('rect')
       .attr('class', 'rect_plot')
       .attr('x', 1)
-      .style('fill', '#3f8cb5')
+      .style('fill', 'var(--accent)')
       .attr('transform', d => {
         return `translate(${xScale(d.x0)},${yScale(d.length)})`;
       })

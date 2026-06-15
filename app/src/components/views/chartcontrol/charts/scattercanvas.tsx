@@ -17,6 +17,7 @@ import { getSeriesKeys } from 'src/sql';
 import { D3Container } from './d3container';
 import { scatterdims } from './chartdimensions';
 import { NoSelectionContainer } from './noselectioncontainer';
+import { token } from './themetokens';
 
 const ScatterCanvas = props => {
   const container = useRef(null);
@@ -235,12 +236,15 @@ const ScatterCanvas = props => {
       const drawPoints = (context, dataArr) => {
         context.clearRect(0, 0, plotwidth, plotheight);
 
-        context.strokeStyle = 'rgba(0,0,0,0.85)';
+        // outline each point with the panel bg so dense clusters separate on
+        // either theme (was a hardcoded near-black that vanished on dark).
+        context.strokeStyle = token('--bg', '#0b0e13');
         context.lineWidth = 0.5;
 
         dataArr.forEach(d => {
           let { x, y, z, time } = d;
-          let color = z === '' ? '#3f8cb5' : colorFunc(colorScale(z));
+          let color =
+            z === '' ? token('--accent', '#5b9efc') : colorFunc(colorScale(z));
           let radius = 3;
           context.fillStyle = color;
           context.beginPath();
@@ -502,12 +506,12 @@ const ScatterCanvas = props => {
 
         tooltipmarker
           .attr('r', 5)
-          .attr('fill', () =>
-            closest.z === '' ? '#3f8cb5' : colorFunc(colorScale(closest.z))
+          .style('fill', () =>
+            closest.z === '' ? 'var(--accent)' : colorFunc(colorScale(closest.z))
           )
           .attr('cx', xScale(closest.x))
           .attr('cy', yScale(closest.y))
-          .style('stroke', 'rgba(0,0,0,1)')
+          .style('stroke', 'var(--ink)')
           .style('stroke-width', '1px')
           .style('opacity', 1);
 
