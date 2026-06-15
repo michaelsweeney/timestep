@@ -43,13 +43,6 @@ export function removeView(id) {
   };
 }
 
-export function setContainerDims(dims) {
-  return {
-    type: 'SET_CONTAINER_DIMS',
-    payload: dims
-  };
-}
-
 export function changeFileInfo(info) {
   return {
     type: 'CHANGE_FILE_INFO',

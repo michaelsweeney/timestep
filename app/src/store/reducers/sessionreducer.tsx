@@ -9,10 +9,6 @@ const initialState = {
   fileInfo: [],
   activeViewID: 1,
   viewArray: [1],
-  containerDims: {
-    width: 700,
-    height: 500
-  },
   sessionIncrement: 1,
   isLoadingFromFile: false,
   version: `v${appVersion}`,
@@ -54,11 +50,6 @@ export default function sessionReducer(state = initialState, action) {
         activeViewID: action.payload
       };
 
-    case 'SET_CONTAINER_DIMS':
-      return {
-        ...state,
-        containerDims: action.payload
-      };
     case 'CHANGE_FILES':
       return {
         ...state,

@@ -2,28 +2,31 @@ import React, { useState, useEffect, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(
-  theme => ({
+  {
     root: {
       textAlign: 'center',
       marginTop: 200,
       marginBottom: 40,
       padding: 20,
-      color: theme.palette.text.primary
+      color: 'var(--ink)'
     },
     title: {
       fontSize: 24,
-      marginBottom: 16
+      marginBottom: 16,
+      fontFamily: 'var(--sans)',
+      fontWeight: 600
     },
     maintext: {
       fontSize: 16,
-      marginBottom: 5
+      marginBottom: 5,
+      color: 'var(--ink-dim)'
     },
     note: {
       fontSize: 13,
       marginTop: 20,
-      color: theme.palette.text.secondary
+      color: 'var(--ink-faint)'
     }
-  }),
+  },
   {
     name: 'landing-page'
   }

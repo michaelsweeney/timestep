@@ -23,6 +23,8 @@
   --accent: #5b9efc; /* timestep cool blue (vs bnd-viz amber) */
   --accent-dim: #3a6bb0;
   --track: #1c2430;
+  --ok: #6cc08b; /* data-quality OK / pass */
+  --warn: #e0a45e; /* data-quality warning */
   --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   --sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
 }
@@ -39,6 +41,8 @@
   --accent: #2f6fd6;
   --accent-dim: #9cbdf0;
   --track: #d4dbe5;
+  --ok: #2e7d32;
+  --warn: #b26a00;
 }
 
 * {

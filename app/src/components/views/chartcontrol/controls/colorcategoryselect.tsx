@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Select, InputLabel, FormControl } from '@material-ui/core';
+import { useControlStyles } from './controlstyles';
 
 const colorcategories = {
   Category10: 'schemeCategory10',
@@ -15,6 +16,7 @@ const colorcategories = {
 };
 
 const ColorCategorySelect = props => {
+  const classes = useControlStyles();
   const handleChange = e => [
     props.colorCategoryCallback(colorcategories[e.target.value])
   ];
@@ -22,10 +24,12 @@ const ColorCategorySelect = props => {
   const id = Math.floor(Math.random() * 1e6);
   return (
     <FormControl>
-      <InputLabel>Color Category</InputLabel>
+      <InputLabel className={classes.label} shrink>
+        Color Category
+      </InputLabel>
       <Select
         native
-        style={{ width: 200 }}
+        className={classes.nativeSelect}
         onChange={handleChange}
         defaultValue="schemeTableau10"
         id={`grouped-select-${id}`}

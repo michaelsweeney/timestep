@@ -1,18 +1,6 @@
 import React from 'react';
 import { Select, FormControl } from '@material-ui/core';
-
-const colorcategories = {
-  Category10: 'schemeCategory10',
-  Accent: 'schemeAccent',
-  Dark2: 'schemeDark2',
-  Paired: 'schemePaired',
-  Pastel1: 'schemePastel1',
-  Pastel2: 'schemePastel2',
-  Set1: 'schemeSet1',
-  Set3: 'schemeSet3',
-  Set2: 'schemeSet2',
-  Tableau10: 'schemeTableau10'
-};
+import { useControlStyles } from './controlstyles';
 
 const colorscales = {
   Diverging: 'divider',
@@ -60,6 +48,7 @@ const colorscales = {
 };
 
 const ColorScaleSelect = props => {
+  const classes = useControlStyles();
   const handleChange = e => [
     props.colorScaleCallback(colorscales[e.target.value])
   ];
@@ -69,7 +58,7 @@ const ColorScaleSelect = props => {
     <FormControl>
       <Select
         native
-        style={{ width: 200 }}
+        className={classes.nativeSelect}
         onChange={handleChange}
         defaultValue="Viridis"
         id={`grouped-select-${id}`}

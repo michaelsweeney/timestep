@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import {connect} from 'src/store';
 import { getFileSummary, getDataQuality } from 'src/sql';
 import type { FileDataQuality } from 'src/sql';
@@ -26,26 +26,38 @@ function getModalStyle() {
 }
 
 const useStyles = makeStyles(
-  (theme: Theme) =>
-    createStyles({
-      root: {},
-      paper: {
-        position: 'absolute',
-        backgroundColor: theme.palette.background.paper,
-        boxShadow: theme.shadows[5],
-        padding: theme.spacing(2, 4, 3)
-      },
-      table: {},
-      title: { fontSize: 20, margin: '5px', textAlign: 'center' },
-      dqSection: { marginTop: 18 },
-      dqHeading: { fontSize: 16, fontWeight: 600, marginBottom: 6 },
-      dqFile: { fontSize: 13, fontWeight: 600, marginTop: 10 },
-      dqList: { margin: '2px 0 0 0', paddingLeft: 18 },
-      dqOk: { fontSize: 13, color: theme.palette.success?.main || '#2e7d32' },
-      dqWarn: { fontSize: 13, color: theme.palette.warning?.main || '#b26a00' },
-      dqInfo: { fontSize: 13, color: theme.palette.text.secondary },
-      dqDetail: { fontSize: 12, color: theme.palette.text.secondary, fontStyle: 'italic' }
-    }),
+  createStyles({
+    root: {},
+    paper: {
+      position: 'absolute',
+      maxWidth: '90vw',
+      maxHeight: '85vh',
+      overflow: 'auto',
+      backgroundColor: 'var(--panel)',
+      color: 'var(--ink)',
+      border: '1px solid var(--hairline)',
+      borderRadius: 8,
+      boxShadow: '0 12px 40px rgba(0, 0, 0, 0.5)',
+      padding: '16px 32px 24px',
+      fontFamily: 'var(--sans)'
+    },
+    table: {},
+    title: {
+      fontSize: 18,
+      margin: '5px',
+      textAlign: 'center',
+      fontWeight: 600,
+      letterSpacing: '0.02em'
+    },
+    dqSection: { marginTop: 18 },
+    dqHeading: { fontSize: 15, fontWeight: 600, marginBottom: 6 },
+    dqFile: { fontSize: 13, fontWeight: 600, marginTop: 10, fontFamily: 'var(--mono)' },
+    dqList: { margin: '2px 0 0 0', paddingLeft: 18 },
+    dqOk: { fontSize: 13, color: 'var(--ok)' },
+    dqWarn: { fontSize: 13, color: 'var(--warn)' },
+    dqInfo: { fontSize: 13, color: 'var(--ink-dim)' },
+    dqDetail: { fontSize: 12, color: 'var(--ink-dim)', fontStyle: 'italic' }
+  }),
   {
     name: 'file-info'
   }

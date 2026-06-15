@@ -1,26 +1,30 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles(
-  theme => ({
+  {
     inner: {
       textAlign: 'center',
       paddingTop: '20%',
-      color: theme.palette.text.secondary,
+      color: 'var(--ink-dim)',
       boxSizing: 'border-box'
     },
     title: {
-      fontSize: 24,
-      marginBottom: 16
+      fontSize: 20,
+      marginBottom: 10,
+      fontFamily: 'var(--sans)',
+      fontWeight: 600,
+      color: 'var(--ink)'
     },
     maintext: {
-      fontSize: 16,
-      marginBottom: 5
+      fontSize: 14,
+      marginBottom: 5,
+      color: 'var(--ink-dim)'
     },
     outer: {
       height: props => props.height,
       boxSizing: 'border-box'
     }
-  }),
+  },
   { name: `empty-container` }
 );
 
