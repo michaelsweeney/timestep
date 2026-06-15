@@ -8,13 +8,15 @@ const useStyles = makeStyles(
   {
     root: {
       boxSizing: 'border-box',
-      display: 'inline-block',
+      display: 'flex',
+      alignItems: 'center',
       overflow: 'hidden',
       whiteSpace: 'nowrap'
     },
 
     container: {
-      display: 'inline-block',
+      display: 'flex',
+      alignItems: 'center',
       paddingLeft: 5,
       paddingRight: 5
     },

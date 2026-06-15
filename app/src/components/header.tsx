@@ -33,10 +33,13 @@ const useStyles = makeStyles(
       margin: '0 12px'
     },
     files: {
-      width: 115
+      display: 'flex',
+      alignItems: 'center'
     },
     views: {
-      marginLeft: 16
+      display: 'flex',
+      alignItems: 'center',
+      marginLeft: 8
     },
     logo: {
       display: 'inline-block'
