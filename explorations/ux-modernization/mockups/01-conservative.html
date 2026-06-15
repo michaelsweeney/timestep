@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>timestep · split-pane (conservative evolution)</title>
+<!--
+  MOCK-UP 1 of 3 — "Conservative evolution"
+  Closest to today's layout: keeps the familiar header + per-view sidebar idea,
+  but replaces the 4-tab strip with two resizable, collapsible chart panes and
+  promotes global settings into the topbar gear popover. Static layout/interaction
+  demo only. No real data. Brand: indigo #3f51b5/#8c9eff + pink #f50057/#ff5c8d.
+-->
+<style>
+  :root {
+    --bg: #1e1e20;            /* matches App.tsx dark default */
+    --panel: #252528;
+    --panel-2: #2a2a2e;       /* matches App.tsx dark paper */
+    --hairline: #36363b;
+    --hairline-2: #44444b;
+    --ink: #e6e7ea;
+    --ink-dim: #9a9aa3;
+    --ink-faint: #65656e;
+    --indigo: #8c9eff;        /* brand indigo, dark */
+    --pink: #ff5c8d;          /* brand pink, dark */
+    --axis: #cfcfcf;          /* matches d3container dark axis */
+    --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --sans: 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
+  }
+  body.light {
+    --bg: #f4f5f7; --panel: #ffffff; --panel-2: #ffffff;
+    --hairline: #e2e4e8; --hairline-2: #d2d5db;
+    --ink: #1a1c20; --ink-dim: #5a5f6b; --ink-faint: #9aa0ab;
+    --indigo: #3f51b5; --pink: #f50057; --axis: rgba(0,0,0,0.75);
+  }
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font: 14px/1.45 var(--sans);
+    display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+  }
+
+  /* ── topbar ─────────────────────────────────────────── */
+  #topbar {
+    flex: none; height: 52px; display: flex; align-items: center; gap: 14px;
+    padding: 0 16px; border-bottom: 1px solid var(--hairline);
+    background: var(--panel);
+  }
+  .wordmark { font: 700 19px/1 var(--sans); letter-spacing: 0.02em; }
+  .wordmark .a { color: var(--indigo); } .wordmark .b { color: var(--pink); }
+  .vdiv { width: 1px; height: 26px; background: var(--hairline-2); }
+  .btn {
+    appearance: none; background: var(--panel-2); color: var(--ink-dim);
+    border: 1px solid var(--hairline-2); border-radius: 6px;
+    font: 500 13px var(--sans); padding: 7px 12px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 7px;
+    transition: border-color .15s, color .15s;
+  }
+  .btn:hover { color: var(--ink); border-color: var(--indigo); }
+  .btn.accent { color: var(--bg); background: var(--indigo); border-color: var(--indigo); font-weight: 600; }
+  .btn.accent:hover { filter: brightness(1.08); color: var(--bg); }
+  #spacer { flex: 1; }
+  .gearbtn { width: 36px; height: 36px; justify-content: center; padding: 0; border-radius: 50%; font-size: 16px; }
+
+  /* gear popover */
+  .pop {
+    position: absolute; top: 56px; right: 14px; width: 250px; z-index: 30;
+    background: var(--panel-2); border: 1px solid var(--hairline-2); border-radius: 10px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.5); padding: 8px; display: none;
+  }
+  .pop.open { display: block; }
+  .pop h4 { margin: 8px 8px 4px; font: 600 10px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); }
+  .poprow { display: flex; align-items: center; justify-content: space-between; padding: 8px; border-radius: 6px; }
+  .poprow:hover { background: rgba(255,255,255,.04); }
+  body.light .poprow:hover { background: rgba(0,0,0,.04); }
+  .seg { display: inline-flex; border: 1px solid var(--hairline-2); border-radius: 6px; overflow: hidden; }
+  .seg button { appearance: none; border: 0; background: transparent; color: var(--ink-dim); font: 500 12px var(--mono); padding: 5px 11px; cursor: pointer; }
+  .seg button.on { background: var(--indigo); color: var(--bg); }
+
+  /* ── workspace ──────────────────────────────────────── */
+  #work { flex: 1; display: flex; min-height: 0; }
+
+  /* shared view sidebar (one, not per-view) */
+  #sidebar { width: 196px; flex: none; border-right: 1px solid var(--hairline); background: var(--panel); display: flex; flex-direction: column; overflow-y: auto; }
+  .side-sec { padding: 14px 14px 6px; }
+  .side-sec h4 { margin: 0 0 9px; font: 600 10px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); }
+  .chip-col { display: flex; flex-direction: column; gap: 4px; }
+  .ctype { appearance: none; text-align: left; background: transparent; border: 1px solid transparent; color: var(--ink-dim); border-radius: 6px; padding: 7px 9px; font: 500 13px var(--sans); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+  .ctype:hover { background: rgba(255,255,255,.04); color: var(--ink); }
+  body.light .ctype:hover { background: rgba(0,0,0,.04); }
+  .ctype.on { background: rgba(140,158,255,.14); color: var(--indigo); border-color: rgba(140,158,255,.3); }
+  .ctype .gl { width: 16px; text-align: center; opacity: .9; }
+  .hr { height: 1px; background: var(--hairline); margin: 8px 14px; }
+  select.sel { width: 100%; appearance: none; background: var(--panel-2); color: var(--ink); border: 1px solid var(--hairline-2); border-radius: 6px; font: 500 13px var(--sans); padding: 7px 10px; cursor: pointer; }
+
+  /* panes */
+  #panes { flex: 1; display: flex; min-width: 0; }
+  .pane { flex: 1; min-width: 0; display: flex; flex-direction: column; background: var(--panel-2); }
+  .paneHead { flex: none; height: 36px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-bottom: 1px solid var(--hairline); }
+  .paneTitle { font: 600 11px/1 var(--sans); letter-spacing: .16em; color: var(--ink-faint); text-transform: uppercase; }
+  .paneTitle b { color: var(--indigo); font-weight: 600; }
+  .paneTools { margin-left: auto; display: flex; gap: 6px; }
+  .iconbtn { appearance: none; width: 26px; height: 26px; border-radius: 5px; border: 1px solid transparent; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 13px; }
+  .iconbtn:hover { color: var(--ink); border-color: var(--hairline-2); }
+  .paneBody { flex: 1; min-height: 0; position: relative; padding: 14px; }
+  .splitter { flex: none; width: 6px; cursor: col-resize; background: transparent; transition: background .15s; }
+  .splitter:hover, .splitter.drag { background: var(--indigo); }
+  .pane.closed { flex: 0 0 34px !important; min-width: 34px; }
+  .pane.closed .paneBody { display: none; }
+  .pane.closed .paneHead { flex-direction: column; height: 100%; padding: 10px 0; border-bottom: 0; }
+  .pane.closed .paneTitle { writing-mode: vertical-rl; letter-spacing: .22em; }
+  .pane.closed .paneTools { margin-left: 0; margin-top: auto; flex-direction: column; }
+
+  svg.chart { width: 100%; height: 100%; display: block; }
+  .gridline { stroke: var(--hairline); stroke-width: 1; }
+  .axislbl { fill: var(--ink-faint); font: 400 10px var(--mono); }
+  .axisline { stroke: var(--axis); stroke-width: 1; opacity: .5; }
+
+  /* footer status */
+  #status { flex: none; height: 26px; display: flex; align-items: center; gap: 16px; padding: 0 14px; border-top: 1px solid var(--hairline); background: var(--panel); font: 400 11px var(--mono); color: var(--ink-faint); }
+  #status .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--indigo); }
+</style>
+</head>
+<body>
+  <div id="topbar">
+    <span class="wordmark"><span class="a">time</span><span class="b">step</span></span>
+    <div class="vdiv"></div>
+    <button class="btn">⊞ Files <span style="color:var(--ink-faint)">2</span></button>
+    <button class="btn accent" onclick="addPane()">＋ Split chart</button>
+    <div id="spacer"></div>
+    <span style="font:400 11px var(--mono); color:var(--ink-faint)">large_office_vav.sql · ip · hourly</span>
+    <button class="btn gearbtn" onclick="togglePop()">⚙</button>
+  </div>
+
+  <div class="pop" id="pop">
+    <h4>Theme</h4>
+    <div class="poprow"><span>Appearance</span>
+      <div class="seg"><button class="on" onclick="setTheme('dark',this)">Dark</button><button onclick="setTheme('light',this)">Light</button></div>
+    </div>
+    <h4>Units</h4>
+    <div class="poprow"><span>System</span>
+      <div class="seg"><button onclick="seg(this)">SI</button><button class="on" onclick="seg(this)">IP</button></div>
+    </div>
+    <h4>Default colorscale</h4>
+    <div class="poprow"><span>Ramp</span>
+      <select class="sel" style="width:120px"><option>Viridis</option><option>RdYlBu</option><option>Turbo</option><option>Inferno</option></select>
+    </div>
+  </div>
+
+  <div id="work">
+    <aside id="sidebar">
+      <div class="side-sec">
+        <h4>Chart type · focused pane</h4>
+        <div class="chip-col">
+          <button class="ctype on"><span class="gl">▦</span>Heatmap</button>
+          <button class="ctype"><span class="gl">∿</span>Multiline</button>
+          <button class="ctype"><span class="gl">⁘</span>Scatter</button>
+          <button class="ctype"><span class="gl">▁▃▅</span>Histogram</button>
+          <button class="ctype"><span class="gl">∑</span>Statistics</button>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="side-sec">
+        <h4>Interval</h4>
+        <select class="sel"><option>Hourly</option><option>Timestep</option><option>Daily</option><option>Monthly</option></select>
+      </div>
+      <div class="side-sec">
+        <h4>Series</h4>
+        <select class="sel"><option>Zone 1 · Air Temperature</option><option>Zone 2 · Air Temperature</option><option>Facility · Electricity</option></select>
+      </div>
+    </aside>
+
+    <div id="panes">
+      <section class="pane" id="p0">
+        <div class="paneHead">
+          <span class="paneTitle">Pane 1 · <b>Heatmap</b></span>
+          <div class="paneTools">
+            <button class="iconbtn" title="Save image">⤓</button>
+            <button class="iconbtn" title="Collapse" onclick="toggleClose('p0')">⟨⟩</button>
+          </div>
+        </div>
+        <div class="paneBody"><svg class="chart" viewBox="0 0 480 320" preserveAspectRatio="none" id="hm"></svg></div>
+      </section>
+      <div class="splitter" data-l="p0" data-r="p1"></div>
+      <section class="pane" id="p1">
+        <div class="paneHead">
+          <span class="paneTitle">Pane 2 · <b>Multiline</b></span>
+          <div class="paneTools">
+            <button class="iconbtn" title="Save image">⤓</button>
+            <button class="iconbtn" title="Collapse" onclick="toggleClose('p1')">⟨⟩</button>
+          </div>
+        </div>
+        <div class="paneBody"><svg class="chart" viewBox="0 0 480 320" preserveAspectRatio="none" id="ml"></svg></div>
+      </section>
+    </div>
+  </div>
+
+  <div id="status">
+    <span class="dot"></span><span>2 files · 8760 hourly steps · 412 series</span>
+    <span style="margin-left:auto">timestep v2.0 · split-pane concept (conservative)</span>
+  </div>
+
+<script>
+function togglePop(){ document.getElementById('pop').classList.toggle('open'); }
+function setTheme(t,el){ document.body.classList.toggle('light', t==='light');
+  el.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on')); el.classList.add('on'); draw(); }
+function seg(el){ el.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on')); el.classList.add('on'); }
+document.querySelectorAll('.ctype').forEach(b=>b.onclick=()=>{ document.querySelectorAll('.ctype').forEach(x=>x.classList.remove('on')); b.classList.add('on'); });
+
+function toggleClose(id){ document.getElementById(id).classList.toggle('closed'); }
+let paneN = 2;
+function addPane(){ alert('In the real app this splits the focused pane into another resizable chart (no 4-view cap).'); }
+
+// drag splitters
+document.querySelectorAll('.splitter').forEach(sp=>{
+  sp.addEventListener('mousedown', e=>{
+    e.preventDefault(); sp.classList.add('drag');
+    const L=document.getElementById(sp.dataset.l), R=document.getElementById(sp.dataset.r);
+    const startX=e.clientX, lw=L.getBoundingClientRect().width, rw=R.getBoundingClientRect().width;
+    function mv(ev){ const d=ev.clientX-startX; L.style.flex='0 0 '+(lw+d)+'px'; R.style.flex='0 0 '+(rw-d)+'px'; }
+    function up(){ sp.classList.remove('drag'); document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); }
+    document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+  });
+});
+
+// ── placeholder chart art (layout only, not real data) ──
+function css(v){ return getComputedStyle(document.body).getPropertyValue(v).trim(); }
+function ramp(t){ // viridis-ish
+  const stops=[[68,1,84],[59,82,139],[33,145,140],[94,201,98],[253,231,37]];
+  const i=Math.min(stops.length-2,Math.floor(t*(stops.length-1))); const f=t*(stops.length-1)-i;
+  const a=stops[i],b=stops[i+1]; return `rgb(${a.map((c,k)=>Math.round(c+(b[k]-c)*f)).join(',')})`;
+}
+function draw(){
+  const ink=css('--ink-faint'), grid=css('--hairline'), indigo=css('--indigo'), pink=css('--pink'), axis=css('--axis');
+  // heatmap: 24h x 14 days grid
+  const hm=document.getElementById('hm'); hm.innerHTML='';
+  const ml=40, mt=14, cw=(480-ml-20)/24, ch=(320-mt-26)/14;
+  for(let d=0;d<14;d++) for(let h=0;h<24;h++){
+    const v=(Math.sin(h/24*Math.PI*2-1.3)*0.5+0.5)*0.7 + (Math.sin(d/14*Math.PI)*0.3);
+    hm.innerHTML+=`<rect x="${ml+h*cw}" y="${mt+d*ch}" width="${cw-0.5}" height="${ch-0.5}" fill="${ramp(Math.max(0,Math.min(1,v)))}"/>`;
+  }
+  hm.innerHTML+=`<text class="axislbl" x="${ml}" y="312" fill="${ink}">0h</text><text class="axislbl" x="430" y="312" fill="${ink}">23h</text>`;
+  hm.innerHTML+=`<text class="axislbl" x="6" y="${mt+10}" fill="${ink}">d1</text><text class="axislbl" x="6" y="300" fill="${ink}">d14</text>`;
+  // multiline: two series on dual axes
+  const ml2=document.getElementById('ml'); ml2.innerHTML='';
+  let p1='',p2=''; const W=480-50-16, H=320-mt-26;
+  for(let i=0;i<=120;i++){ const x=40+i/120*W;
+    const y1=mt+H*(0.5-0.4*Math.sin(i/120*Math.PI*4));
+    const y2=mt+H*(0.55-0.35*Math.cos(i/120*Math.PI*3+1));
+    p1+=(i?'L':'M')+x.toFixed(1)+' '+y1.toFixed(1); p2+=(i?'L':'M')+x.toFixed(1)+' '+y2.toFixed(1);
+  }
+  for(let g=0;g<=4;g++){ const y=mt+H*g/4; ml2.innerHTML+=`<line class="gridline" x1="40" y1="${y}" x2="${40+W}" y2="${y}" stroke="${grid}"/>`; }
+  ml2.innerHTML+=`<line class="axisline" x1="40" y1="${mt}" x2="40" y2="${mt+H}" stroke="${axis}"/>`;
+  ml2.innerHTML+=`<path d="${p1}" fill="none" stroke="${indigo}" stroke-width="2"/><path d="${p2}" fill="none" stroke="${pink}" stroke-width="2"/>`;
+  ml2.innerHTML+=`<circle cx="${40+W*0.62}" cy="${mt+H*(0.5-0.4*Math.sin(0.62*Math.PI*4))}" r="3.5" fill="${indigo}" stroke="${axis}"/>`;
+  ml2.innerHTML+=`<text class="axislbl" x="44" y="${mt+12}" fill="${indigo}">Zone 1 °F</text><text class="axislbl" x="44" y="${mt+26}" fill="${pink}">Facility kWh</text>`;
+}
+draw();
+</script>
+</body>
+</html>
