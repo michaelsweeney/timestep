@@ -17,6 +17,11 @@ const useStyles = makeStyles(
     maintext: {
       fontSize: 16,
       marginBottom: 5
+    },
+    note: {
+      fontSize: 13,
+      marginTop: 20,
+      color: theme.palette.text.secondary
     }
   }),
   {
@@ -32,13 +37,23 @@ const LandingPage = props => {
         Timestep: EnergyPlus timeseries visualization tool
       </div>
 
-      <div className={classes.maintext}>No Files are currently loaded.</div>
+      <div className={classes.maintext}>No files loaded yet.</div>
       <div className={classes.maintext}>
-        Select "LOAD FILES" from the "Files" menu to load timeseries results.
+        Open files from the "Files" menu, or drag them onto the window.
+      </div>
+
+      <div className={classes.maintext}>
+        Already have an <strong>eplusout.sql</strong> (from
+        "Output:SQLite" in your IDF)? Load it directly.
       </div>
       <div className={classes.maintext}>
-        Make sure that "Output:SQLite:SimpleAndTabular" has been included in
-        your IDF file.
+        No .sql? Load the raw <strong>eplusout.eso</strong> instead — Timestep
+        converts it for you, with no model re-run needed.
+      </div>
+
+      <div className={classes.note}>
+        Your original output files are never modified — ESO conversions are
+        cached separately.
       </div>
     </div>
   );
