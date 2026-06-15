@@ -33,12 +33,17 @@
   per chart type, so the keystone only needed `multilinecanvas`'s cursor factored
   into `drawCursorAtTime(time, withTooltip)` (which an external hover can drive),
   not a sweeping refactor. Latent fix along the way: memoized `seriesData` so a
-  hover dispatch no longer rebuilds the chart mid-hover. Scope is
-  multiline↔multiline; **heatmap honoring `hoverTime`** (a highlighted cell/column)
-  is the obvious next increment.
+  hover dispatch no longer rebuilds the chart mid-hover.
+- **Track C #1 follow-on (heatmap joins the linked hover) — DONE** (`5d236d4`):
+  a linked heatmap now both honors and emits hovers — hover a multiline → the
+  heatmap draws an accent day-line + boxed hour cell at that timestamp; hover a
+  heatmap cell → every linked multiline shows its crosshair there. This is the
+  cross-chart-type comparison (heatmap + load curve of the same meter) the
+  multiline-only keystone couldn't reach. Scatter and histogram still don't
+  participate (scatter's x is an arbitrary series, not always time; histogram is
+  value-binned).
 - **Track C remaining — NOT STARTED**: **#3 global interval**, **#4 variable
-  browser**, **#5 tiling grid**, **#6 inspector**. (Plus the heatmap-honors-hover
-  follow-on above.)
+  browser**, **#5 tiling grid**, **#6 inspector**.
 
 ## The one-sentence finding
 
