@@ -29,7 +29,7 @@ const MultilineControl = props => {
   // crosshair from these). hoverSource lets the canvas ignore the echo of its
   // own hover.
   const viewLinked = props.view.linked !== false;
-  const { hoverTime, hoverSource } = props.linked;
+  const { hoverTime, hoverSource, window: linkedWindow } = props.linked;
 
   const { files, units, isLoadingFromFile } = props.session;
   const { paneDims, forcedTab, onForcedTabHandled } = props;
@@ -178,9 +178,15 @@ const MultilineControl = props => {
     props.actions.removeFromLoadedArray(e, viewID);
   };
 
-  // chart ui changes
+  // chart ui changes. Linked panes share one x-domain through the linked slice
+  // (brush/zoom one → every linked pane follows); an unlinked pane keeps its
+  // own private zoom.
   const handleZoomChange = domain => {
-    setZoomDomain(domain);
+    if (viewLinked) {
+      props.actions.setLinkedWindow(domain);
+    } else {
+      setZoomDomain(domain);
+    }
   };
 
   const handleSelectClose = () => {
@@ -192,7 +198,7 @@ const MultilineControl = props => {
       <ChartWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <MultilineCanvas
           zoomCallback={handleZoomChange}
-          zoomDomain={zoomDomain}
+          zoomDomain={viewLinked ? linkedWindow : zoomDomain}
           files={files}
           plotdims={plotDims}
           seriesConfig={seriesConfig}
