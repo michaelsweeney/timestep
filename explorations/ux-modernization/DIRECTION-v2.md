@@ -22,14 +22,23 @@
   over-claimed; left as-is.)
 - **Track C #2 (duplicate-pane) — DONE** (`3c1c4fb`): "+ Split chart" now clones
   the focused pane (type/interval/series/data) instead of opening blank.
-- **Track C remaining — NOT STARTED**: the keystone **#1 linked time-domain +
-  crosshair** (+ its D3 scaffold prerequisite), **#3 global interval**, **#4
-  variable browser**, **#5 tiling grid**, **#6 inspector**. These are the bigger
-  architectural lifts; the keystone in particular needs the scaffold split
-  (separate the static chart from the dynamic hover overlay) before a shared
-  `hoverTime`/`window` slice can drive a crosshair without redrawing each chart on
-  every mousemove. `themetokens.ts` `token()` (added in B) is the canvas-side
-  color bridge that work will reuse.
+- **Track C #1 (the keystone — linked time-domain + crosshair) — DONE**
+  (`2675c1f`, `bf17a9f`): a thin `linked` slice `{ window, hoverTime, hoverSource }`
+  + a per-pane link toggle (default on, shown only when multi-pane). Hovering any
+  linked multiline pane draws an aligned crosshair + markers at the same instant in
+  every other linked multiline pane (source keeps its full tooltip; receivers show
+  just the cursor); brushing/zooming one linked pane drives all linked panes to the
+  same x-domain. **The big "unify the 6 SVG/canvas scaffolds" prerequisite was
+  descoped** — Track B had already deleted the dead SVG twins, leaving one renderer
+  per chart type, so the keystone only needed `multilinecanvas`'s cursor factored
+  into `drawCursorAtTime(time, withTooltip)` (which an external hover can drive),
+  not a sweeping refactor. Latent fix along the way: memoized `seriesData` so a
+  hover dispatch no longer rebuilds the chart mid-hover. Scope is
+  multiline↔multiline; **heatmap honoring `hoverTime`** (a highlighted cell/column)
+  is the obvious next increment.
+- **Track C remaining — NOT STARTED**: **#3 global interval**, **#4 variable
+  browser**, **#5 tiling grid**, **#6 inspector**. (Plus the heatmap-honors-hover
+  follow-on above.)
 
 ## The one-sentence finding
 
