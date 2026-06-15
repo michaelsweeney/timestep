@@ -20,6 +20,20 @@ const useStyles = makeStyles(
       // hover crosshair — accent so it reads clearly on either theme (this CSS
       // rule governs; the renderer no longer hardcodes a stroke attribute)
       '& .x-line': { stroke: 'var(--accent)' },
+      // linked-hover cell highlight on the heatmap (accent outline, no fill)
+      '& .cell-highlight': {
+        fill: 'none',
+        stroke: 'var(--accent)',
+        strokeWidth: 2,
+        pointerEvents: 'none'
+      },
+      // full-height day line behind the cell highlight (accent, dashed)
+      '& .cell-dayline': {
+        stroke: 'var(--accent)',
+        strokeWidth: 1,
+        strokeDasharray: '4, 4',
+        pointerEvents: 'none'
+      },
       '& .tick text': { fill: 'var(--ink-dim)' },
       '& path': { shapeRendering: 'geometricPrecision' },
       '& .series-line, .marker-circle': { pointerEvents: 'none' },

@@ -20,6 +20,12 @@ const HeatmapControl = props => {
   const plotContainer = useRef(null);
 
   const { viewID } = props;
+
+  // Cross-pane linking: a linked heatmap honors hovers from other linked panes
+  // (highlighting the matching day/hour cell) and broadcasts its own.
+  const viewLinked = props.view.linked !== false;
+  const { hoverTime, hoverSource } = props.linked;
+
   const { files, units, isLoadingFromFile } = props.session;
   const { paneDims, forcedTab, onForcedTabHandled } = props;
   const {
@@ -153,6 +159,15 @@ const HeatmapControl = props => {
           minrange={minRange}
           maxrange={maxRange}
           reversecolor={reverseColor}
+          viewID={viewID}
+          hoverTime={viewLinked ? hoverTime : null}
+          hoverSource={viewLinked ? hoverSource : null}
+          onHoverMove={
+            viewLinked ? t => props.actions.setHoverTime(t, viewID) : undefined
+          }
+          onHoverEnd={
+            viewLinked ? () => props.actions.clearHoverTime() : undefined
+          }
         />
       </ChartWrapper>
       <ControlsWrapper
@@ -189,6 +204,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     session: { ...state.session },
     view: { ...state.views[ownProps.viewID] },
+    linked: { ...state.linked },
     actions: { ...state.actions }
   };
 };
