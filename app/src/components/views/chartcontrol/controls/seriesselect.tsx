@@ -7,6 +7,7 @@ import { ListSubheader } from '@material-ui/core';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 import { VariableSizeList } from 'react-window';
 import Typography from '@material-ui/core/Typography';
+import { seriesGroup, sortByGroup } from './seriesgroup';
 
 // THIS IS TAKEN FROM MATERIAL-UI AND ONLY MODIFIED SLIGHTLY;
 // THERE IS LIKELY SOME BOILERPLATE THAT CAN BE REMOVED.
@@ -146,7 +147,8 @@ const renderGroup = params => [
 const SeriesSelect = (props) => {
   const classes = useStyles();
 
-  const options = props.series;
+  // group by zone/equipment; options must be group-sorted for MUI's headers
+  const options = sortByGroup(props.series);
 
   return (
     <div className={classes.root}>
@@ -158,6 +160,7 @@ const SeriesSelect = (props) => {
         classes={classes}
         ListboxComponent={ListboxComponent}
         renderGroup={renderGroup}
+        groupBy={seriesGroup}
         options={options}
         value={props.value}
         renderInput={params => (

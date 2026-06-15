@@ -109,14 +109,23 @@ const PaneHeader = props => {
     fn();
   };
 
-  // Switching chart type resets the pane's series/loaded data, then changes the
-  // type — identical to the old sidebar selector's side-effects.
+  // Switching chart type normally resets the pane's series/loaded data, because
+  // the chart types consume different selection shapes (Multiline = array,
+  // Scatter = x/y/z, Heatmap/Histogram = a single key). The exception:
+  // Heatmap and Histogram share an identical single-series shape, so toggling
+  // between those two keeps the selection — view a variable as a heatmap, flip
+  // to its histogram, and back, without re-picking it.
+  const SINGLE_SERIES = ['Heatmap', 'Histogram'];
   const handleChartType = e => {
-    const el = e.target.value;
-    props.actions.changeSelectedSeries([], viewID);
-    props.actions.changeSelectedSeriesLabel(null, viewID);
-    props.actions.changeLoadedArray({}, viewID);
-    props.actions.changeChartType(el, viewID);
+    const next = e.target.value;
+    const sameShape =
+      SINGLE_SERIES.includes(chartType) && SINGLE_SERIES.includes(next);
+    if (!sameShape) {
+      props.actions.changeSelectedSeries([], viewID);
+      props.actions.changeSelectedSeriesLabel(null, viewID);
+      props.actions.changeLoadedArray({}, viewID);
+    }
+    props.actions.changeChartType(next, viewID);
   };
 
   const handleInterval = e => {
