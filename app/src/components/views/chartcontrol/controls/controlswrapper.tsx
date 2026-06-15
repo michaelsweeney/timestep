@@ -6,6 +6,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
+// Flat bnd-viz-style control strip. The MUI Tabs/Tab stay (they drive the tab
+// callbacks) but are restyled flat: no Material indicator, mono uppercase
+// labels, an accent underline + accent text on the active tab.
 const useStyles = makeStyles(
   {
     root: {
@@ -19,19 +22,43 @@ const useStyles = makeStyles(
       background: 'var(--panel)',
       borderTop: '1px solid var(--hairline)'
     },
-    tabs: { display: 'inline-block' },
-    tab: {},
-    header: {
+    tabs: {
       display: 'inline-block',
+      // kill the Material sliding indicator; we draw our own underline per-tab
+      '& .MuiTabs-indicator': { display: 'none' },
+      '& .MuiTabs-flexContainer': { gap: 4 }
+    },
+    header: {
+      display: 'flex',
+      alignItems: 'center',
       whiteSpace: 'nowrap'
     },
-    tabactive: {},
-    tabinactive: {},
-    indicatoractive: {},
-    indicatorinactive: {
-      '& .MuiTabs-indicator': {
-        display: 'none'
-      }
+    tab: {
+      minWidth: 0,
+      minHeight: 0,
+      padding: '7px 10px',
+      fontFamily: 'var(--mono) !important',
+      fontWeight: 600,
+      fontSize: '11px !important',
+      letterSpacing: '0.10em',
+      textTransform: 'uppercase',
+      borderBottom: '2px solid transparent',
+      transition: 'color .12s, border-color .12s',
+      opacity: 1
+    },
+    tabactive: {
+      color: 'var(--accent) !important',
+      borderBottomColor: 'var(--accent)'
+    },
+    tabinactive: {
+      color: 'var(--ink-dim) !important',
+      '&:hover': { color: 'var(--ink) !important' }
+    },
+    collapseBtn: {
+      minWidth: 0,
+      padding: '4px 6px',
+      color: 'var(--ink-dim) !important',
+      '&:hover': { color: 'var(--ink) !important', background: 'transparent' }
     },
     view: {
       marginTop: 15,
@@ -68,41 +95,30 @@ const ControlsWrapper = props => {
   return (
     <div ref={container} className={classes.root}>
       <div className={classes.header}>
-        <div className={classes.tabs}>
-          <Tabs
-            value={activetab}
-            indicatorColor="primary"
-            textColor="primary"
-            className={
-              props.isVisible
-                ? classes.indicatoractive
-                : classes.indicatorinactive
-            }
-          >
-            {childprops.map((t, i) => {
-              return (
-                <Tab
-                  disableRipple={true}
-                  key={i}
-                  className={
-                    activetab == t.tag
-                      ? classes.tab + ' ' + classes.tabactive
-                      : classes.tab + ' ' + classes.tabinactive
-                  }
-                  label={t.tabname}
-                  value={t.tag}
-                  onClick={() => props.tabChangeCallback(t.tag)}
-                />
-              );
-            })}
-          </Tabs>
-        </div>
+        <Tabs value={activetab} className={classes.tabs}>
+          {childprops.map((t, i) => {
+            return (
+              <Tab
+                disableRipple={true}
+                key={i}
+                className={
+                  activetab == t.tag
+                    ? classes.tab + ' ' + classes.tabactive
+                    : classes.tab + ' ' + classes.tabinactive
+                }
+                label={t.tabname}
+                value={t.tag}
+                onClick={() => props.tabChangeCallback(t.tag)}
+              />
+            );
+          })}
+        </Tabs>
         {props.disableCollapse ? (
           ''
         ) : (
           <Button
             disableRipple={true}
-            color="primary"
+            className={classes.collapseBtn}
             onClick={() => props.toggleHideCallback()}
           >
             {props.isVisible ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}

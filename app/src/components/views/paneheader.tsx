@@ -2,10 +2,23 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import TuneIcon from '@material-ui/icons/Tune';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import { connect } from 'src/store';
 
-// Per-pane header bar: "PANE N · ‹TYPE›" with Options (sliders) and Export
-// (download) icon buttons. These reveal the pane's existing Options / Export
-// controls (the chart's ControlsWrapper tabs) without relocating the wiring.
+// Per-pane header — the single place a pane's chart is configured:
+//   PANE N · [chart-type ▾] · [interval ▾]            [Options] [Export]
+// Chart-type + interval are per-view and dispatch on this pane's viewID; the
+// pane's series/options/export live in its own bottom strip. Flat token-styled
+// native selects so they don't read as Material.
+const CHART_TYPES = ['Heatmap', 'Multiline', 'Scatter', 'Histogram', 'Statistics'];
+const INTERVALS = [
+  'HVAC Timestep',
+  'Zone Timestep',
+  'Hourly',
+  'Daily',
+  'Monthly',
+  'Run Period'
+];
+
 const useStyles = makeStyles(
   {
     head: {
@@ -13,13 +26,13 @@ const useStyles = makeStyles(
       height: 34,
       display: 'flex',
       alignItems: 'center',
-      gap: 10,
+      gap: 8,
       padding: '0 12px',
       boxSizing: 'border-box',
       borderBottom: '1px solid var(--hairline)',
       background: 'var(--panel)'
     },
-    title: {
+    label: {
       fontFamily: 'var(--sans)',
       fontWeight: 600,
       fontSize: 11,
@@ -28,11 +41,36 @@ const useStyles = makeStyles(
       textTransform: 'uppercase',
       color: 'var(--ink-faint)',
       whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis'
+      flex: 'none'
     },
-    type: { color: 'var(--accent)', fontWeight: 600 },
-    tools: { marginLeft: 'auto', display: 'flex', gap: 6 },
+    sep: { color: 'var(--ink-faint)', flex: 'none' },
+    // Flat token-styled native selects. EnergyPlus-y values, but these are the
+    // chart's own config labels → keep them sans, accent text to read as active.
+    select: {
+      appearance: 'none',
+      cursor: 'pointer',
+      background: 'var(--panel-2)',
+      color: 'var(--accent)',
+      border: '1px solid var(--hairline-2)',
+      borderRadius: 4,
+      fontFamily: 'var(--sans)',
+      fontWeight: 600,
+      fontSize: 12,
+      lineHeight: 1,
+      padding: '5px 22px 5px 8px',
+      // chevron drawn with a background gradient so we don't ship an icon
+      backgroundImage:
+        'linear-gradient(45deg, transparent 50%, var(--ink-dim) 50%), linear-gradient(135deg, var(--ink-dim) 50%, transparent 50%)',
+      backgroundPosition:
+        'calc(100% - 12px) calc(50% - 1px), calc(100% - 8px) calc(50% - 1px)',
+      backgroundSize: '4px 4px, 4px 4px',
+      backgroundRepeat: 'no-repeat',
+      transition: 'border-color .12s',
+      '&:hover': { borderColor: 'var(--accent)' },
+      '&:focus': { outline: 'none', borderColor: 'var(--accent)' }
+    },
+    intervalSelect: { color: 'var(--ink)', fontWeight: 500 },
+    tools: { marginLeft: 'auto', display: 'flex', gap: 6, flex: 'none' },
     iconbtn: {
       appearance: 'none',
       cursor: 'pointer',
@@ -57,18 +95,63 @@ const useStyles = makeStyles(
 
 const PaneHeader = props => {
   const classes = useStyles();
-  const { paneIndex, chartType, onOptions, onExport } = props;
+  const {
+    paneIndex,
+    viewID,
+    chartType,
+    timestepType,
+    onOptions,
+    onExport
+  } = props;
 
   const stop = (fn: () => void) => (e: React.MouseEvent) => {
     e.stopPropagation();
     fn();
   };
 
+  // Switching chart type resets the pane's series/loaded data, then changes the
+  // type — identical to the old sidebar selector's side-effects.
+  const handleChartType = e => {
+    const el = e.target.value;
+    props.actions.changeSelectedSeries([], viewID);
+    props.actions.changeSelectedSeriesLabel(null, viewID);
+    props.actions.changeLoadedArray({}, viewID);
+    props.actions.changeChartType(el, viewID);
+  };
+
+  const handleInterval = e => {
+    props.actions.changeTimestepType(e.target.value, viewID);
+  };
+
   return (
-    <div className={classes.head}>
-      <span className={classes.title}>
-        Pane {paneIndex + 1} · <span className={classes.type}>{chartType}</span>
-      </span>
+    <div className={classes.head} onClick={e => e.stopPropagation()}>
+      <span className={classes.label}>Pane {paneIndex + 1}</span>
+      <span className={classes.sep}>·</span>
+      <select
+        className={classes.select}
+        value={chartType}
+        onChange={handleChartType}
+        title="Chart type"
+      >
+        {CHART_TYPES.map(t => (
+          <option key={t} value={t}>
+            {t}
+          </option>
+        ))}
+      </select>
+      <span className={classes.sep}>·</span>
+      <select
+        className={classes.select + ' ' + classes.intervalSelect}
+        value={timestepType}
+        onChange={handleInterval}
+        title="Interval"
+      >
+        {INTERVALS.map(t => (
+          <option key={t} value={t}>
+            {t}
+          </option>
+        ))}
+      </select>
       <div className={classes.tools}>
         <button
           className={classes.iconbtn}
@@ -89,4 +172,12 @@ const PaneHeader = props => {
   );
 };
 
-export default PaneHeader;
+const mapStateToProps = (state, ownProps) => {
+  const view = state.views[ownProps.viewID];
+  return {
+    chartType: view.chartType,
+    timestepType: view.timestepType
+  };
+};
+
+export default connect(mapStateToProps)(PaneHeader);

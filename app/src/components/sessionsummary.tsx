@@ -2,9 +2,9 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'src/store';
 
-// Right-aligned topbar summary: ‹dataset› · ‹units› · ‹interval›, matching the
-// mockup's monospace caption. Dataset = the focused pane's first file basename;
-// interval = the focused pane's timestepType; units are global.
+// Right-aligned topbar summary: the loaded dataset (file basename, or "N files").
+// Units now have their own topbar toggle and interval is per-pane, so the summary
+// is just the dataset identifier (mono — it's an EnergyPlus file name).
 const useStyles = makeStyles(
   {
     // EnergyPlus data/identifiers → mono per the bnd-viz split
@@ -28,24 +28,19 @@ const basename = (p: string) =>
 
 const SessionSummary = props => {
   const classes = useStyles();
-  const { files, units, interval } = props;
+  const { files } = props;
 
   if (!files || files.length === 0) return null;
 
   const ds =
     files.length === 1 ? basename(files[0]) : `${files.length} files`;
-  const parts = [ds, (units || '').toUpperCase(), interval].filter(Boolean);
 
-  return <span className={classes.root}>{parts.join('  ·  ')}</span>;
+  return <span className={classes.root}>{ds}</span>;
 };
 
 const mapStateToProps = state => {
-  const activeID = state.session.activeViewID;
-  const view = state.views[activeID];
   return {
-    files: state.session.files,
-    units: state.session.units,
-    interval: view ? view.timestepType : ''
+    files: state.session.files
   };
 };
 

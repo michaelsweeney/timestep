@@ -95,8 +95,8 @@ const ChartTypeControl = props => {
   return (
     <div className={rootClass} onClick={focusPane}>
       <PaneHeader
+        viewID={viewID}
         paneIndex={paneIndex}
-        chartType={chartType}
         onOptions={() => setForcedTab('tab-options')}
         onExport={() => setForcedTab('tab-export')}
       />
