@@ -13,8 +13,7 @@ without writing any SQL.
 - **Loads `.sql` and `.eso` output directly.** Point it at an EnergyPlus
   `eplusout.sql` (from `Output:SQLite`) or a raw `eplusout.eso`. ESO files are
   converted to SQLite on the fly and cached, so models without `Output:SQLite`
-  work too — conversion is verified row-identical to native `.sql` at every
-  reporting frequency.
+  work too — no model re-run needed.
 - **Multiple simulations side by side.** Load several output files and compare
   the same variable across runs on one chart.
 - **Searchable variables.** Filter the report-variable dictionary by name to
@@ -97,9 +96,6 @@ regenerating them. `yarn smoke-web` also needs a system Chromium/Chrome.
 - **`app/src/web/`** — the browser I/O layer: a `window.api` shim and the
   sql.js-backed engine that together replace the Electron preload bridge, letting
   the unchanged renderer run as a static site (`yarn build-web`).
-
-See [`MODERNIZATION_PROGRESS.md`](MODERNIZATION_PROGRESS.md) for the v2.0.0
-modernization history and remaining follow-ups.
 
 ## License
 

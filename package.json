@@ -27,7 +27,7 @@
     "package-mac": "yarn build && electron-builder build --mac",
     "package-linux": "yarn build && electron-builder build --linux",
     "package-win": "yarn build && electron-builder build --win --x64",
-    "postinstall": "node -r @babel/register internals/scripts/CheckNativeDep.js && electron-builder install-app-deps && opencollective-postinstall",
+    "postinstall": "node -r @babel/register internals/scripts/CheckNativeDep.js && electron-builder install-app-deps",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{js,jsx,json,html,css,less,scss,yml}'",
     "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
     "preinstall": "node ./internals/scripts/CheckYarn.js",
@@ -114,33 +114,19 @@
     "email": "michael.samuel.sweeney@gmail.com",
     "url": "https://github.com/michaelsweeney"
   },
-  "contributors": [
-    {
-      "name": "Vikram Rangaraj",
-      "email": "vikr01@icloud.com",
-      "url": "https://github.com/vikr01"
-    },
-    {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    }
-  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/michaelsweeney/timestep/issues"
   },
   "keywords": [
-    "electron",
-    "boilerplate",
-    "react",
-    "redux",
-    "typescript",
-    "ts",
-    "sass",
-    "webpack",
-    "hot",
-    "reload"
+    "energyplus",
+    "timeseries",
+    "visualization",
+    "building-energy",
+    "eso",
+    "sqlite",
+    "d3",
+    "electron"
   ],
   "homepage": "https://github.com/michaelsweeney/timestep#readme",
   "jest": {
@@ -241,7 +227,6 @@
     "jest": "^25.1.0",
     "lint-staged": "^10.0.2",
     "mini-css-extract-plugin": "^2.10.0",
-    "opencollective-postinstall": "^2.0.2",
     "playwright-core": "^1.60.0",
     "prettier": "^1.19.1",
     "react-test-renderer": "^16.12.0",
@@ -267,6 +252,7 @@
   "dependencies": {
     "@fontsource/ibm-plex-sans": "^4",
     "@fontsource/jetbrains-mono": "^4",
+    "@fontsource/roboto": "^4",
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@reduxjs/toolkit": "^1.4.0",
     "@timestep/core": "link:./packages/core",
@@ -288,9 +274,6 @@
     "reselect": "^4.0.0",
     "source-map-support": "^0.5.16",
     "sql.js": "^1.14.1"
-  },
-  "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
   },
   "browserslist": [
     "last 2 chrome versions"
@@ -315,11 +298,6 @@
     "extends": [
       "stylelint-config-standard",
       "stylelint-config-prettier"
-    ]
-  },
-  "renovate": {
-    "extends": [
-      "bliss"
     ]
   }
 }

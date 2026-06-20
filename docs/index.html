@@ -17,7 +17,6 @@
   <div class="logo-title">
     <span class="title-left">timest</span><span class="title-right">ep</span>
   </div>
-  <!-- <div class="section-break"></div> -->
   <div class="section">
     <div class="section-header">
       EnergyPlus timeseries visualization software
@@ -30,33 +29,38 @@
     </p>
     <p>
       Timestep attempts to be a better solution, offering a clean,
-      user-friendly and near-instanteous querying interface, as well as modern
-      data visualization capabilities. It accomplishes this by using the
-      EnergyPlus SQLite Output reporting, and can load and visualize very
-      large simulation output files in seconds, rather than minutes.
+      user-friendly and near-instantaneous querying interface, as well as
+      modern data visualization capabilities. It reads the EnergyPlus SQLite
+      output directly, loading and visualizing very large simulation files in
+      seconds rather than minutes.
     </p>
-    <div><u>Current Timestep features</u>:</div>
+    <div><u>Timestep features</u>:</div>
     <ul>
-      <li>Native support and install packages for MacOS and Windows.</li>
       <li>
-        Heatmap, Multi-Line, Scatter Plot, Histogram, and Statistical Summary
-        outputs
+        Loads EnergyPlus <code>.sql</code> and raw <code>.eso</code> output
+        directly; <code>.eso</code> is converted to SQLite on first open and
+        cached, with no model re-run.
       </li>
-      <li>CSV and clipboard export</li>
-      <li>Saved sessions and multiple views within a session</li>
-      <li>Support for multiple simulation files</li>
       <li>
-        Auto-detection and parsing of BND files for more contextual IP units
-        conversion.
+        Heatmap, multi-line, scatter, histogram, and statistical-summary
+        charts.
       </li>
-    </ul>
-    <div><u>Planned Timestep features</u>:</div>
-    <ul>
-      <li>Support for platform-agnostic CSV files</li>
-      <li>Support for tabular data (similar to eplusout.html reports)</li>
       <li>
-        Additional chart types like 2D hexbins, scatter matrices, and
-        box/violin distribution plots
+        Multiple simulation files side by side, with the same variable
+        overlaid across runs.
+      </li>
+      <li>
+        Split panes with a linked hover crosshair and linked time-domain zoom
+        across panes.
+      </li>
+      <li>
+        SI/IP units with honest labels (cfm/gpm resolved from the BND node
+        fluid type) and load-time data-quality warnings.
+      </li>
+      <li>Dark and light mode, CSV/clipboard export, and saved sessions.</li>
+      <li>
+        Native installers for macOS, Windows, and Linux, plus a no-install
+        browser build (files never uploaded).
       </li>
     </ul>
   </div>
