@@ -13,8 +13,7 @@ without writing any SQL.
 - **Loads `.sql` and `.eso` output directly.** Point it at an EnergyPlus
   `eplusout.sql` (from `Output:SQLite`) or a raw `eplusout.eso`. ESO files are
   converted to SQLite on the fly and cached, so models without `Output:SQLite`
-  work too — conversion is verified row-identical to native `.sql` at every
-  reporting frequency.
+  work too — no model re-run needed.
 - **Multiple simulations side by side.** Load several output files and compare
   the same variable across runs on one chart.
 - **Searchable variables.** Filter the report-variable dictionary by name to
@@ -59,6 +58,25 @@ read sibling files by path; without it units fall back to cfm), and very large
 annual outputs load entirely into tab memory, so the desktop app remains the
 better choice for multi-gigabyte runs.
 
+## Run locally with native performance (`yarn serve`)
+
+For real-sized EnergyPlus outputs (300 MB+ annual / sub-hourly runs), the
+in-tab sql.js build above loads the whole file into browser memory and slows
+down. `yarn serve` runs the **same UI** in your browser but backs it with a
+local `127.0.0.1` server using **native `sqlite3`**, so files are read by path
+off disk — no whole-file-in-memory:
+
+```bash
+yarn serve   # builds app/dist-serve, boots a loopback server, opens the browser
+```
+
+You pick files through your OS's native file dialog (the server has filesystem
+access; the browser doesn't expose dropped-file paths, so drag-and-drop is not
+yet supported in this mode). The server binds loopback-only and guards every
+request with a per-startup token + Origin/Host check. It ships over npm/source,
+so there's no unsigned-binary warning. `yarn smoke-serve` is a headless check
+that native sqlite3 works on the host OS.
+
 ## Development
 
 Requires Node.js 18+ (CI runs on Node 24) and Yarn 1.x.
@@ -97,9 +115,6 @@ regenerating them. `yarn smoke-web` also needs a system Chromium/Chrome.
 - **`app/src/web/`** — the browser I/O layer: a `window.api` shim and the
   sql.js-backed engine that together replace the Electron preload bridge, letting
   the unchanged renderer run as a static site (`yarn build-web`).
-
-See [`MODERNIZATION_PROGRESS.md`](MODERNIZATION_PROGRESS.md) for the v2.0.0
-modernization history and remaining follow-ups.
 
 ## License
 

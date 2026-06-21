@@ -4,24 +4,21 @@ import { Typography } from '@material-ui/core';
 import { connect } from 'src/store';
 
 const useStyles = makeStyles(
-  theme => ({
+  {
     root: {
       textAlign: 'right',
       position: 'absolute',
       bottom: 10,
-      // left: 5,
       right: 30,
-      color: theme.palette.text.secondary,
+      color: 'var(--ink-faint)',
+      fontFamily: 'var(--mono)',
+      fontSize: 11,
       fontWeight: 400,
-      // backgroundColor: 'white',
       height: 25,
       width: 25
-      // border: '1px solid black'
-      // width: '75px',
-      // padding: 5
     },
     inner: {}
-  }),
+  },
   {
     name: 'version'
   }

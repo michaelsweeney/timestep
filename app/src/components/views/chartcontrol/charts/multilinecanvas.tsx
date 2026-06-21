@@ -25,13 +25,24 @@ import {
 
 const MultilineCanvas = props => {
   const container = useRef(null);
+  // Imperative handle onto the crosshair, set once the chart is built, so an
+  // externally-linked hover can redraw the cursor without a local mouse event.
+  const cursorApi = useRef(null);
+  // Last hover time broadcast to the linked slice — dedupes the per-pixel
+  // mousemove stream down to one dispatch per data point.
+  const lastHoverSent = useRef(null);
   let {
     seriesArray,
     seriesConfig,
     units,
     files,
     zoomCallback,
-    zoomDomain
+    zoomDomain,
+    hoverTime,
+    hoverSource,
+    onHoverMove,
+    onHoverEnd,
+    viewID
   } = props;
   const { width, height } = props.plotdims;
 
@@ -70,7 +81,26 @@ const MultilineCanvas = props => {
   useEffect(() => {
     handleYAxes();
     createChart();
-  }, [seriesArray, seriesConfig, width, height]);
+    // zoomDomain is an explicit dep: the chart rebuilds (redrawing the canvas
+    // lines at the new x-domain) when a brush/zoom changes it. seriesArray is
+    // memoized upstream so unrelated re-renders (e.g. a linked hover) don't
+    // retrigger this and wipe the live cursor.
+  }, [seriesArray, seriesConfig, width, height, zoomDomain]);
+
+  // Honor a hover coming from another linked pane: draw this pane's crosshair at
+  // the shared time with no local mouse event. Skipped when this pane is the
+  // source (its own mouseMove already drew it) so the echo can't fight the live
+  // cursor; clears the echo when the shared hover ends.
+  useEffect(() => {
+    const api = cursorApi.current;
+    if (!api) return;
+    const isSource = hoverSource != null && hoverSource === viewID;
+    if (!isSource && hoverTime != null) {
+      api.drawCursorAtTime(new Date(hoverTime), false);
+    } else if (!isSource) {
+      api.hideCursor();
+    }
+  }, [hoverTime, hoverSource]);
 
   const handleYAxes = () => {
     yconfig.y2.active =
@@ -407,7 +437,6 @@ const MultilineCanvas = props => {
         .data([0])
         .join('line')
         .attr('class', 'x-line')
-        .attr('stroke', 'black')
         .attr('stroke-dasharray', '4, 4')
         .attr('y1', 0)
         .attr('y2', plotheight)
@@ -445,8 +474,17 @@ const MultilineCanvas = props => {
         tooltip.style('opacity', 1);
       }
 
-      function mouseMove(e) {
-        let xpos = xScale.invert(mouse(this)[0]);
+      // Reposition the crosshair + per-series markers for an explicit time.
+      // Shared by local hover (withTooltip → the full tooltip) and by an
+      // externally-linked hover from another pane (withTooltip false — just the
+      // aligned cursor). Returns the snapped time drawn, or null when the time
+      // is outside this pane's current x-domain (cursor hidden).
+      function drawCursorAtTime(time, withTooltip) {
+        const xdomain = xScale.domain();
+        if (time < xdomain[0] || time > xdomain[1]) {
+          hideHover();
+          return null;
+        }
 
         let bisectDate = bisector(function(d) {
           return d.time;
@@ -454,18 +492,26 @@ const MultilineCanvas = props => {
 
         let pointarray = [];
         seriesArray.forEach((d, i) => {
-          let idx = bisectDate(d, xpos);
+          if (!d || d.length === 0) {
+            select(markers.nodes()[i]).style('opacity', 0);
+            return;
+          }
+          let idx = bisectDate(d, time);
 
-          let pointleft = d[idx];
-          let pointright = d[idx + 1];
-
-          let deltaleft = Math.abs(xpos - pointleft.time);
-          let deltaright = Math.abs(pointright.time - xpos);
-
-          let point = deltaleft < deltaright ? pointleft : pointright;
+          // nearest sample to `time` — clamp at the ends so an external time
+          // past this series' extent picks the edge point instead of throwing.
+          let a = d[idx - 1];
+          let b = d[idx];
+          let point = !a
+            ? b
+            : !b
+            ? a
+            : Math.abs(time - a.time) <= Math.abs(b.time - time)
+            ? a
+            : b;
 
           let marker = select(markers.nodes()[i]);
-          pointarray.push(d[idx]);
+          pointarray.push(point);
           marker
             .attr('cx', () => xScale(point.time))
             .attr('cy', () => {
@@ -483,17 +529,32 @@ const MultilineCanvas = props => {
             .style('opacity', 1);
         });
 
-        // should check that all pointarray 'times' line up.
-        // if not, find first matching and then drive the rest of the series.
-        let timecheck = new Set(pointarray.map(d => d.time.getTime()));
-        if (timecheck.length > 1) {
-          alert('warning: times not aligned between arrays');
+        if (pointarray.length === 0) {
+          hideHover();
+          return null;
         }
 
+        // crosshair sticks to the first series' nearest sample; when panes share
+        // a time grid (same file + interval) this lands on the same instant in
+        // every linked pane.
+        let snapped = pointarray[0].time;
         xline
           .style('opacity', 1)
-          .attr('x1', xScale(pointarray[0].time))
-          .attr('x2', xScale(pointarray[0].time));
+          .attr('x1', xScale(snapped))
+          .attr('x2', xScale(snapped));
+
+        // External (linked) hovers want only the aligned cursor — no tooltip.
+        if (!withTooltip) {
+          return snapped;
+        }
+
+        // If the hovered series don't share a time grid the markers can drift;
+        // warn quietly rather than alert() in a mousemove handler (the old check
+        // also used .length on a Set, so it never fired).
+        let timecheck = new Set(pointarray.map(d => d.time.getTime()));
+        if (timecheck.size > 1) {
+          console.warn('timestep: hovered series are not time-aligned');
+        }
 
         tooltip
           .style(
@@ -542,12 +603,30 @@ const MultilineCanvas = props => {
         })
         .join('')}</div>
       `);
+
+        return snapped;
+      }
+
+      function mouseMove(e) {
+        let xpos = xScale.invert(mouse(this)[0]);
+        let snapped = drawCursorAtTime(xpos, true);
+        // Broadcast the snapped time so other linked panes draw a crosshair at
+        // the same instant. Dedupe: the cursor quantizes to data points, so
+        // consecutive moves within one point's pixel span resolve to the same
+        // time — no need to thrash the store.
+        if (snapped && onHoverMove) {
+          let t = snapped.getTime();
+          if (t !== lastHoverSent.current) {
+            lastHoverSent.current = t;
+            onHoverMove(t);
+          }
+        }
       }
 
       function mouseOut(e) {
-        xline.style('opacity', 0);
-        markers.style('opacity', 0);
-        tooltip.style('opacity', 0);
+        hideHover();
+        lastHoverSent.current = null;
+        if (onHoverEnd) onHoverEnd();
       }
 
       /* HANDLE ZOOM & BRUSH */
@@ -660,6 +739,8 @@ const MultilineCanvas = props => {
         .on('mouseout', mouseOut)
         .on('mouseover', mouseOver)
         .call(zoomFunc);
+
+      cursorApi.current = { drawCursorAtTime, hideCursor: hideHover };
     }
   };
 

@@ -29,10 +29,15 @@ export function resetViews() {
   };
 }
 
-export function addView(id) {
+// `seed` (optional) clones a source pane's config + loaded data into the new
+// pane — used by "+ Split chart" so the new pane starts as a copy of the
+// focused one rather than blank. Omitted callers (fresh load, session restore)
+// get the default blank pane.
+export function addView(id, seed) {
   return {
     type: 'ADD_VIEW',
-    payload: id
+    payload: id,
+    seed
   };
 }
 
@@ -40,13 +45,6 @@ export function removeView(id) {
   return {
     type: 'REMOVE_VIEW',
     payload: id
-  };
-}
-
-export function setContainerDims(dims) {
-  return {
-    type: 'SET_CONTAINER_DIMS',
-    payload: dims
   };
 }
 
@@ -71,6 +69,22 @@ export function changeUnits(units) {
   };
 }
 
+export function setGlobalInterval(interval) {
+  return {
+    type: 'SET_GLOBAL_INTERVAL',
+    payload: interval
+  };
+}
+
+// Map of reporting-frequency -> number of series available in the loaded
+// files, used to annotate the interval pickers ("Hourly [62]").
+export function setIntervalCounts(counts) {
+  return {
+    type: 'SET_INTERVAL_COUNTS',
+    payload: counts
+  };
+}
+
 export function setNotification(message) {
   return {
     type: 'SET_NOTIFICATION',
@@ -84,7 +98,25 @@ export function clearNotification() {
   };
 }
 
+// linked / cross-pane comparison actions. hoverTime carries its source viewID
+// so the emitting pane can tell its own hover apart from an echo.
+export function setHoverTime(time, source) {
+  return { type: 'SET_HOVER_TIME', payload: time, source };
+}
+
+export function clearHoverTime() {
+  return { type: 'CLEAR_HOVER_TIME' };
+}
+
+export function setLinkedWindow(domain) {
+  return { type: 'SET_LINKED_WINDOW', payload: domain };
+}
+
 // view level actions - all need to have viewID for future multiple view support
+
+export function changeViewLinked(linked, viewID) {
+  return { type: 'CHANGE_VIEW_LINKED', payload: linked, viewID };
+}
 
 export function changeChartType(chartType, viewID) {
   return {

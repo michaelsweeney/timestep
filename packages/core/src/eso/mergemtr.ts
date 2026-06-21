@@ -23,7 +23,9 @@ export function mergeMeterFile(eso: ParsedEso, mtr: ParsedEso): ParsedEso {
   // .mtr Time rows referenced by the new meters, in order of first use.
   const mtrTimeByIdx = new Map(mtr.time.map(t => [t.timeIndex, t]));
   const timeRemap = new Map<number, number>();
-  const appendedTime = [];
+  // Typed (not bare `[]`, which strict TS infers as never[]) — rows appended
+  // here share the .eso/.mtr time-row shape and are spread into `time` below.
+  const appendedTime: typeof mtr.time = [];
   // eso time indexes are 1-based and contiguous, so length is the last index.
   let nextTimeIdx = eso.time.length;
   let addCount = 0;

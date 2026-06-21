@@ -32,6 +32,15 @@ const AboutDialog = props => {
           A fast EnergyPlus timeseries visualization tool — load a .sql or .eso
           output and explore it interactively, no re-run needed.
         </Typography>
+        <Typography variant="body2" component="div" style={{ marginTop: 8 }}>
+          <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+            <li>Loads .sql and raw .eso output (cached conversion, no re-run)</li>
+            <li>Line, heatmap, histogram, scatter, and summary charts</li>
+            <li>Multiple files side by side; split panes with linked hover &amp; zoom</li>
+            <li>SI/IP units with honest labels and load-time data-quality warnings</li>
+            <li>CSV/clipboard export; save &amp; restore sessions</li>
+          </ul>
+        </Typography>
         <Typography variant="body2" component="div" style={{ marginTop: 12 }}>
           <Link href="#" onClick={ext(REPO)}>
             GitHub repository

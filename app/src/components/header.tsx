@@ -1,50 +1,50 @@
 import React from 'react';
-import Logo from './logo';
 import FileMenu from './filemenu';
-import ViewSelector from './viewselector';
 import SettingsMenu from './settingsmenu';
-import { Divider } from '@material-ui/core';
+import SplitButton from './splitbutton';
+import SessionSummary from './sessionsummary';
+import UnitToggle from './unittoggle';
 import { makeStyles } from '@material-ui/core/styles';
 
+// bnd-viz-style flat topbar driven by the CSS token set:
+//   timestep | [Files (N)] [+ Split chart]   …   ‹dataset·units›  [⚙]
+// Wordmark: the original lowercase two-tone logo in Roboto (--sans) — the face
+// the first timestep shipped with — "timest" in --accent (Indigo) with the
+// trailing "ep" in --brand-red (Pink A400), the original Material palette.
+// Medium weight, not heavy.
 const useStyles = makeStyles(
-  theme => ({
+  {
     root: {
-      padding: 10,
+      flex: 'none',
+      height: 72,
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
-      borderBottom: `1px solid ${theme.palette.divider}`,
-      boxShadow: '0px 6px 7px -4px rgba(0,0,0,0.2)',
+      gap: 28,
+      padding: '0 28px',
+      boxSizing: 'border-box',
+      borderBottom: '1px solid var(--hairline)',
+      background: 'var(--panel)',
       width: '100%',
-      height: 75,
       overflow: 'hidden',
-      whiteSpace: 'nowrap',
-      minWidth: 700
+      whiteSpace: 'nowrap'
     },
-    left: {
-      display: 'flex',
-      alignItems: 'center'
+    wordmark: {
+      fontFamily: 'var(--sans)',
+      fontWeight: 500,
+      fontSize: 34,
+      lineHeight: 1,
+      letterSpacing: 0,
+      color: 'var(--ink)',
+      userSelect: 'none',
+      // extra breathing room between the logo and the Files / Split cluster,
+      // on top of the row gap
+      marginRight: 32
     },
-    // App-level settings sit left of a divider; data controls (files, views)
-    // sit right of it — a meaningful grouping, not just decoration.
-    vdivider: {
-      height: 34,
-      alignSelf: 'center',
-      margin: '0 12px'
-    },
-    files: {
-      width: 115
-    },
-    views: {
-      marginLeft: 16
-    },
-    logo: {
-      display: 'inline-block'
-    }
-  }),
-  {
-    name: 'header'
-  }
+    blue: { color: 'var(--accent)' },
+    red: { color: 'var(--brand-red)' },
+    spacer: { flex: 1 }
+  },
+  { name: 'header' }
 );
 
 const Header = () => {
@@ -52,19 +52,16 @@ const Header = () => {
 
   return (
     <div className={classes.root}>
-      <div className={classes.left}>
-        <SettingsMenu />
-        <Divider orientation="vertical" className={classes.vdivider} />
-        <div className={classes.files}>
-          <FileMenu />
-        </div>
-        <div className={classes.views}>
-          <ViewSelector />
-        </div>
+      <div className={classes.wordmark}>
+        <span className={classes.blue}>timest</span>
+        <span className={classes.red}>ep</span>
       </div>
-      <div className={classes.logo}>
-        <Logo />
-      </div>
+      <FileMenu />
+      <SplitButton />
+      <div className={classes.spacer} />
+      <SessionSummary />
+      <UnitToggle />
+      <SettingsMenu />
     </div>
   );
 };

@@ -13,6 +13,10 @@ import { getSeriesKeys } from 'src/sql';
 
 const HeatmapCanvas = props => {
   const container = useRef(null);
+  // imperative handle onto the cell highlight, set once the chart is built, so a
+  // linked hover from another pane can highlight a cell with no local mouse event
+  const cursorApi = useRef(null);
+  const lastHoverSent = useRef(null);
   const {
     files,
     series,
@@ -20,7 +24,12 @@ const HeatmapCanvas = props => {
     units,
     minrange,
     maxrange,
-    reversecolor
+    reversecolor,
+    hoverTime,
+    hoverSource,
+    onHoverMove,
+    onHoverEnd,
+    viewID
   } = props;
 
   const { width, height } = props.plotdims;
@@ -42,6 +51,20 @@ const HeatmapCanvas = props => {
   useEffect(() => {
     createChart();
   }, [colorfunc, reversecolor, minrange, maxrange]);
+
+  // Honor a hover from another linked pane: highlight the cell at the shared
+  // time. Skipped when this pane is the source (its own mousemove already drew
+  // it). hoverTime is a ms timestamp; the heatmap maps it to its nearest cell.
+  useEffect(() => {
+    const api = cursorApi.current;
+    if (!api) return;
+    const isSource = hoverSource != null && hoverSource === viewID;
+    if (!isSource && hoverTime != null) {
+      api.drawCursorAtTime(new Date(hoverTime), false);
+    } else if (!isSource) {
+      api.hideCursor();
+    }
+  }, [hoverTime, hoverSource]);
 
   const createColorScale = () => {
     const colorScale = scaleLinear().range([0, 1]);
@@ -125,6 +148,28 @@ const HeatmapCanvas = props => {
         .on('mouseout', handleMouseout)
         .on('mouseover', handleMouseover)
         .on('mousemove', handleMousemove);
+
+      // accent outline over the hovered cell — driven by local hover and by a
+      // linked hover from another pane. Stroked via the d3-container CSS.
+      const cellHighlight = svg
+        .selectAll('.cell-highlight')
+        .data([0])
+        .join('rect')
+        .attr('class', 'cell-highlight')
+        .attr('transform', `translate(${margins.l}, ${margins.t})`)
+        .style('opacity', 0);
+
+      // full-height day line at the hovered column — makes the linked highlight
+      // legible (a single hourly cell is only ~1px wide in a 365-day calendar)
+      const cellDayline = svg
+        .selectAll('.cell-dayline')
+        .data([0])
+        .join('line')
+        .attr('class', 'cell-dayline')
+        .attr('transform', `translate(${margins.l}, ${margins.t})`)
+        .attr('y1', 0)
+        .attr('y2', plotheight)
+        .style('opacity', 0);
 
       context.clearRect(0, 0, plotwidth, plotheight);
 
@@ -270,6 +315,52 @@ const HeatmapCanvas = props => {
         return array[idx];
       }
 
+      function highlightCell(d) {
+        let x = xScale(column(d));
+        let cx = x + rectwidth / 2;
+        cellDayline
+          .attr('x1', cx)
+          .attr('x2', cx)
+          .style('opacity', 1);
+        cellHighlight
+          .attr('x', x)
+          .attr('y', yScale(d.hour) - rectheight)
+          .attr('width', rectwidth)
+          .attr('height', rectheight)
+          .style('opacity', 1);
+      }
+
+      function hideCell() {
+        cellHighlight.style('opacity', 0);
+        cellDayline.style('opacity', 0);
+      }
+
+      function findNearestByTime(t) {
+        let best = null;
+        let bestDelta = Infinity;
+        for (let i = 0; i < series.length; i++) {
+          let delta = Math.abs(series[i].time.getTime() - t);
+          if (delta < bestDelta) {
+            bestDelta = delta;
+            best = series[i];
+          }
+        }
+        return best;
+      }
+
+      // Highlight the cell nearest an explicit time — used by a linked hover from
+      // another pane (no local mouse event, so no tooltip). Returns the cell's
+      // time.
+      function drawCursorAtTime(time, withTooltip) {
+        let d = findNearestByTime(time.getTime());
+        if (!d) {
+          hideCell();
+          return null;
+        }
+        highlightCell(d);
+        return d.time;
+      }
+
       function handleMousemove(d) {
         tooltipdiv.style('opacity', 0.85);
         let target = event.target;
@@ -282,6 +373,17 @@ const HeatmapCanvas = props => {
           [mouseRangeX * bbox.width, mouseRangeY * bbox.height],
           series
         );
+
+        highlightCell(closest);
+
+        // broadcast to linked panes (deduped to one dispatch per cell)
+        if (onHoverMove) {
+          let t = closest.time.getTime();
+          if (t !== lastHoverSent.current) {
+            lastHoverSent.current = t;
+            onHoverMove(t);
+          }
+        }
 
         tooltipdiv
           .style('left', event.pageX - 150 + 'px')
@@ -301,7 +403,12 @@ const HeatmapCanvas = props => {
       }
       function handleMouseout() {
         tooltipdiv.style('opacity', 0);
+        hideCell();
+        lastHoverSent.current = null;
+        if (onHoverEnd) onHoverEnd();
       }
+
+      cursorApi.current = { drawCursorAtTime, hideCursor: hideCell };
 
       /* COLOR LEGEND */
 

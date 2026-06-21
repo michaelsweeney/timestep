@@ -6,31 +6,60 @@ import { makeStyles } from '@material-ui/core/styles';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
+// Flat control strip. The MUI Tabs/Tab stay (they drive the tab callbacks) but
+// are restyled flat: no Material slider indicator, uppercase Roboto labels (the
+// original timestep tab style, not the technical mono), an accent underline +
+// accent text on the active tab.
 const useStyles = makeStyles(
-  theme => ({
+  {
     root: {
-      paddingLeft: 55,
-      transition: 'all 500ms',
-      paddingRight: 55,
+      paddingLeft: 24,
+      transition: 'height 300ms',
+      paddingRight: 24,
       width: '100%',
-      marginTop: 10,
-      paddingTop: 10,
+      marginTop: 0,
+      paddingTop: 6,
       height: props => (props.height ? props.height : 100),
-      borderTop: `1px solid ${theme.palette.divider}`
+      background: 'var(--panel)',
+      borderTop: '1px solid var(--hairline)'
     },
-    tabs: { display: 'inline-block' },
-    tab: {},
-    header: {
+    tabs: {
       display: 'inline-block',
+      // kill the Material sliding indicator; we draw our own underline per-tab
+      '& .MuiTabs-indicator': { display: 'none' },
+      '& .MuiTabs-flexContainer': { gap: 4 }
+    },
+    header: {
+      display: 'flex',
+      alignItems: 'center',
       whiteSpace: 'nowrap'
     },
-    tabactive: {},
-    tabinactive: {},
-    indicatoractive: {},
-    indicatorinactive: {
-      '& .MuiTabs-indicator': {
-        display: 'none'
-      }
+    tab: {
+      minWidth: 0,
+      minHeight: 0,
+      padding: '7px 10px',
+      fontFamily: 'var(--sans) !important',
+      fontWeight: 500,
+      fontSize: '12px !important',
+      letterSpacing: '0.06em',
+      textTransform: 'uppercase',
+      borderBottom: '2px solid transparent',
+      transition: 'color .12s, border-color .12s',
+      opacity: 1
+    },
+    tabactive: {
+      color: 'var(--accent) !important',
+      borderBottomColor: 'var(--accent)'
+    },
+    tabinactive: {
+      color: 'var(--ink-dim) !important',
+      '&:hover': { color: 'var(--ink) !important' }
+    },
+    collapseBtn: {
+      minWidth: 0,
+      padding: '4px 6px',
+      color: 'var(--ink-dim) !important',
+      '&:hover': { color: 'var(--ink) !important', background: 'transparent' }
     },
     view: {
       marginTop: 15,
@@ -46,7 +75,7 @@ const useStyles = makeStyles(
       }
     },
     viewcontainer: { height: '100%' }
-  }),
+  },
   { name: 'controls-wrapper' }
 );
 
@@ -67,41 +96,30 @@ const ControlsWrapper = props => {
   return (
     <div ref={container} className={classes.root}>
       <div className={classes.header}>
-        <div className={classes.tabs}>
-          <Tabs
-            value={activetab}
-            indicatorColor="primary"
-            textColor="primary"
-            className={
-              props.isVisible
-                ? classes.indicatoractive
-                : classes.indicatorinactive
-            }
-          >
-            {childprops.map((t, i) => {
-              return (
-                <Tab
-                  disableRipple={true}
-                  key={i}
-                  className={
-                    activetab == t.tag
-                      ? classes.tab + ' ' + classes.tabactive
-                      : classes.tab + ' ' + classes.tabinactive
-                  }
-                  label={t.tabname}
-                  value={t.tag}
-                  onClick={() => props.tabChangeCallback(t.tag)}
-                />
-              );
-            })}
-          </Tabs>
-        </div>
+        <Tabs value={activetab} className={classes.tabs}>
+          {childprops.map((t, i) => {
+            return (
+              <Tab
+                disableRipple={true}
+                key={i}
+                className={
+                  activetab == t.tag
+                    ? classes.tab + ' ' + classes.tabactive
+                    : classes.tab + ' ' + classes.tabinactive
+                }
+                label={t.tabname}
+                value={t.tag}
+                onClick={() => props.tabChangeCallback(t.tag)}
+              />
+            );
+          })}
+        </Tabs>
         {props.disableCollapse ? (
           ''
         ) : (
           <Button
             disableRipple={true}
-            color="primary"
+            className={classes.collapseBtn}
             onClick={() => props.toggleHideCallback()}
           >
             {props.isVisible ? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}

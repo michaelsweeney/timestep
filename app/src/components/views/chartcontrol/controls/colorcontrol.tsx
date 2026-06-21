@@ -3,6 +3,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { ColorScaleSelect } from './colorscaleselect';
 import { RangeSlider } from './rangeslider';
+import { useControlStyles } from './controlstyles';
 import { InputLabel, Checkbox } from '@material-ui/core';
 
 const useStyles = makeStyles(
@@ -37,26 +38,33 @@ const useStyles = makeStyles(
 
 const ColorControl = props => {
   const classes = useStyles();
+  const tokens = useControlStyles();
 
   return (
     <div className={classes.root}>
       <div>
         <div className={classes.colorselectcontainer}>
-          <InputLabel>Colorscale</InputLabel>
+          <InputLabel className={tokens.label} shrink>
+            Colorscale
+          </InputLabel>
           <ColorScaleSelect colorScaleCallback={props.colorScaleCallback} />
         </div>
         <div className={classes.checkboxcontainer}>
           <Checkbox
-            className={classes.checkbox}
+            className={tokens.checkbox}
             color="primary"
             disableRipple={true}
             onChange={props.reverseCallback}
           />
-          <InputLabel>Reversed</InputLabel>
+          <InputLabel className={tokens.label} shrink>
+            Reversed
+          </InputLabel>
         </div>
       </div>
       <div className={classes.colordomaincontainer}>
-        <InputLabel>Color Domain</InputLabel>
+        <InputLabel className={tokens.label} shrink>
+          Color Domain
+        </InputLabel>
         <RangeSlider
           defaultValue={props.defaultRange}
           rangeCallback={props.rangeCallback}

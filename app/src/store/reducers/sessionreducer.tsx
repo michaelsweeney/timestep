@@ -5,14 +5,12 @@ import { version as appVersion } from '../../../package.json';
 
 const initialState = {
   units: 'si',
+  intervalDefault: 'Hourly',
+  intervalCounts: {},
   files: [],
   fileInfo: [],
   activeViewID: 1,
   viewArray: [1],
-  containerDims: {
-    width: 700,
-    height: 500
-  },
   sessionIncrement: 1,
   isLoadingFromFile: false,
   version: `v${appVersion}`,
@@ -54,11 +52,6 @@ export default function sessionReducer(state = initialState, action) {
         activeViewID: action.payload
       };
 
-    case 'SET_CONTAINER_DIMS':
-      return {
-        ...state,
-        containerDims: action.payload
-      };
     case 'CHANGE_FILES':
       return {
         ...state,
@@ -68,6 +61,17 @@ export default function sessionReducer(state = initialState, action) {
       return {
         ...state,
         units: action.payload
+      };
+    case 'SET_GLOBAL_INTERVAL':
+      return {
+        ...state,
+        intervalDefault: action.payload
+      };
+
+    case 'SET_INTERVAL_COUNTS':
+      return {
+        ...state,
+        intervalCounts: action.payload
       };
 
     case 'CHANGE_FILE_INFO':

@@ -40,6 +40,7 @@ app/style.css
 app/style.css.map
 dist
 dist-web
+dist-serve
 dll
 main.js
 main.js.map

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { connect } from 'src/store';
+import { getPlotDims } from './plotdims';
 
 import { getSeries } from 'src/sql';
 
-import { Heatmap } from './charts/heatmap';
 import { HeatmapCanvas } from './charts/heatmapcanvas';
 
 import { ChartWrapper } from './chartwrapper';
@@ -20,7 +20,14 @@ const HeatmapControl = props => {
   const plotContainer = useRef(null);
 
   const { viewID } = props;
-  const { containerDims, files, units, isLoadingFromFile } = props.session;
+
+  // Cross-pane linking: a linked heatmap honors hovers from other linked panes
+  // (highlighting the matching day/hour cell) and broadcasts its own.
+  const viewLinked = props.view.linked !== false;
+  const { hoverTime, hoverSource } = props.linked;
+
+  const { files, units, isLoadingFromFile } = props.session;
+  const { paneDims, forcedTab, onForcedTabHandled } = props;
   const {
     seriesOptions,
     isLoading,
@@ -48,10 +55,7 @@ const HeatmapControl = props => {
   const [controlsHeight, setControlsHeight] = useState(controlsVisibleHeight);
   const [controlsVisible, setControlsVisible] = useState(true);
 
-  const plotDims = {
-    width: Math.max(containerDims.width, 200),
-    height: Math.max(containerDims.height - controlsHeight, 200)
-  };
+  const plotDims = getPlotDims(paneDims, controlsHeight);
   const toggleHideControlsTabs = () => {
     if (controlsVisible) {
       setControlsVisible(false);
@@ -100,6 +104,15 @@ const HeatmapControl = props => {
     seriesLoad(selectedKey, v, viewID);
   };
 
+  // Pane-header Options/Export buttons request a tab; open it + reveal controls.
+  useEffect(() => {
+    if (!forcedTab) return;
+    setActiveTab(forcedTab);
+    setControlsVisible(true);
+    setControlsHeight(controlsVisibleHeight);
+    onForcedTabHandled && onForcedTabHandled();
+  }, [forcedTab]);
+
   useEffect(() => {
     if (isLoadingFromFile) {
       try {
@@ -146,6 +159,15 @@ const HeatmapControl = props => {
           minrange={minRange}
           maxrange={maxRange}
           reversecolor={reverseColor}
+          viewID={viewID}
+          hoverTime={viewLinked ? hoverTime : null}
+          hoverSource={viewLinked ? hoverSource : null}
+          onHoverMove={
+            viewLinked ? t => props.actions.setHoverTime(t, viewID) : undefined
+          }
+          onHoverEnd={
+            viewLinked ? () => props.actions.clearHoverTime() : undefined
+          }
         />
       </ChartWrapper>
       <ControlsWrapper
@@ -182,6 +204,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     session: { ...state.session },
     view: { ...state.views[ownProps.viewID] },
+    linked: { ...state.linked },
     actions: { ...state.actions }
   };
 };

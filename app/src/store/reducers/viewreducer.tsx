@@ -9,26 +9,48 @@ const initialState = {
     selectedSeriesLabel: null,
     isLoading: false,
     loadingQueue: {},
-    loadedObj: {}
+    loadedObj: {},
+    // opted into cross-pane hover/zoom linking by default — comparison is the
+    // point of having more than one pane; a pane can opt out from its header.
+    linked: true
   }
 };
 
 export default function viewReducer(state = initialState, action) {
   switch (action.type) {
     case 'ADD_VIEW': {
+      // A seed clones a source pane (same chart type, interval, selection and
+      // already-loaded data) so "+ Split chart" yields a working copy. loadedObj
+      // is shallow-copied so per-pane add/remove can't mutate the source. No
+      // seed → the default blank pane (fresh load / session restore).
+      const seed = action.seed;
+      const config = seed
+        ? {
+            timestepType: seed.timestepType,
+            chartType: seed.chartType,
+            seriesOptions: seed.seriesOptions || [],
+            selectedSeries: seed.selectedSeries,
+            selectedSeriesLabel: seed.selectedSeriesLabel,
+            loadedObj: { ...(seed.loadedObj || {}) },
+            linked: seed.linked !== false
+          }
+        : {
+            timestepType: 'Hourly',
+            chartType: 'Heatmap',
+            seriesOptions: [],
+            selectedSeries: [],
+            selectedSeriesLabel: null,
+            loadedObj: {},
+            linked: true
+          };
       return {
         ...state,
         [action.payload]: {
           viewID: action.payload,
           label: `View ${action.payload}`,
-          timestepType: 'Hourly',
-          chartType: 'Heatmap',
-          seriesOptions: [],
-          selectedSeries: [],
-          selectedSeriesLabel: null,
           loadingQueue: {},
-          loadedObj: {},
-          isLoading: false
+          isLoading: false,
+          ...config
         }
       };
     }
@@ -49,6 +71,14 @@ export default function viewReducer(state = initialState, action) {
       return initialState;
     }
 
+    case 'CHANGE_VIEW_LINKED':
+      return {
+        ...state,
+        [action.viewID]: {
+          ...state[action.viewID],
+          linked: action.payload
+        }
+      };
     case 'CHANGE_VIEW_TYPE':
       return {
         ...state,
@@ -65,6 +95,13 @@ export default function viewReducer(state = initialState, action) {
           timestepType: action.payload
         }
       };
+    case 'SET_GLOBAL_INTERVAL':
+      return Object.fromEntries(
+        Object.entries(state).map(([id, view]) => [
+          id,
+          { ...view, timestepType: action.payload }
+        ])
+      );
 
     case 'CHANGE_SELECTED_SERIES':
       return {

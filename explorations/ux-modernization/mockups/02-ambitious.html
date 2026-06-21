@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>timestep · multi-pane workspace (BND-Vis spirit)</title>
+<!--
+  MOCK-UP 2 of 3 — "Ambitious multi-pane workspace"
+  Full BND-Vis-style shell adapted to timeseries: persistent variable browser
+  (left), tiled resizable/collapsible chart panes (center, four at once),
+  inspector (right), topbar gear popover. LINKED SELECTION + LINKED HOVER are
+  the stars: clicking a variable lights up every pane + the inspector, and
+  hovering a time-based chart draws a crosshair at that instant ACROSS all
+  linked panes and reads the value into the inspector — a read interaction, no
+  playback. Static demo, no real data. Brand indigo/pink.
+-->
+<style>
+  :root {
+    --bg: #18181b; --panel: #202024; --panel-2: #26262b; --panel-3: #2c2c32;
+    --hairline: #34343a; --hairline-2: #43434b;
+    --ink: #e7e8ec; --ink-dim: #9596a0; --ink-faint: #62636d;
+    --indigo: #8c9eff; --indigo-dim: #5a64a8; --pink: #ff5c8d; --axis: #cfcfcf;
+    --sel: rgba(140,158,255,.16);
+    --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+    --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+  body.light {
+    --bg: #eef0f3; --panel: #fff; --panel-2: #fff; --panel-3: #f4f5f7;
+    --hairline: #e0e2e7; --hairline-2: #ccd0d7;
+    --ink: #1a1c20; --ink-dim: #5a5f6b; --ink-faint: #99a0ac;
+    --indigo: #3f51b5; --indigo-dim: #9aa3d8; --pink: #f50057; --axis: rgba(0,0,0,.7);
+    --sel: rgba(63,81,181,.1);
+  }
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body { background: var(--bg); color: var(--ink); font: 14px/1.45 var(--sans);
+    display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+  /* topbar */
+  #topbar { flex: none; height: 50px; display: flex; align-items: center; gap: 16px;
+    padding: 0 16px; border-bottom: 1px solid var(--hairline);
+    background: linear-gradient(180deg, var(--panel-2), var(--panel)); }
+  .wordmark { font: 700 19px/1 var(--sans); letter-spacing: .02em; }
+  .wordmark .a { color: var(--indigo); } .wordmark .b { color: var(--pink); }
+  .chip { font: 500 12px var(--mono); color: var(--ink-dim); border: 1px solid var(--hairline-2);
+    border-radius: 5px; padding: 6px 9px; background: var(--panel-3); }
+  .chip b { color: var(--ink); }
+  .iso { color: var(--indigo); border-color: var(--indigo-dim); background: var(--sel); display: inline-flex; gap: 8px; align-items: center; }
+  .iso .x { cursor: pointer; color: var(--indigo-dim); } .iso .x:hover { color: var(--indigo); }
+  #spacer { flex: 1; }
+  .tbtn { appearance: none; background: var(--panel-3); color: var(--ink-dim); border: 1px solid var(--hairline-2);
+    border-radius: 6px; font: 500 13px var(--sans); padding: 7px 11px; cursor: pointer; transition: .15s; display: inline-flex; gap: 7px; align-items: center; }
+  .tbtn:hover { color: var(--ink); border-color: var(--indigo); }
+  .gear { width: 36px; height: 36px; border-radius: 50%; justify-content: center; padding: 0; font-size: 16px; }
+  .pop { position: absolute; top: 54px; right: 14px; width: 248px; z-index: 40; background: var(--panel-2);
+    border: 1px solid var(--hairline-2); border-radius: 10px; box-shadow: 0 18px 44px rgba(0,0,0,.55); padding: 8px; display: none; }
+  .pop.open { display: block; }
+  .pop h4 { margin: 8px 8px 4px; font: 600 10px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); }
+  .poprow { display: flex; align-items: center; justify-content: space-between; padding: 8px; border-radius: 6px; }
+  .seg { display: inline-flex; border: 1px solid var(--hairline-2); border-radius: 6px; overflow: hidden; }
+  .seg button { appearance: none; border: 0; background: transparent; color: var(--ink-dim); font: 500 12px var(--mono); padding: 5px 11px; cursor: pointer; }
+  .seg button.on { background: var(--indigo); color: var(--bg); }
+  .sel-in { appearance: none; background: var(--panel-3); color: var(--ink); border: 1px solid var(--hairline-2); border-radius: 6px; font: 500 12px var(--sans); padding: 6px 9px; }
+
+  /* workspace */
+  #work { flex: 1; display: flex; min-height: 0; }
+
+  /* variable browser */
+  #browser { width: 244px; flex: none; background: var(--panel-2); border-right: 1px solid var(--hairline); display: flex; flex-direction: column; }
+  .bhead { flex: none; height: 36px; display: flex; align-items: center; padding: 0 12px; border-bottom: 1px solid var(--hairline); }
+  .bhead .t { font: 600 11px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); }
+  .search { margin: 10px; flex: none; }
+  .search input { width: 100%; appearance: none; background: var(--panel-3); border: 1px solid var(--hairline-2); border-radius: 7px;
+    color: var(--ink); font: 400 13px var(--sans); padding: 8px 10px; }
+  .search input:focus { outline: none; border-color: var(--indigo); }
+  .blist { flex: 1; overflow-y: auto; padding: 0 6px 14px; }
+  .bgroup { font: 600 10px/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); padding: 12px 8px 5px; }
+  .bvar { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; cursor: pointer; font: 400 12.5px/1.3 var(--sans); color: var(--ink-dim); }
+  .bvar:hover { background: rgba(255,255,255,.04); color: var(--ink); }
+  body.light .bvar:hover { background: rgba(0,0,0,.04); }
+  .bvar.on { background: var(--sel); color: var(--indigo); }
+  .bvar .sw { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+  .bvar .freq { margin-left: auto; font: 400 10px var(--mono); color: var(--ink-faint); }
+
+  /* center column = tiled panes (no transport — static viewer) */
+  #center { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  #grid { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .prow { flex: 1; display: flex; min-height: 0; }
+  .hsplit { flex: none; height: 6px; cursor: row-resize; background: transparent; transition: .15s; } .hsplit:hover { background: var(--indigo); }
+  .vsplit { flex: none; width: 6px; cursor: col-resize; background: transparent; transition: .15s; } .vsplit:hover { background: var(--indigo); }
+  .pane { flex: 1; min-width: 0; min-height: 0; display: flex; flex-direction: column; background: var(--panel); }
+  .pane + .pane, .prow + .prow { }
+  .ph { flex: none; height: 32px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border-bottom: 1px solid var(--hairline); background: rgba(255,255,255,.012); }
+  .pt { font: 600 11px/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); }
+  .pt b { color: var(--indigo); }
+  .ptools { margin-left: auto; display: flex; gap: 5px; }
+  .link { appearance: none; border: 1px solid var(--hairline-2); background: transparent; color: var(--ink-faint); border-radius: 5px; font: 600 10px var(--mono); padding: 3px 7px; cursor: pointer; }
+  .link.on { color: var(--indigo); border-color: var(--indigo-dim); background: var(--sel); }
+  .ib { appearance: none; width: 24px; height: 24px; border-radius: 5px; border: 1px solid transparent; background: transparent; color: var(--ink-dim); cursor: pointer; font-size: 12px; }
+  .ib:hover { color: var(--ink); border-color: var(--hairline-2); }
+  .pb { flex: 1; min-height: 0; position: relative; }
+  .pb svg { width: 100%; height: 100%; display: block; }
+  .pane.closed { flex: 0 0 32px !important; }
+  .pane.closed .pb { display: none; }
+  .pane.closed .ph { flex-direction: column; height: 100%; padding: 9px 0; border-bottom: 0; }
+  .pane.closed .pt { writing-mode: vertical-rl; letter-spacing: .2em; }
+  .pane.closed .ptools { margin-left: 0; margin-top: auto; flex-direction: column; }
+
+  .gl { stroke: var(--hairline); } .al { stroke: var(--axis); opacity: .5; }
+  .lbl { fill: var(--ink-faint); font: 400 9.5px var(--mono); }
+  .cursorline { stroke: var(--pink); stroke-width: 1.5; stroke-dasharray: 3 2; opacity: .85; }
+  .hovertip { fill: var(--ink); font: 600 9.5px var(--mono); }
+
+  /* inspector */
+  #inspector { width: 296px; flex: none; background: var(--panel-2); border-left: 1px solid var(--hairline); display: flex; flex-direction: column; }
+  .ihead { flex: none; height: 36px; display: flex; align-items: center; padding: 0 14px; border-bottom: 1px solid var(--hairline); }
+  .ihead .t { font: 600 11px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); }
+  .ibody { flex: 1; overflow-y: auto; padding: 16px; }
+  .ibody h2 { margin: 0 0 6px; font: 600 16px/1.3 var(--mono); color: var(--ink); }
+  .kind { display: inline-block; font: 600 10px var(--mono); letter-spacing: .14em; color: var(--indigo); border: 1px solid var(--indigo-dim); border-radius: 4px; padding: 3px 7px; margin-bottom: 14px; }
+  .isec { font: 600 10px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-faint); margin: 16px 0 6px; border-bottom: 1px solid var(--hairline); padding-bottom: 5px; }
+  .ibody table { width: 100%; border-collapse: collapse; font: 400 12.5px/1.6 var(--mono); }
+  .ibody td { padding: 2px 6px 2px 0; vertical-align: top; }
+  .ibody td:first-child { color: var(--ink-dim); white-space: nowrap; }
+  .ibody td:last-child { color: var(--ink); text-align: right; }
+  .stat-now { color: var(--pink) !important; font-weight: 600; }
+  .dq { padding: 8px 10px; border-radius: 6px; background: rgba(255,184,77,.08); border: 1px solid rgba(255,184,77,.25); color: #ffce80; font: 400 12px/1.5 var(--sans); margin-bottom: 6px; }
+  .dq b { color: #ffd699; }
+
+  #foot { flex: none; height: 24px; display: flex; align-items: center; gap: 14px; padding: 0 14px; border-top: 1px solid var(--hairline); background: var(--panel); font: 400 11px var(--mono); color: var(--ink-faint); }
+</style>
+</head>
+<body>
+  <div id="topbar">
+    <span class="wordmark"><span class="a">time</span><span class="b">step</span></span>
+    <span class="chip">⊞ <b>2</b> files</span>
+    <span class="chip iso" id="isochip">selection: <b>Zone 1 Air Temp</b><span class="x" onclick="clearSel()">✕</span></span>
+    <div id="spacer"></div>
+    <span class="chip">ip · hourly</span>
+    <button class="tbtn gear" onclick="document.getElementById('pop').classList.toggle('open')">⚙</button>
+  </div>
+  <div class="pop" id="pop">
+    <h4>Theme</h4>
+    <div class="poprow"><span>Appearance</span><div class="seg"><button class="on" onclick="setTheme('dark',this)">Dark</button><button onclick="setTheme('light',this)">Light</button></div></div>
+    <h4>Units</h4>
+    <div class="poprow"><span>System</span><div class="seg"><button onclick="seg(this)">SI</button><button class="on" onclick="seg(this)">IP</button></div></div>
+    <h4>Colorscale</h4>
+    <div class="poprow"><span>Default ramp</span><select class="sel-in"><option>Viridis</option><option>RdYlBu</option><option>Turbo</option></select></div>
+  </div>
+
+  <div id="work">
+    <!-- variable browser -->
+    <aside id="browser">
+      <div class="bhead"><span class="t">Variables</span></div>
+      <div class="search"><input placeholder="/  search 412 series…" /></div>
+      <div class="blist" id="blist"></div>
+    </aside>
+
+    <!-- center: 2x2 tiled panes -->
+    <div id="center">
+      <div id="grid">
+        <div class="prow" id="row0">
+          <section class="pane" id="pa">
+            <div class="ph"><span class="pt">Pane 1 · <b>Heatmap</b></span>
+              <div class="ptools"><button class="link on" onclick="this.classList.toggle('on')">🔗 LINK</button><button class="ib" onclick="cls('pa')">⟨⟩</button></div></div>
+            <div class="pb"><svg id="cHm" viewBox="0 0 420 230" preserveAspectRatio="none"></svg></div>
+          </section>
+          <div class="vsplit" data-l="pa" data-r="pb"></div>
+          <section class="pane" id="pb">
+            <div class="ph"><span class="pt">Pane 2 · <b>Multiline</b></span>
+              <div class="ptools"><button class="link on" onclick="this.classList.toggle('on')">🔗 LINK</button><button class="ib" onclick="cls('pb')">⟨⟩</button></div></div>
+            <div class="pb"><svg id="cMl" viewBox="0 0 420 230" preserveAspectRatio="none"></svg></div>
+          </section>
+        </div>
+        <div class="hsplit" data-t="row0" data-b="row1"></div>
+        <div class="prow" id="row1">
+          <section class="pane" id="pc">
+            <div class="ph"><span class="pt">Pane 3 · <b>Scatter</b></span>
+              <div class="ptools"><button class="link on" onclick="this.classList.toggle('on')">🔗 LINK</button><button class="ib" onclick="cls('pc')">⟨⟩</button></div></div>
+            <div class="pb"><svg id="cSc" viewBox="0 0 420 230" preserveAspectRatio="none"></svg></div>
+          </section>
+          <div class="vsplit" data-l="pc" data-r="pd"></div>
+          <section class="pane" id="pd">
+            <div class="ph"><span class="pt">Pane 4 · <b>Load duration</b></span>
+              <div class="ptools"><button class="link" onclick="this.classList.toggle('on')">🔗 LINK</button><button class="ib" onclick="cls('pd')">⟨⟩</button></div></div>
+            <div class="pb"><svg id="cLd" viewBox="0 0 420 230" preserveAspectRatio="none"></svg></div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- inspector -->
+    <aside id="inspector">
+      <div class="ihead"><span class="t">Inspector</span></div>
+      <div class="ibody" id="ibody"></div>
+    </aside>
+  </div>
+
+  <div id="foot"><span>2 files · 8760 hourly · 412 series</span>
+    <span style="margin-left:auto">hover any time chart → linked crosshair across panes · multi-pane concept</span></div>
+
+<script>
+function css(v){ return getComputedStyle(document.body).getPropertyValue(v).trim(); }
+function setTheme(t,el){ document.body.classList.toggle('light',t==='light');
+  el.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on')); el.classList.add('on'); drawAll(); }
+function seg(el){ el.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('on')); el.classList.add('on'); }
+function cls(id){ document.getElementById(id).classList.toggle('closed'); }
+function clearSel(){ document.getElementById('isochip').style.display='none'; }
+
+// ── variable browser ──
+const groups = {
+  'large_office_vav.sql · Zones': ['Zone 1 Air Temp','Zone 2 Air Temp','Zone 3 Air Temp','Zone 1 Relative Humidity','Zone 4 Air Temp'],
+  'large_office_vav.sql · Facility': ['Facility Electricity','Cooling Coil Load','Heating Coil Load','Fan Electricity'],
+  'baseline_run.sql · Zones': ['Zone 1 Air Temp','Zone 2 Air Temp']
+};
+const swatches = ['var(--indigo)','var(--pink)','#5ec8c0','#ffb84d','#b48cff'];
+function buildBrowser(){
+  const el=document.getElementById('blist'); let h=''; let si=0;
+  for(const g in groups){ h+=`<div class="bgroup">${g}</div>`;
+    for(const v of groups[g]){ const on = v==='Zone 1 Air Temp' && g.startsWith('large');
+      h+=`<div class="bvar ${on?'on':''}" onclick="pick(this,'${v}')"><span class="sw" style="background:${swatches[si%swatches.length]}"></span>${v}<span class="freq">hr</span></div>`; si++; } }
+  el.innerHTML=h;
+}
+function pick(elm,name){ document.querySelectorAll('.bvar').forEach(b=>b.classList.remove('on')); elm.classList.add('on');
+  document.getElementById('isochip').style.display=''; document.getElementById('isochip').querySelector('b').textContent=name;
+  setInspector(name); drawAll(); }
+
+// ── inspector ──
+function setInspector(name){
+  document.getElementById('ibody').innerHTML = `
+    <h2>${name}</h2><span class="kind">SERIES · HOURLY · °F</span>
+    <div class="isec">Summary (annual)</div>
+    <table>
+      <tr><td>Min</td><td>58.2 °F</td></tr>
+      <tr><td>Mean</td><td>72.6 °F</td></tr>
+      <tr><td>Max</td><td>81.4 °F</td></tr>
+      <tr><td>Peak at</td><td>Jul 18 · 16:00</td></tr>
+      <tr><td>At hover</td><td class="stat-now" id="atcursor">—</td></tr>
+    </table>
+    <div class="isec">Source</div>
+    <table>
+      <tr><td>File</td><td>large_office_vav.sql</td></tr>
+      <tr><td>EnergyPlus</td><td>22.1</td></tr>
+      <tr><td>Steps</td><td>8760</td></tr>
+    </table>
+    <div class="isec">Data quality</div>
+    <div class="dq"><b>Info:</b> warmup days excluded from summary stats.</div>`;
+}
+
+// ── placeholder charts (layout only) ──
+// LINKED HOVER: hoverT is the time fraction (0..1) under the pointer, shared by
+// every linked time-based chart. null = not hovering = no crosshair. This is a
+// pure read interaction — there is no playback / auto-advance.
+let hoverT = null;
+function ramp(t){ const s=[[68,1,84],[59,82,139],[33,145,140],[94,201,98],[253,231,37]];
+  const i=Math.min(s.length-2,Math.floor(t*(s.length-1))),f=t*(s.length-1)-i,a=s[i],b=s[i+1];
+  return `rgb(${a.map((c,k)=>Math.round(c+(b[k]-c)*f)).join(',')})`; }
+
+function drawHm(){ const el=document.getElementById('cHm'); const ink=css('--ink-faint');
+  let h=''; const ml=28,mt=8,cw=(420-ml-12)/24,ch=(230-mt-20)/12;
+  for(let d=0;d<12;d++)for(let hh=0;hh<24;hh++){ const v=(Math.sin(hh/24*6.28-1.3)*.5+.5)*.7+Math.sin(d/12*3.14)*.3;
+    h+=`<rect x="${ml+hh*cw}" y="${mt+d*ch}" width="${cw-.4}" height="${ch-.4}" fill="${ramp(Math.max(0,Math.min(1,v)))}"/>`; }
+  if(hoverT!=null){ const cx=ml+hoverT*24*cw; h+=`<line class="cursorline" x1="${cx}" y1="${mt}" x2="${cx}" y2="${mt+12*ch}" stroke="${css('--pink')}"/>`; }
+  h+=`<text class="lbl" x="${ml}" y="226" fill="${ink}">0h</text><text class="lbl" x="386" y="226" fill="${ink}">23h</text>`;
+  el.innerHTML=h; }
+
+function drawMl(){ const el=document.getElementById('cMl'); const grid=css('--hairline'),ind=css('--indigo'),pink=css('--pink'),ax=css('--axis');
+  let p1='',p2='',h=''; const ml=30,mt=8,W=420-ml-12,H=230-mt-20;
+  for(let g=0;g<=3;g++){ const y=mt+H*g/3; h+=`<line class="gl" x1="${ml}" y1="${y}" x2="${ml+W}" y2="${y}" stroke="${grid}"/>`; }
+  for(let i=0;i<=120;i++){ const x=ml+i/120*W; const y1=mt+H*(.5-.4*Math.sin(i/120*12.5));
+    const y2=mt+H*(.55-.32*Math.cos(i/120*9+1)); p1+=(i?'L':'M')+x.toFixed(1)+' '+y1.toFixed(1); p2+=(i?'L':'M')+x.toFixed(1)+' '+y2.toFixed(1); }
+  h+=`<line class="al" x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+H}" stroke="${ax}"/>`;
+  h+=`<path d="${p1}" fill="none" stroke="${ind}" stroke-width="1.8"/><path d="${p2}" fill="none" stroke="${pink}" stroke-width="1.4" opacity=".75"/>`;
+  if(hoverT!=null){ const cx=ml+hoverT*W; const cy=mt+H*(.5-.4*Math.sin(hoverT*12.5)); const val=(70+8*Math.sin(hoverT*12.5)).toFixed(1);
+    h+=`<line class="cursorline" x1="${cx}" y1="${mt}" x2="${cx}" y2="${mt+H}" stroke="${pink}"/><circle cx="${cx}" cy="${cy}" r="3.5" fill="${ind}" stroke="${ax}"/>`;
+    h+=`<text class="hovertip" x="${Math.min(cx+5,ml+W-44)}" y="${mt+11}" fill="${css('--ink')}">${val} °F</text>`; }
+  el.innerHTML=h; }
+
+function drawSc(){ const el=document.getElementById('cSc'); const ax=css('--axis'),ind=css('--indigo'),grid=css('--hairline');
+  let h=''; const ml=30,mt=8,W=420-ml-12,H=230-mt-20;
+  h+=`<line class="al" x1="${ml}" y1="${mt+H}" x2="${ml+W}" y2="${mt+H}" stroke="${ax}"/><line class="al" x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+H}" stroke="${ax}"/>`;
+  for(let i=0;i<160;i++){ const t=Math.random(); const x=ml+t*W; const y=mt+H*(1-(t*.6+Math.random()*.35));
+    // linked hover: points near the hovered instant light up across the scatter too
+    const hot=hoverT!=null && Math.abs(t-hoverT)<.04; h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${hot?3.4:2.2}" fill="${hot?css('--pink'):ramp(t)}" ${hot?`stroke="${ax}"`:''} opacity="${hot?1:.78}"/>`; }
+  el.innerHTML=h; }
+
+function drawLd(){ const el=document.getElementById('cLd'); const ax=css('--axis'),pink=css('--pink'),grid=css('--hairline');
+  let p='',h=''; const ml=30,mt=8,W=420-ml-12,H=230-mt-20;
+  for(let g=0;g<=3;g++){ const y=mt+H*g/3; h+=`<line class="gl" x1="${ml}" y1="${y}" x2="${ml+W}" y2="${y}" stroke="${grid}"/>`; }
+  for(let i=0;i<=120;i++){ const x=ml+i/120*W; const y=mt+H*Math.pow(i/120,.55); p+=(i?'L':'M')+x.toFixed(1)+' '+y.toFixed(1); }
+  h+=`<line class="al" x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt+H}" stroke="${ax}"/>`;
+  h+=`<path d="${p}" fill="none" stroke="${css('--indigo')}" stroke-width="1.8"/>`;
+  el.innerHTML=h; }
+
+function drawAll(){ drawHm(); drawMl(); drawSc(); drawLd(); }
+
+// ── linked hover (read-only crosshair, no playback) ──
+// Hovering a time-based pane (heatmap / multiline) sets the shared hoverT; every
+// linked pane redraws its crosshair at that instant and the inspector reads the
+// value. Leaving clears it. Plot geometry matches the per-chart left margin.
+function updateInspectorHover(){
+  const ac=document.getElementById('atcursor');
+  if(!ac) return;
+  ac.textContent = hoverT==null ? '—' : (70+8*Math.sin(hoverT*12.5)).toFixed(1)+' °F';
+}
+function attachHover(svgId, ml){
+  const svg=document.getElementById(svgId);
+  svg.style.cursor='crosshair';
+  svg.addEventListener('mousemove',ev=>{
+    const r=svg.getBoundingClientRect();
+    // map pixel x → viewBox x (vb width 420) → plot fraction past the left margin
+    const vbX=(ev.clientX-r.left)/r.width*420;
+    const W=420-ml-12;
+    hoverT=Math.max(0,Math.min(1,(vbX-ml)/W));
+    updateInspectorHover(); drawAll();
+  });
+  svg.addEventListener('mouseleave',()=>{ hoverT=null; updateInspectorHover(); drawAll(); });
+}
+attachHover('cHm',28); attachHover('cMl',30);
+
+// splitters
+document.querySelectorAll('.vsplit').forEach(sp=>sp.addEventListener('mousedown',e=>{ e.preventDefault();
+  const L=document.getElementById(sp.dataset.l),R=document.getElementById(sp.dataset.r),sx=e.clientX,lw=L.offsetWidth,rw=R.offsetWidth;
+  function mv(ev){ const d=ev.clientX-sx; L.style.flex='0 0 '+(lw+d)+'px'; R.style.flex='0 0 '+(rw-d)+'px'; setTimeout(drawAll,0); }
+  function up(){ document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); drawAll(); }
+  document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up); }));
+document.querySelectorAll('.hsplit').forEach(sp=>sp.addEventListener('mousedown',e=>{ e.preventDefault();
+  const T=document.getElementById(sp.dataset.t),B=document.getElementById(sp.dataset.b),sy=e.clientY,th=T.offsetHeight,bh=B.offsetHeight;
+  function mv(ev){ const d=ev.clientY-sy; T.style.flex='0 0 '+(th+d)+'px'; B.style.flex='0 0 '+(bh-d)+'px'; setTimeout(drawAll,0); }
+  function up(){ document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up); drawAll(); }
+  document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up); }));
+
+// init
+buildBrowser(); setInspector('Zone 1 Air Temp'); drawAll();
+window.addEventListener('resize',drawAll);
+</script>
+</body>
+</html>

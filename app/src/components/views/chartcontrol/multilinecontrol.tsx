@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { connect } from 'src/store';
+import { getPlotDims } from './plotdims';
 
 import { getSeries, getSeriesKeys } from 'src/sql';
 
-import { Multiline } from './charts/Multiline';
 import { MultilineCanvas } from './charts/multilinecanvas';
 
 import { ChartWrapper } from './chartwrapper';
@@ -24,7 +24,15 @@ const MultilineControl = props => {
 
   const { viewID } = props;
 
-  const { containerDims, files, units, isLoadingFromFile } = props.session;
+  // Cross-pane linking: a linked pane both broadcasts the time its cursor is
+  // over and honors hovers from other linked panes (the canvas draws the
+  // crosshair from these). hoverSource lets the canvas ignore the echo of its
+  // own hover.
+  const viewLinked = props.view.linked !== false;
+  const { hoverTime, hoverSource, window: linkedWindow } = props.linked;
+
+  const { files, units, isLoadingFromFile } = props.session;
+  const { paneDims, forcedTab, onForcedTabHandled } = props;
 
   const {
     seriesOptions,
@@ -35,7 +43,11 @@ const MultilineControl = props => {
   } = props.view;
 
   const optionArray = Object.keys(seriesOptions);
-  const seriesData = Object.values(loadedObj);
+  // Stable reference unless the loaded data actually changes. Without this a
+  // fresh array every render retriggers the chart's build effect — and a hover
+  // dispatch (linked crosshair) would rebuild the chart mid-hover, wiping the
+  // cursor the source pane just drew.
+  const seriesData = useMemo(() => Object.values(loadedObj), [loadedObj]);
 
   const [colorScheme, setColorScheme] = useState('schemeTableau10');
   const [seriesConfig, setSeriesConfig] = useState([]);
@@ -70,10 +82,16 @@ const MultilineControl = props => {
     }
   };
 
-  const plotDims = {
-    width: Math.max(containerDims.width, 200),
-    height: Math.max(containerDims.height - controlsHeight, 200)
-  };
+  // Pane-header Options/Export buttons request a tab; open it + reveal controls.
+  useEffect(() => {
+    if (!forcedTab) return;
+    setActiveTab(forcedTab);
+    setControlsVisible(true);
+    setControlsHeight(getControlsVisibleHeight());
+    onForcedTabHandled && onForcedTabHandled();
+  }, [forcedTab]);
+
+  const plotDims = getPlotDims(paneDims, controlsHeight);
 
   const seriesLoad = (newkeys, existingkeys, labels, viewID) => {
     let keysToAdd = [];
@@ -160,9 +178,15 @@ const MultilineControl = props => {
     props.actions.removeFromLoadedArray(e, viewID);
   };
 
-  // chart ui changes
+  // chart ui changes. Linked panes share one x-domain through the linked slice
+  // (brush/zoom one → every linked pane follows); an unlinked pane keeps its
+  // own private zoom.
   const handleZoomChange = domain => {
-    setZoomDomain(domain);
+    if (viewLinked) {
+      props.actions.setLinkedWindow(domain);
+    } else {
+      setZoomDomain(domain);
+    }
   };
 
   const handleSelectClose = () => {
@@ -174,12 +198,21 @@ const MultilineControl = props => {
       <ChartWrapper plotContainer={plotContainer} isLoading={isLoading}>
         <MultilineCanvas
           zoomCallback={handleZoomChange}
-          zoomDomain={zoomDomain}
+          zoomDomain={viewLinked ? linkedWindow : zoomDomain}
           files={files}
           plotdims={plotDims}
           seriesConfig={seriesConfig}
           units={units}
           seriesArray={seriesData}
+          viewID={viewID}
+          hoverTime={viewLinked ? hoverTime : null}
+          hoverSource={viewLinked ? hoverSource : null}
+          onHoverMove={
+            viewLinked ? t => props.actions.setHoverTime(t, viewID) : undefined
+          }
+          onHoverEnd={
+            viewLinked ? () => props.actions.clearHoverTime() : undefined
+          }
         />
       </ChartWrapper>
       <ControlsWrapper
@@ -225,6 +258,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     session: { ...state.session },
     view: { ...state.views[ownProps.viewID] },
+    linked: { ...state.linked },
     actions: { ...state.actions }
   };
 };

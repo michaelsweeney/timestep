@@ -7,8 +7,8 @@
   "type": "commonjs",
   "author": {
     "name": "Michael Sweeney",
-    "email": "timestepvis@gmail.com",
-    "url": "https://timestep.herokuapp.com"
+    "email": "michael.samuel.sweeney@gmail.com",
+    "url": "https://github.com/michaelsweeney"
   },
   "scripts": {
     "electron-rebuild": "node -r ../internals/scripts/BabelRegister.js ../internals/scripts/ElectronRebuild.js",

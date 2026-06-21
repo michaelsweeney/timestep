@@ -5,9 +5,19 @@ import { dependencies } from '../../package.json';
 
 if (dependencies) {
   const dependenciesKeys = Object.keys(dependencies);
+  // `timestep serve` (the local native-sqlite3 HTTP server) deliberately keeps
+  // a Node-ABI sqlite3 at the repo root, separate from app/'s Electron-ABI
+  // copy. It is loaded at runtime by the Node server and is externalized from
+  // the serve webpack bundle (never webpack-bundled), so the "webpack can't
+  // bundle native deps" concern this guard enforces does not apply. Excluding
+  // it from the scan keeps the root native-dep set empty as before — and
+  // avoids the crude `npm ls sqlite3` reverse-lookup false-flagging
+  // @timestep/core (a root dep that merely *depends on* sqlite3).
+  const SERVE_NATIVE_ALLOWLIST = new Set(['sqlite3']);
   const nativeDeps = fs
     .readdirSync('node_modules')
-    .filter(folder => fs.existsSync(`node_modules/${folder}/binding.gyp`));
+    .filter(folder => fs.existsSync(`node_modules/${folder}/binding.gyp`))
+    .filter(folder => !SERVE_NATIVE_ALLOWLIST.has(folder));
   // Guard: if there are no native modules at the root, skip. Without this,
   // `npm ls --json` (with no package args) returns the full tree and every
   // root dep is mis-flagged as native.

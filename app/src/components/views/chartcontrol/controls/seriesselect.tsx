@@ -92,11 +92,40 @@ ListboxComponent.propTypes = {
   children: PropTypes.node
 };
 
+// Visual-only flattening — the virtualization (ListboxComponent / renderGroup /
+// renderRow) is untouched. Series names are EnergyPlus identifiers, so the
+// input + options render in --mono; the surfaces use the token palette and
+// square corners so the control doesn't read as Material.
 const useStyles = makeStyles({
   root: {
     marginTop: 5,
     marginBottom: 5,
-    width: '100%'
+    width: '100%',
+    '& .MuiOutlinedInput-root': { borderRadius: 4 },
+    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'var(--hairline-2)' },
+    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'var(--accent)' },
+    '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
+      borderColor: 'var(--accent)',
+      borderWidth: 1
+    },
+    '& .MuiAutocomplete-input': {
+      fontFamily: 'var(--mono)',
+      fontSize: 12,
+      color: 'var(--ink)'
+    },
+    '& .MuiInputLabel-root': { fontFamily: 'var(--sans)', color: 'var(--ink-faint)' }
+  },
+  paper: {
+    background: 'var(--panel-2)',
+    border: '1px solid var(--hairline-2)',
+    borderRadius: 6,
+    color: 'var(--ink)'
+  },
+  option: { fontFamily: 'var(--mono)', fontSize: 12 },
+  groupLabel: {
+    fontFamily: 'var(--sans)',
+    color: 'var(--ink-faint)',
+    background: 'var(--panel)'
   },
   listbox: {
     boxSizing: 'border-box',
@@ -107,17 +136,11 @@ const useStyles = makeStyles({
   }
 });
 
-const renderGroup = params => [
-  <ListSubheader key={params.key} component="div">
-    {params.group}
-  </ListSubheader>,
-  params.children
-];
-
 const SeriesSelect = (props) => {
   const classes = useStyles();
 
-  const options = props.series;
+  // flat alphabetical list (grouping headers removed)
+  const options = [...props.series].sort((a, b) => a.localeCompare(b));
 
   return (
     <div className={classes.root}>
@@ -128,7 +151,6 @@ const SeriesSelect = (props) => {
         disableListWrap
         classes={classes}
         ListboxComponent={ListboxComponent}
-        renderGroup={renderGroup}
         options={options}
         value={props.value}
         renderInput={params => (

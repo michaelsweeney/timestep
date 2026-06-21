@@ -1,25 +1,87 @@
-@font-face {
-  font-family: 'Roboto';
-  src: local('Roboto-Black') url('../fonts/Roboto-Black.ttf') format('truetype'),
-    local('Roboto-BlackItalic') url('../fonts/Roboto-BlackItalic.ttf')
-      format('truetype'),
-    local('Roboto-Bold') url('../fonts/Roboto-Bold.ttf') format('truetype'),
-    local('Roboto-BoldItalic') url('../fonts/Roboto-BoldItalic.ttf')
-      format('truetype'),
-    local('Roboto-Light') url('../fonts/Roboto-Light.ttf') format('truetype'),
-    local('Roboto-LightItalic') url('../fonts/Roboto-LightItalic.ttf')
-      format('truetype'),
-    local('Roboto-Medium') url('../fonts/Roboto-Medium.ttf') format('truetype'),
-    local('Roboto-MediumItalic') url('../fonts/Roboto-MediumItalic.ttf')
-      format('truetype'),
-    local('Roboto-Regular') url('../fonts/Roboto-Regular.ttf')
-      format('truetype'),
-    local('Roboto-Thin') url('../fonts/Roboto-Thin.ttf') format('truetype'),
-    local('Roboto-ThinItalic') url('../fonts/Roboto-ThinItalic.ttf')
-      format('truetype');
+/* Fonts bundled offline (Electron + web) via @fontsource — no CDN.
+   IBM Plex Sans = UI chrome; JetBrains Mono = EnergyPlus data / identifiers /
+   values. Imported here (a .global.css file, so css-loader does NOT scope these
+   @font-face rules as CSS modules). */
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import '@fontsource/ibm-plex-sans/700.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
+@import '@fontsource/jetbrains-mono/600.css';
+/* Roboto = the original timestep UI face (--sans) */
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import '@fontsource/roboto/700.css';
+
+/* ── design tokens (bnd-viz-style), dark default ───────────────────────── */
+:root {
+  --bg: #0b0e13;
+  --panel: #10141b;
+  --panel-2: #141923;
+  --hairline: #232b38;
+  --hairline-2: #2d3848;
+  --ink: #c7d3e4;
+  --ink-dim: #7c8aa0;
+  --ink-faint: #4d5a6e;
+  --accent: #5c6bc0; /* Indigo 400 — original timestep primary, lifted for dark-bg contrast */
+  --accent-dim: #3949ab;
+  --brand-red: #f50057; /* original Pink A400 secondary — wordmark "ep" */
+  --track: #1c2430;
+  --ok: #6cc08b; /* data-quality OK / pass */
+  --warn: #e0a45e; /* data-quality warning */
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /* UI chrome = Roboto, the face the original timestep shipped with */
+  --sans: 'Roboto', 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  /* D3 axes / chart furniture = IBM Plex Sans — a more technical face for data,
+     distinct from the Roboto UI */
+  --axis: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+}
+
+:root[data-theme='light'] {
+  --bg: #eef1f5;
+  --panel: #f7f9fb;
+  --panel-2: #ffffff;
+  --hairline: #d8dee6;
+  --hairline-2: #c2ccd9;
+  --ink: #2a3442;
+  --ink-dim: #5d6b7e;
+  --ink-faint: #97a3b4;
+  --accent: #3f51b5; /* Indigo 500 — original timestep primary */
+  --accent-dim: #9fa8da;
+  --brand-red: #f50057; /* original Pink A400 secondary — wordmark "ep" */
+  --track: #d4dbe5;
+  --ok: #2e7d32;
+  --warn: #b26a00;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
 }
 
 body {
-  font-family: 'Roboto';
   margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Native form controls / scrollbars pick up the token palette */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--hairline-2);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }

@@ -11,6 +11,11 @@
     "start-web": "python3 -m http.server 8080 --directory app/dist-web",
     "web": "yarn build-web && yarn start-web",
     "smoke-web": "node scripts/web-smoke.mjs",
+    "test-serve": "node --import tsx --test \"app/serve/**/*.test.ts\"",
+    "ts-serve": "tsc -p tsconfig.serve.json",
+    "build-serve": "rimraf app/dist-serve && cross-env NODE_ENV=production webpack --config ./configs/webpack.config.serve.prod.js && node -e \"require('fs').copyFileSync('app/serve.html','app/dist-serve/index.html')\"",
+    "serve": "yarn build-serve && node --import tsx app/serve/start.ts",
+    "smoke-serve": "node --import tsx scripts/serve-smoke.mjs",
     "dev": "cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "ts": "tsc",
@@ -27,7 +32,7 @@
     "package-mac": "yarn build && electron-builder build --mac",
     "package-linux": "yarn build && electron-builder build --linux",
     "package-win": "yarn build && electron-builder build --win --x64",
-    "postinstall": "node -r @babel/register internals/scripts/CheckNativeDep.js && electron-builder install-app-deps && opencollective-postinstall",
+    "postinstall": "node -r @babel/register internals/scripts/CheckNativeDep.js && electron-builder install-app-deps",
     "postlint-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{js,jsx,json,html,css,less,scss,yml}'",
     "postlint-styles-fix": "prettier --ignore-path .eslintignore --single-quote --write '**/*.{css,scss}'",
     "preinstall": "node ./internals/scripts/CheckYarn.js",
@@ -114,33 +119,19 @@
     "email": "michael.samuel.sweeney@gmail.com",
     "url": "https://github.com/michaelsweeney"
   },
-  "contributors": [
-    {
-      "name": "Vikram Rangaraj",
-      "email": "vikr01@icloud.com",
-      "url": "https://github.com/vikr01"
-    },
-    {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
-    }
-  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/michaelsweeney/timestep/issues"
   },
   "keywords": [
-    "electron",
-    "boilerplate",
-    "react",
-    "redux",
-    "typescript",
-    "ts",
-    "sass",
-    "webpack",
-    "hot",
-    "reload"
+    "energyplus",
+    "timeseries",
+    "visualization",
+    "building-energy",
+    "eso",
+    "sqlite",
+    "d3",
+    "electron"
   ],
   "homepage": "https://github.com/michaelsweeney/timestep#readme",
   "jest": {
@@ -241,7 +232,6 @@
     "jest": "^25.1.0",
     "lint-staged": "^10.0.2",
     "mini-css-extract-plugin": "^2.10.0",
-    "opencollective-postinstall": "^2.0.2",
     "playwright-core": "^1.60.0",
     "prettier": "^1.19.1",
     "react-test-renderer": "^16.12.0",
@@ -255,6 +245,7 @@
     "stylelint-config-prettier": "^8.0.1",
     "stylelint-config-standard": "^19.0.0",
     "terser-webpack-plugin": "^5.3.0",
+    "tsx": "^4.19.0",
     "typed-css-modules-webpack-plugin": "^0.2.0",
     "typescript": "^5.9.0",
     "webpack": "^5.106.0",
@@ -265,6 +256,9 @@
     "yarn": "^1.21.1"
   },
   "dependencies": {
+    "@fontsource/ibm-plex-sans": "^4",
+    "@fontsource/jetbrains-mono": "^4",
+    "@fontsource/roboto": "^4",
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@reduxjs/toolkit": "^1.4.0",
     "@timestep/core": "link:./packages/core",
@@ -285,10 +279,8 @@
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
     "source-map-support": "^0.5.16",
-    "sql.js": "^1.14.1"
-  },
-  "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
+    "sql.js": "^1.14.1",
+    "sqlite3": "^5.1.7"
   },
   "browserslist": [
     "last 2 chrome versions"
@@ -313,11 +305,6 @@
     "extends": [
       "stylelint-config-standard",
       "stylelint-config-prettier"
-    ]
-  },
-  "renovate": {
-    "extends": [
-      "bliss"
     ]
   }
 }
