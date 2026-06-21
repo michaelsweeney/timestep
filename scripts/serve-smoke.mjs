@@ -74,5 +74,12 @@ try {
   console.log(`PASS serve-smoke on ${os.platform()} ${os.arch()} — native sqlite3 query over HTTP returned [{x:99}]`);
 } finally {
   server.close();
-  fs.rmSync(dbPath, { force: true });
+  // Best-effort temp cleanup. On Windows the cached read-only sqlite3 handle
+  // (Sqlite3Engine keeps it open for the process lifetime) keeps a lock on the
+  // file, so rm throws EPERM — harmless, the OS reclaims the temp dir.
+  try {
+    fs.rmSync(dbPath, { force: true });
+  } catch {
+    /* file still locked by the engine handle; ignore */
+  }
 }
