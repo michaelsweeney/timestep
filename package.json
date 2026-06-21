@@ -15,6 +15,7 @@
     "ts-serve": "tsc -p tsconfig.serve.json",
     "build-serve": "rimraf app/dist-serve && cross-env NODE_ENV=production webpack --config ./configs/webpack.config.serve.prod.js && node -e \"require('fs').copyFileSync('app/serve.html','app/dist-serve/index.html')\"",
     "serve": "yarn build-serve && node --import tsx app/serve/start.ts",
+    "smoke-serve": "node --import tsx scripts/serve-smoke.mjs",
     "dev": "cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "ts": "tsc",

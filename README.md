@@ -58,6 +58,25 @@ read sibling files by path; without it units fall back to cfm), and very large
 annual outputs load entirely into tab memory, so the desktop app remains the
 better choice for multi-gigabyte runs.
 
+## Run locally with native performance (`yarn serve`)
+
+For real-sized EnergyPlus outputs (300 MB+ annual / sub-hourly runs), the
+in-tab sql.js build above loads the whole file into browser memory and slows
+down. `yarn serve` runs the **same UI** in your browser but backs it with a
+local `127.0.0.1` server using **native `sqlite3`**, so files are read by path
+off disk — no whole-file-in-memory:
+
+```bash
+yarn serve   # builds app/dist-serve, boots a loopback server, opens the browser
+```
+
+You pick files through your OS's native file dialog (the server has filesystem
+access; the browser doesn't expose dropped-file paths, so drag-and-drop is not
+yet supported in this mode). The server binds loopback-only and guards every
+request with a per-startup token + Origin/Host check. It ships over npm/source,
+so there's no unsigned-binary warning. `yarn smoke-serve` is a headless check
+that native sqlite3 works on the host OS.
+
 ## Development
 
 Requires Node.js 18+ (CI runs on Node 24) and Yarn 1.x.
