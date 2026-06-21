@@ -32,6 +32,7 @@
   },
   "exclude": [
     "test",
+    "app/serve",
     "release",
     "app/main.prod.js",
     "app/main.prod.js.map",

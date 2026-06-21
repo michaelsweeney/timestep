@@ -11,6 +11,8 @@
     "start-web": "python3 -m http.server 8080 --directory app/dist-web",
     "web": "yarn build-web && yarn start-web",
     "smoke-web": "node scripts/web-smoke.mjs",
+    "test-serve": "node --import tsx --test \"app/serve/**/*.test.ts\"",
+    "ts-serve": "tsc -p tsconfig.serve.json",
     "dev": "cross-env START_HOT=1 node -r @babel/register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 yarn start-renderer-dev",
     "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "ts": "tsc",
@@ -240,6 +242,7 @@
     "stylelint-config-prettier": "^8.0.1",
     "stylelint-config-standard": "^19.0.0",
     "terser-webpack-plugin": "^5.3.0",
+    "tsx": "^4.19.0",
     "typed-css-modules-webpack-plugin": "^0.2.0",
     "typescript": "^5.9.0",
     "webpack": "^5.106.0",
@@ -273,7 +276,8 @@
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
     "source-map-support": "^0.5.16",
-    "sql.js": "^1.14.1"
+    "sql.js": "^1.14.1",
+    "sqlite3": "^5.1.7"
   },
   "browserslist": [
     "last 2 chrome versions"

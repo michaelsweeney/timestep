@@ -64,6 +64,16 @@ In `package.json`, add to `devDependencies`: `"tsx": "^4.19.0"`. Add to `depende
 "ts-serve": "tsc -p tsconfig.serve.json",
 ```
 
+**Also allowlist sqlite3 in the ERB native-dep guard** (discovered during execution): adding a native module to the **root** `dependencies` makes `internals/scripts/CheckNativeDep.js` (run in `postinstall`) fail the install — its crude `npm ls sqlite3` reverse-lookup then false-flags `@timestep/core` (a root dep that merely *depends on* sqlite3). serve's root sqlite3 is loaded at runtime by the Node server and externalized from the webpack bundle, so the guard's "webpack can't bundle native deps" concern doesn't apply. In `CheckNativeDep.js`, exclude it from the native scan (this restores the original early-exit behavior):
+
+```js
+  const SERVE_NATIVE_ALLOWLIST = new Set(['sqlite3']);
+  const nativeDeps = fs
+    .readdirSync('node_modules')
+    .filter(folder => fs.existsSync(`node_modules/${folder}/binding.gyp`))
+    .filter(folder => !SERVE_NATIVE_ALLOWLIST.has(folder));
+```
+
 - [ ] **Step 2: Split the tsconfig**
 
 In `tsconfig.json`, add `"app/serve"` to the `exclude` array (so the main `tsc` skips the Node-side files).
