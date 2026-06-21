@@ -121,3 +121,35 @@ test('fs/exists true/false', async () => {
   const no = await req({ method: 'POST', path: '/api/fs/exists', headers: apiHeaders() }, JSON.stringify({ path: '/no/such/file' }));
   assert.equal(JSON.parse(no.body), false);
 });
+
+test('index.html is served with the token injected at response time', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'serve-static-'));
+  fs.writeFileSync(path.join(dir, 'index.html'), '<meta name="timestep-token" content="__TIMESTEP_TOKEN__">');
+  const s = createServer(build({ staticDir: dir }));
+  await new Promise<void>(r => s.listen(0, '127.0.0.1', r));
+  const p2 = (s.address() as import('net').AddressInfo).port;
+  const got: string = await new Promise((resolve, reject) => {
+    http.get({ host: '127.0.0.1', port: p2, path: '/' }, res => {
+      let d = ''; res.on('data', c => (d += c)); res.on('end', () => resolve(d));
+    }).on('error', reject);
+  });
+  s.close();
+  assert.ok(got.includes(`content="${TOKEN}"`));
+  assert.ok(!got.includes('__TIMESTEP_TOKEN__'));
+});
+
+test('eso/convert routes through the injected converter', async () => {
+  const calls: string[] = [];
+  const s = createServer(build({ convertEso: async (p3: string) => { calls.push(p3); return '/out.sql'; } }));
+  await new Promise<void>(r => s.listen(0, '127.0.0.1', r));
+  const p2 = (s.address() as import('net').AddressInfo).port;
+  const out: string = await new Promise((resolve, reject) => {
+    const r = http.request({ host: '127.0.0.1', port: p2, method: 'POST', path: '/api/eso/convert', headers: { 'content-type': 'application/json', 'x-timestep-token': TOKEN, host: `127.0.0.1:${p2}` } }, res => {
+      let d = ''; res.on('data', c => (d += c)); res.on('end', () => resolve(d));
+    });
+    r.on('error', reject); r.end(JSON.stringify({ path: '/in.eso' }));
+  });
+  s.close();
+  assert.equal(JSON.parse(out), '/out.sql');
+  assert.deepEqual(calls, ['/in.eso']);
+});
