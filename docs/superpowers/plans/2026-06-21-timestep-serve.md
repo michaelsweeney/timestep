@@ -1249,3 +1249,36 @@ git commit -m "docs: note yarn serve (local native-sqlite3) in README"
 **Placeholder scan:** the only intentional scaffold is `serve-smoke.mjs` (Task 8 Step 1), explicitly flagged with an executor note to finish the boot/port/query wiring — every other step has complete code.
 
 **Type consistency:** `ServeDeps` (Task 3) is reused verbatim in Tasks 4/7; `makeEsoConverter` (Task 2) → `convertEso` dep; `makeDialogs` (Task 5) → `openDialog`/`saveDialog` deps; `installHttpApi` (Task 6) ↔ the `/api/*` paths in `route()` (Task 3). The renderer's `window.api` shape matches `app/preload.js` exactly.
+
+---
+
+## Verification results (2026-06-21)
+
+`timestep serve` implemented and verified end-to-end. All 9 commits on
+`feat/timestep-serve`. Local: 21 `node:test` + 4 jest pass; `ts-serve` clean;
+`build-serve` bundle has no wasm / no native code / token placeholder intact;
+headless boot serves the token-injected page and 403-guards `/api`.
+
+Cross-platform `smoke-serve` (native sqlite3 query over loopback HTTP), run over
+Tailscale SSH from a fresh `git clone`:
+
+| Platform | Node | Result |
+|---|---|---|
+| linux x64 | 24 | PASS |
+| macOS arm64 (`sweeney-macbook-air-228`) | 26.3.1 | PASS |
+| win32 x64 (`swee-4070`) | 24.12.0 | PASS |
+
+**Execution deviations folded in:** `CheckNativeDep.js` sqlite3 allowlist (root
+native dep otherwise fails install); websocket test split (a real upgrade
+destroys the socket, can't assert 400); `mergemtr.ts` `never[]` type annotation
+(serve type-check follows imports into core; repo's main `yarn ts` is already
+red with 140 pre-existing errors); best-effort temp cleanup in `serve-smoke`
+(Windows EPERM on the engine-locked db file).
+
+**Windows caveat (documented, not a serve defect):** on Windows without VS C++
+Build Tools, the repo's `yarn install` **postinstall fails** at
+`electron-builder install-app-deps` (rebuilding the *app's* sqlite3 for the
+Electron ABI needs MSVC). This is irrelevant to serve — `yarn serve` /
+`smoke-serve` only need the **root Node-ABI sqlite3**, which ships a Windows
+prebuild (installs in ~3s, no compiler). So: **serve runs on Windows with no
+Visual Studio; only the desktop Electron build needs it.**
