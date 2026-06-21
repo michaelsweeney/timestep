@@ -42,43 +42,77 @@ Every task implicitly includes these (verbatim from `docs/superpowers/specs/2026
 
 ### Task 1: Scaffold tooling + Node-ABI sqlite3
 
-Establishes that `serve` can run TS under `tsx` and load a **Node-ABI** `sqlite3` from root `node_modules`, independent of the Electron-ABI build in `app/node_modules`. This de-risks the whole plan.
+Establishes that `serve` can run TS under `tsx`, type-check cleanly, and load a **Node-ABI** `sqlite3` from root `node_modules`, independent of the Electron-ABI build in `app/node_modules`. This de-risks the whole plan.
 
 **Files:**
-- Modify: `package.json` (root deps + a probe script)
+- Modify: `package.json` (root deps + scripts)
+- Modify: `tsconfig.json` (exclude the Node-side serve files)
+- Create: `tsconfig.serve.json` (type-check the Node-side serve files)
 - Create: `app/serve/abi-probe.test.ts`
 
 **Interfaces:**
-- Produces: a working `tsx` runner and a root `node_modules/sqlite3` loadable under plain Node.
+- Produces: a working `tsx` runner, a `ts-serve` type-check, and a **root** `node_modules/sqlite3` loadable under plain Node from an explicit absolute path.
 
-- [ ] **Step 1: Add `tsx` and root `sqlite3`, plus the `test-serve` script**
+> **Why the tsconfig split (from review):** the Node-side files `app/serve/*.ts` use `import.meta.url` and explicit `.ts` import specifiers. The main `tsconfig.json` is `"module": "CommonJS"` with no `allowImportingTsExtensions`, so `yarn ts` (tsc, which currently includes `app/serve`) would error on both. The renderer-side `app/src/serve/*.tsx` files use neither (plain `import './http-api'`), so they stay under the main config. Only `app/serve` moves to a dedicated config.
+
+- [ ] **Step 1: Add `tsx` and root `sqlite3`, plus `test-serve`/`ts-serve` scripts**
 
 In `package.json`, add to `devDependencies`: `"tsx": "^4.19.0"`. Add to `dependencies`: `"sqlite3": "^5.1.7"` (root, Node-ABI — distinct from `app/`'s Electron-ABI copy). Add to `scripts`:
 
 ```json
 "test-serve": "node --import tsx --test \"app/serve/**/*.test.ts\"",
+"ts-serve": "tsc -p tsconfig.serve.json",
 ```
 
-- [ ] **Step 2: Install**
+- [ ] **Step 2: Split the tsconfig**
+
+In `tsconfig.json`, add `"app/serve"` to the `exclude` array (so the main `tsc` skips the Node-side files).
+
+Create `tsconfig.serve.json`:
+
+```json
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["app/serve/**/*.ts"],
+  "exclude": ["app/serve/**/*.test.ts"]
+}
+```
+
+- [ ] **Step 3: Install**
 
 Run: `yarn install`
-Expected: completes; `node_modules/sqlite3` present and built for the Node ABI (root install does not run `electron-builder install-app-deps` against root deps).
+Expected: completes. Then **verify two physically separate sqlite3 copies exist** (the ABI split depends on it — yarn v1 must not have hoisted them into one):
 
-- [ ] **Step 3: Write the failing probe test**
+Run: `ls -d node_modules/sqlite3 app/node_modules/sqlite3`
+Expected: both paths exist. (If root's is missing, yarn hoisted into `app/` — force a root copy with `npm rebuild sqlite3 --build-from-source` at the repo root, or add a `nohoist`. The Electron rebuild in `postinstall` only targets `app/node_modules`, so root stays Node-ABI.)
+
+- [ ] **Step 4: Write the failing probe test**
 
 Create `app/serve/abi-probe.test.ts`:
 
 ```ts
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import path from 'node:path';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 
-// serve must load the Node-ABI sqlite3 from ROOT node_modules, not app/'s
-// Electron-ABI copy. Resolve from the repo root explicitly.
+// serve must load the Node-ABI sqlite3 from the REPO-ROOT node_modules, not
+// app/'s Electron-ABI copy. A bare require('sqlite3') from app/serve/ would
+// resolve app/node_modules first — so resolve the root copy by absolute path,
+// exactly as start.ts does.
 const require = createRequire(import.meta.url);
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 test('root sqlite3 loads under plain Node and runs a query', async () => {
-  const sqlite3 = require('sqlite3'); // resolves repo-root node_modules
+  const sqlite3 = require(path.join(ROOT, 'node_modules', 'sqlite3'));
   await new Promise<void>((resolve, reject) => {
     const db = new sqlite3.Database(':memory:');
     db.serialize(() => {
@@ -98,16 +132,16 @@ test('root sqlite3 loads under plain Node and runs a query', async () => {
 });
 ```
 
-- [ ] **Step 4: Run it**
+- [ ] **Step 5: Run it**
 
 Run: `yarn test-serve`
-Expected: PASS. (If it fails with `NODE_MODULE_VERSION` mismatch, root `sqlite3` was rebuilt for Electron — reinstall root deps without `electron-builder install-app-deps` touching them, or `npm rebuild sqlite3 --build-from-source` at root.)
+Expected: PASS. (If it fails with `NODE_MODULE_VERSION` mismatch, the resolved copy was built for Electron — confirm Step 3's two-copy check and `npm rebuild sqlite3 --build-from-source` at the repo root.)
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add package.json yarn.lock app/serve/abi-probe.test.ts
-git commit -m "serve: scaffold tsx runner + Node-ABI sqlite3 probe"
+git add package.json yarn.lock tsconfig.json tsconfig.serve.json app/serve/abi-probe.test.ts
+git commit -m "serve: scaffold tsx runner, tsconfig split, Node-ABI sqlite3 probe"
 ```
 
 ---
@@ -464,7 +498,12 @@ async function route(url: string, p: Record<string, unknown>, deps: ServeDeps, r
 function serveStatic(url: string, deps: ServeDeps, res: http.ServerResponse): void {
   const rel = url === '/' ? 'index.html' : decodeURIComponent(url);
   const file = path.join(deps.staticDir, rel);
-  if (!file.startsWith(deps.staticDir)) { res.writeHead(403); return res.end(); }
+  // Prefix match alone would approve a sibling like `<staticDir>-evil`; require
+  // an exact dir match or a real path-separator boundary.
+  if (file !== deps.staticDir && !file.startsWith(deps.staticDir + path.sep)) {
+    res.writeHead(403);
+    return res.end();
+  }
   fs.readFile(file, (err, buf) => {
     if (err) { res.writeHead(404); return res.end('not found'); }
     const ext = path.extname(file);
@@ -568,11 +607,11 @@ git commit -m "serve: integration tests for static token injection + eso routing
   ```ts
   type RunFn = (cmd: string, args: string[]) => Promise<string>; // resolves stdout
   function makeDialogs(run?: RunFn, platform?: NodeJS.Platform, hasCmd?: (c: string) => boolean): {
-    openDialog(opts: { properties?: string[] }): Promise<{ canceled: boolean; filePaths: string[] }>;
-    saveDialog(opts: { defaultPath?: string }): Promise<{ canceled: boolean; filePath?: string }>;
+    openDialog(opts: unknown): Promise<{ canceled: boolean; filePaths: string[] }>;
+    saveDialog(opts: unknown): Promise<{ canceled: boolean; filePath?: string }>;
   }
   ```
-  Dependencies (`run`, `platform`, `hasCmd`) are injected so tests never spawn a real dialog.
+  The returned methods take `opts: unknown` (narrowed internally) so the shape assigns to `ServeDeps.openDialog`/`saveDialog` under `strict`/`strictFunctionTypes` — a `{properties?}` param is NOT assignable to an `unknown` param (contravariance). Dependencies (`run`, `platform`, `hasCmd`) are injected so tests never spawn a real dialog. `openDialog` honors `properties: ['multiSelections']` (multi-sim load is a headline feature). **Known v0 gap:** native dialogs do not apply the renderer's extension `filters` (the picker shows all files); documented, not implemented.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -615,6 +654,13 @@ test('macOS uses osascript', async () => {
   const d = makeDialogs(run, 'darwin', () => true);
   await d.openDialog({});
   assert.equal(seen[0], 'osascript');
+});
+
+test('multiSelections returns all chosen paths', async () => {
+  const run = async () => '/x/a.sql\n/x/b.sql\n';
+  const d = makeDialogs(run, 'linux', c => c === 'zenity');
+  const res = await d.openDialog({ properties: ['multiSelections'] });
+  assert.deepEqual(res.filePaths, ['/x/a.sql', '/x/b.sql']);
 });
 
 test('windows uses powershell', async () => {
@@ -660,8 +706,10 @@ function defaultHasCmd(cmd: string): boolean {
   return dirs.some(dir => exts.some(ext => { try { return existsSync(path.join(dir, cmd + ext)); } catch { return false; } }));
 }
 
-function sanitize(stdout: string): string {
-  return stdout.replace(/\r?\n$/, '').trim();
+// Split on newlines, trim CR/whitespace, drop empties. Handles single- and
+// multi-select output uniformly (each tool emits newline-separated paths).
+function parsePaths(stdout: string): string[] {
+  return stdout.split('\n').map(s => s.replace(/\r$/, '').trim()).filter(Boolean);
 }
 
 export function makeDialogs(
@@ -669,45 +717,59 @@ export function makeDialogs(
   platform: NodeJS.Platform = process.platform,
   hasCmd: (c: string) => boolean = defaultHasCmd
 ) {
-  // Returns the chosen path, or null on cancel.
-  async function pick(mode: 'open' | 'save', opts: { defaultPath?: string }): Promise<string | null> {
+  // Returns chosen paths (possibly several), or [] on cancel. Throws only when
+  // no dialog tool exists.
+  async function pick(mode: 'open' | 'save', multi: boolean, defaultPath?: string): Promise<string[]> {
     let cmd: string;
     let args: string[];
     if (platform === 'darwin') {
       cmd = 'osascript';
-      const verb = mode === 'open' ? 'choose file' : 'choose file name';
-      args = ['-e', `POSIX path of (${verb})`];
+      if (mode === 'save') {
+        args = ['-e', 'POSIX path of (choose file name)'];
+      } else if (multi) {
+        // Return one POSIX path per line for the selected files.
+        args = ['-e', 'set fs to choose file with multiple selections allowed', '-e',
+          'set out to ""', '-e', 'repeat with f in fs', '-e',
+          'set out to out & POSIX path of f & linefeed', '-e', 'end repeat', '-e', 'return out'];
+      } else {
+        args = ['-e', 'POSIX path of (choose file)'];
+      }
     } else if (platform === 'win32') {
       cmd = 'powershell';
       const dlg = mode === 'open' ? 'OpenFileDialog' : 'SaveFileDialog';
-      args = ['-NoProfile', '-Command', `Add-Type -AssemblyName System.Windows.Forms; $f = New-Object System.Windows.Forms.${dlg}; if ($f.ShowDialog() -eq 'OK') { $f.FileName }`];
+      const multiLine = mode === 'open' && multi ? '$f.Multiselect = $true; ' : '';
+      const out = mode === 'open' && multi ? '$f.FileNames -join "`n"' : '$f.FileName';
+      args = ['-NoProfile', '-Command',
+        `Add-Type -AssemblyName System.Windows.Forms; $f = New-Object System.Windows.Forms.${dlg}; ${multiLine}if ($f.ShowDialog() -eq 'OK') { ${out} }`];
     } else if (hasCmd('kdialog')) {
       cmd = 'kdialog';
-      args = mode === 'open' ? ['--getopenfilename'] : ['--getsavefilename'];
-      if (opts.defaultPath) args.push(opts.defaultPath);
+      if (mode === 'save') args = ['--getsavefilename', defaultPath || ''];
+      else args = multi ? ['--getopenfilename', '--multiple', '--separate-output'] : ['--getopenfilename'];
     } else if (hasCmd('zenity')) {
       cmd = 'zenity';
-      args = mode === 'open' ? ['--file-selection'] : ['--file-selection', '--save', '--confirm-overwrite'];
+      if (mode === 'save') args = ['--file-selection', '--save', '--confirm-overwrite'];
+      else args = multi ? ['--file-selection', '--multiple', '--separator', '\n'] : ['--file-selection'];
     } else {
       throw new Error('No file dialog tool found. Install zenity or kdialog.');
     }
     try {
-      const out = sanitize(await run(cmd, args));
-      return out === '' ? null : out;
+      return parsePaths(await run(cmd, args));
     } catch {
-      return null; // user cancel / nonzero exit
+      return []; // user cancel / nonzero exit
     }
   }
 
   return {
-    async openDialog(opts: { properties?: string[] } = {}) {
-      void opts;
-      const p = await pick('open', {});
-      return p ? { canceled: false, filePaths: [p] } : { canceled: true, filePaths: [] };
+    async openDialog(opts: unknown) {
+      const o = (opts ?? {}) as { properties?: string[] };
+      const multi = Array.isArray(o.properties) && o.properties.includes('multiSelections');
+      const paths = await pick('open', multi, undefined);
+      return paths.length ? { canceled: false, filePaths: paths } : { canceled: true, filePaths: [] };
     },
-    async saveDialog(opts: { defaultPath?: string } = {}) {
-      const p = await pick('save', { defaultPath: opts.defaultPath || path.join(os.homedir(), 'timestep.tss') });
-      return p ? { canceled: false, filePath: p } : { canceled: true };
+    async saveDialog(opts: unknown) {
+      const o = (opts ?? {}) as { defaultPath?: string };
+      const paths = await pick('save', false, o.defaultPath || path.join(os.homedir(), 'timestep.tss'));
+      return paths.length ? { canceled: false, filePath: paths[0] } : { canceled: true };
     }
   };
 }
@@ -745,14 +807,19 @@ git commit -m "serve: native OS file dialogs (kdialog/zenity/osascript/powershel
 Create `app/src/serve/http-api.test.ts`:
 
 ```ts
+/** @jest-environment jsdom */
+// (jest 25 defaults to jsdom and the config's `testURL` confirms it; the
+// directive is belt-and-suspenders so the test survives a future jest bump.)
 import { installHttpApi } from './http-api';
+
+function okResponse(value: unknown) {
+  return { ok: true, status: 200, json: async () => value, text: async () => JSON.stringify(value) };
+}
 
 describe('http-api shim', () => {
   beforeEach(() => {
     document.head.innerHTML = '<meta name="timestep-token" content="tok-1">';
-    (global as unknown as { fetch: jest.Mock }).fetch = jest.fn(async () => ({
-      json: async () => [{ x: 1 }]
-    })) as unknown as jest.Mock;
+    (global as unknown as { fetch: jest.Mock }).fetch = jest.fn(async () => okResponse([{ x: 1 }])) as unknown as jest.Mock;
     installHttpApi();
   });
 
@@ -763,6 +830,11 @@ describe('http-api shim', () => {
     expect(opts.headers['X-Timestep-Token']).toBe('tok-1');
     expect(JSON.parse(opts.body)).toEqual({ file: '/f.sql', sql: 'SELECT 1' });
     expect(rows).toEqual([{ x: 1 }]);
+  });
+
+  it('a non-2xx response rejects (does not resolve to an error object)', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({ ok: false, status: 403, text: async () => 'forbidden' });
+    await expect((window as any).api.dialog.openFiles({})).rejects.toThrow(/403/);
   });
 
   it('getPathForFile throws a clear serve-mode error', () => {
@@ -802,6 +874,13 @@ async function post<T>(endpoint: string, payload: unknown): Promise<T> {
     headers: { 'Content-Type': 'application/json', 'X-Timestep-Token': token() },
     body: JSON.stringify(payload)
   });
+  // A non-2xx (403 forbidden, 500 server error) must REJECT, not silently
+  // resolve to a parsed error object — the renderer's FileHandler treats a
+  // resolved openFiles result as a real path list.
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '');
+    throw new Error(`serve ${endpoint} failed (${res.status})${detail ? `: ${detail}` : ''}`);
+  }
   return res.json() as Promise<T>;
 }
 
@@ -913,15 +992,19 @@ Create `app/serve.html`:
 
 - [ ] **Step 2: Create the webpack config**
 
-Create `configs/webpack.config.serve.prod.js` — copy `configs/webpack.config.web.prod.js` and change exactly: the entry to `app/src/serve/index.tsx`, the output `path` to `app/dist-serve` and `filename` to `serve.js`, the `library.name` to `timestepServe`, **remove** the `sql-wasm` asset rule, and add an `externals` guard so a stray Node-only import fails the build loudly:
+Create `configs/webpack.config.serve.prod.js` — copy `configs/webpack.config.web.prod.js` and change exactly: keep `target: 'web'`; entry → `app/src/serve/index.tsx`; output `path` → `app/dist-serve`, `filename` → `serve.js`; `library` → `{ type: 'window', name: 'timestepServe' }`; **remove** the `sql-wasm` asset rule; and add an `externals` safety net for the Node-only core modules:
 
 ```js
   // The client bundle must never pull in the Node-only core modules; only
-  // app/serve/*.ts (server side) may import these.
+  // app/serve/*.ts (server side) imports these. The renderer shim imports none
+  // of them, so the graph is already clean — this is a safety net that turns a
+  // stray import into a runtime `require is not defined` rather than silently
+  // bundling native code. (Webpack does NOT fail the build on an external.)
   externals: {
     sqlite3: 'commonjs sqlite3',
     '@timestep/core/sqlite3': 'commonjs @timestep/core/sqlite3',
-    '@timestep/core/eso-cache': 'commonjs @timestep/core/eso-cache'
+    '@timestep/core/eso-cache': 'commonjs @timestep/core/eso-cache',
+    '@timestep/core/eso-sqlite': 'commonjs @timestep/core/eso-sqlite'
   },
 ```
 
@@ -982,17 +1065,20 @@ function openBrowser(url: string): void {
 
 - [ ] **Step 4: Add package scripts**
 
-In `package.json` `scripts`, add:
+In `package.json` `scripts`, add (cross-platform — Task 8 runs `build-serve` on Windows, so no POSIX `rm`/`cp`; uses `rimraf` (already a devDep) and Node's `fs.copyFileSync`):
 
 ```json
-"build-serve": "rm -rf app/dist-serve && cross-env NODE_ENV=production webpack --config ./configs/webpack.config.serve.prod.js && cp app/serve.html app/dist-serve/index.html",
+"build-serve": "rimraf app/dist-serve && cross-env NODE_ENV=production webpack --config ./configs/webpack.config.serve.prod.js && node -e \"require('fs').copyFileSync('app/serve.html','app/dist-serve/index.html')\"",
 "serve": "yarn build-serve && node --import tsx app/serve/start.ts",
 ```
 
 - [ ] **Step 5: Build and smoke by hand**
 
 Run: `yarn build-serve`
-Expected: `app/dist-serve/` contains `serve.js`, `style.css`, `index.html` (with the `__TIMESTEP_TOKEN__` placeholder), fonts. **No** `sql-wasm*.wasm`.
+Expected: `app/dist-serve/` contains `serve.js`, `style.css`, `index.html`, fonts. Verify all three:
+- No `sql-wasm*.wasm` in `app/dist-serve/` (`ls app/dist-serve` shows none).
+- `grep -c __TIMESTEP_TOKEN__ app/dist-serve/index.html` → `1` (placeholder present, replaced only at response time).
+- The bundle did not pull in native code: `grep -l "node_modules/sqlite3" app/dist-serve/serve.js` → no match.
 
 Run: `yarn serve` (then Ctrl-C after it prints the URL and opens the browser)
 Expected: prints `timestep serve → http://127.0.0.1:<port>/`; the page loads; Load Files pops the native dialog; selecting a `.sql` charts it.
@@ -1146,7 +1232,9 @@ git commit -m "docs: note yarn serve (local native-sqlite3) in README"
 
 ## Self-Review
 
-**Spec coverage:** server core + 7 endpoints (Tasks 3-4) ✓; native dialogs (Task 5) ✓; renderer shim + `getPathForFile` stub (Task 6) ✓; build config/no-sql.js/Node-only-exclusion (Task 7) ✓; loopback+token+exact Host/Origin+upgrade-reject+no-CORS (Task 3) ✓; eso per-key mutex (Task 2) ✓; ephemeral port + XDG cache dir + long timeouts (Task 7) ✓; sqlite3 ABI split (Tasks 1, 7) ✓; cross-platform verification (Task 8) ✓; drag-drop deferred (Global Constraints) ✓. Out-of-scope per spec and excluded here: npm/`bin` packaging, hosted-demo dataset, README/landing rewrite, CI-release demotion.
+**Spec coverage:** server core + 7 endpoints (Tasks 3-4) ✓; native dialogs incl. multi-select (Task 5) ✓; renderer shim + `getPathForFile` stub + non-2xx-rejects (Task 6) ✓; build config/no-sql.js/Node-only-exclusion (Task 7) ✓; loopback+token+exact Host/Origin+upgrade-reject+no-CORS (Task 3) ✓; eso per-key mutex (Task 2) ✓; ephemeral port + XDG cache dir + long timeouts (Task 7) ✓; sqlite3 ABI split + tsconfig split for `import.meta`/`.ts` specifiers (Tasks 1, 7) ✓; cross-platform verification incl. cross-platform `build-serve` (Tasks 7-8) ✓; drag-drop deferred (Global Constraints) ✓. **Known v0 gap:** native dialogs don't apply extension `filters` (picker shows all files) — documented in Task 5, not implemented. Out-of-scope per spec and excluded here: npm/`bin` packaging, hosted-demo dataset, README/landing rewrite, CI-release demotion.
+
+**Review fixes folded in (Codex + opencode-go, verified against repo):** `post()` rejects on non-2xx; ABI probe requires the **root** sqlite3 by absolute path + a two-copy verification step; `tsconfig.serve.json` + main-config exclude so `yarn ts` survives `import.meta`/`.ts` specifiers; dialog opts typed `unknown` (strict contravariance) + multi-select restored; static-serve traversal guard uses a separator boundary; `build-serve` is cross-platform (`rimraf` + `fs.copyFileSync`); webpack externals corrected (safety net, not a build-fail) + `eso-sqlite` added.
 
 **Placeholder scan:** the only intentional scaffold is `serve-smoke.mjs` (Task 8 Step 1), explicitly flagged with an executor note to finish the boot/port/query wiring — every other step has complete code.
 
