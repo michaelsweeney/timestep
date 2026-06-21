@@ -5,7 +5,6 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useTheme, makeStyles } from '@material-ui/core/styles';
 import { VariableSizeList } from 'react-window';
 import Typography from '@material-ui/core/Typography';
-import { seriesGroup, sortByGroup } from './seriesgroup';
 
 const LISTBOX_PADDING = 8;
 
@@ -137,17 +136,10 @@ const useStyles = makeStyles({
   }
 });
 
-const renderGroup = params => [
-  <ListSubheader key={params.key} component="div">
-    {params.group}
-  </ListSubheader>,
-  params.children
-];
-
 function MultiSeriesSelect(props) {
   const classes = useStyles();
-  // group by zone/equipment; options must be group-sorted for MUI's headers
-  const options = sortByGroup(props.series);
+  // flat alphabetical list (grouping headers removed)
+  const options = [...props.series].sort((a, b) => a.localeCompare(b));
 
   return (
     <div className={classes.root}>
@@ -167,8 +159,6 @@ function MultiSeriesSelect(props) {
         disableListWrap
         classes={classes}
         ListboxComponent={ListboxComponent}
-        renderGroup={renderGroup}
-        groupBy={seriesGroup}
         options={options}
         renderInput={params => (
           <TextField

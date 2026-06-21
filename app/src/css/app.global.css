@@ -9,6 +9,10 @@
 @import '@fontsource/jetbrains-mono/400.css';
 @import '@fontsource/jetbrains-mono/500.css';
 @import '@fontsource/jetbrains-mono/600.css';
+/* Roboto = the original timestep UI face (--sans) */
+@import '@fontsource/roboto/400.css';
+@import '@fontsource/roboto/500.css';
+@import '@fontsource/roboto/700.css';
 
 /* ── design tokens (bnd-viz-style), dark default ───────────────────────── */
 :root {
@@ -20,13 +24,18 @@
   --ink: #c7d3e4;
   --ink-dim: #7c8aa0;
   --ink-faint: #4d5a6e;
-  --accent: #5b9efc; /* timestep cool blue (vs bnd-viz amber) */
-  --accent-dim: #3a6bb0;
+  --accent: #5c6bc0; /* Indigo 400 — original timestep primary, lifted for dark-bg contrast */
+  --accent-dim: #3949ab;
+  --brand-red: #f50057; /* original Pink A400 secondary — wordmark "ep" */
   --track: #1c2430;
   --ok: #6cc08b; /* data-quality OK / pass */
   --warn: #e0a45e; /* data-quality warning */
   --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-  --sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  /* UI chrome = Roboto, the face the original timestep shipped with */
+  --sans: 'Roboto', 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  /* D3 axes / chart furniture = IBM Plex Sans — a more technical face for data,
+     distinct from the Roboto UI */
+  --axis: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
 }
 
 :root[data-theme='light'] {
@@ -38,8 +47,9 @@
   --ink: #2a3442;
   --ink-dim: #5d6b7e;
   --ink-faint: #97a3b4;
-  --accent: #2f6fd6;
-  --accent-dim: #9cbdf0;
+  --accent: #3f51b5; /* Indigo 500 — original timestep primary */
+  --accent-dim: #9fa8da;
+  --brand-red: #f50057; /* original Pink A400 secondary — wordmark "ep" */
   --track: #d4dbe5;
   --ok: #2e7d32;
   --warn: #b26a00;
@@ -59,8 +69,8 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--sans);
-  font-size: 14px;
-  line-height: 1.45;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 /* Native form controls / scrollbars pick up the token palette */

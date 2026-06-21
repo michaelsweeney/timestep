@@ -4,8 +4,9 @@ import TuneIcon from '@material-ui/icons/Tune';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import LinkIcon from '@material-ui/icons/Link';
 import LinkOffIcon from '@material-ui/icons/LinkOff';
+import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'src/store';
-import { INTERVALS } from './intervals';
+import { INTERVALS, intervalLabel } from './intervals';
 
 // Per-pane header — the single place a pane's chart is configured:
 //   PANE N · [chart-type ▾] · [interval ▾]            [Options] [Export]
@@ -88,6 +89,13 @@ const useStyles = makeStyles(
     linkOn: {
       color: 'var(--accent)',
       '&:hover': { color: 'var(--accent)', borderColor: 'var(--accent)' }
+    },
+    // close affordance reads red on hover so it's clearly destructive
+    closeBtn: {
+      '&:hover': {
+        color: 'var(--brand-red)',
+        borderColor: 'var(--brand-red)'
+      }
     }
   },
   { name: 'pane-header' }
@@ -102,6 +110,9 @@ const PaneHeader = props => {
     timestepType,
     linked,
     multiPane,
+    intervalCounts,
+    viewArray,
+    activeViewID,
     onOptions,
     onExport
   } = props;
@@ -140,6 +151,16 @@ const PaneHeader = props => {
   const toggleLinked = () =>
     props.actions.changeViewLinked(!isLinked, viewID);
 
+  // Closing the active pane hands focus to a surviving one before removal so the
+  // focus ring / "+ Split chart" seed never point at a deleted view.
+  const handleRemove = () => {
+    if (viewID === activeViewID) {
+      const survivor = (viewArray || []).find(v => v !== viewID);
+      if (survivor != null) props.actions.setActiveView(survivor);
+    }
+    props.actions.removeView(viewID);
+  };
+
   return (
     <div className={classes.head} onClick={e => e.stopPropagation()}>
       <span className={classes.label}>Pane {paneIndex + 1}</span>
@@ -165,7 +186,7 @@ const PaneHeader = props => {
       >
         {INTERVALS.map(t => (
           <option key={t} value={t}>
-            {t}
+            {intervalLabel(t, intervalCounts)}
           </option>
         ))}
       </select>
@@ -201,6 +222,15 @@ const PaneHeader = props => {
         >
           <SaveAltIcon style={{ fontSize: 16 }} />
         </button>
+        {multiPane && (
+          <button
+            className={classes.iconbtn + ' ' + classes.closeBtn}
+            title="Close pane"
+            onClick={stop(handleRemove)}
+          >
+            <CloseIcon style={{ fontSize: 16 }} />
+          </button>
+        )}
       </div>
     </div>
   );
@@ -211,7 +241,10 @@ const mapStateToProps = (state, ownProps) => {
   return {
     chartType: view.chartType,
     timestepType: view.timestepType,
-    linked: view.linked
+    linked: view.linked,
+    intervalCounts: state.session.intervalCounts,
+    viewArray: state.session.viewArray,
+    activeViewID: state.session.activeViewID
   };
 };
 

@@ -6,9 +6,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 
-// Flat bnd-viz-style control strip. The MUI Tabs/Tab stay (they drive the tab
-// callbacks) but are restyled flat: no Material indicator, mono uppercase
-// labels, an accent underline + accent text on the active tab.
+// Flat control strip. The MUI Tabs/Tab stay (they drive the tab callbacks) but
+// are restyled flat: no Material slider indicator, uppercase Roboto labels (the
+// original timestep tab style, not the technical mono), an accent underline +
+// accent text on the active tab.
 const useStyles = makeStyles(
   {
     root: {
@@ -37,10 +38,10 @@ const useStyles = makeStyles(
       minWidth: 0,
       minHeight: 0,
       padding: '7px 10px',
-      fontFamily: 'var(--mono) !important',
-      fontWeight: 600,
-      fontSize: '11px !important',
-      letterSpacing: '0.10em',
+      fontFamily: 'var(--sans) !important',
+      fontWeight: 500,
+      fontSize: '12px !important',
+      letterSpacing: '0.06em',
       textTransform: 'uppercase',
       borderBottom: '2px solid transparent',
       transition: 'color .12s, border-color .12s',

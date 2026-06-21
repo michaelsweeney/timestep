@@ -35,6 +35,9 @@ const useStyles = makeStyles(
         pointerEvents: 'none'
       },
       '& .tick text': { fill: 'var(--ink-dim)' },
+      // chart furniture (axis ticks + labels) gets the dedicated --axis face,
+      // distinct from the Roboto UI
+      '& .tick text, & .axis-text': { fontFamily: 'var(--axis)' },
       '& path': { shapeRendering: 'geometricPrecision' },
       '& .series-line, .marker-circle': { pointerEvents: 'none' },
       '& .tooltip': {

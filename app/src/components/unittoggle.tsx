@@ -10,6 +10,8 @@ const useStyles = makeStyles(
     seg: {
       display: 'inline-flex',
       flex: 'none',
+      height: 40,
+      boxSizing: 'border-box',
       border: '1px solid var(--hairline-2)',
       borderRadius: 4,
       overflow: 'hidden'
@@ -22,9 +24,9 @@ const useStyles = makeStyles(
       color: 'var(--ink-dim)',
       fontFamily: 'var(--mono)',
       fontWeight: 600,
-      fontSize: 12,
+      fontSize: 15,
       lineHeight: 1,
-      padding: '6px 11px',
+      padding: '0 16px',
       transition: 'background .12s, color .12s',
       '&:hover': { color: 'var(--ink)' },
       '& + $btn': { borderLeft: '1px solid var(--hairline-2)' }

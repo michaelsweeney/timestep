@@ -18,16 +18,18 @@ const useStyles = makeStyles(
       cursor: 'pointer',
       display: 'inline-flex',
       alignItems: 'center',
-      gap: 7,
-      borderRadius: 4,
+      gap: 9,
+      height: 40,
+      boxSizing: 'border-box',
+      borderRadius: 5,
       border: '1px solid var(--hairline-2)',
       background: 'var(--panel-2)',
       color: 'var(--ink-dim)',
       fontFamily: 'var(--sans)',
       fontWeight: 500,
-      fontSize: 13,
+      fontSize: 15,
       lineHeight: 1,
-      padding: '7px 11px',
+      padding: '0 16px',
       transition: 'color .15s, border-color .15s',
       '&:hover': {
         color: 'var(--ink)',
@@ -66,7 +68,10 @@ const FileMenu = props => {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <span style={{ fontSize: 14, lineHeight: 1 }}>⊞</span> Files
+        <span style={{ fontSize: 17, lineHeight: 1, position: 'relative', top: -1 }}>
+          ⊞
+        </span>{' '}
+        Files
         {fileCount > 0 ? <span className={classes.count}>{fileCount}</span> : null}
       </button>
       <Menu

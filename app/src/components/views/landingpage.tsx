@@ -11,19 +11,21 @@ const useStyles = makeStyles(
       color: 'var(--ink)'
     },
     title: {
-      fontSize: 24,
-      marginBottom: 16,
+      fontSize: 40,
+      marginBottom: 32,
       fontFamily: 'var(--sans)',
-      fontWeight: 600
+      fontWeight: 600,
+      letterSpacing: '0.01em'
     },
     maintext: {
-      fontSize: 16,
-      marginBottom: 5,
+      fontSize: 21,
+      marginBottom: 14,
+      lineHeight: 1.6,
       color: 'var(--ink-dim)'
     },
     note: {
-      fontSize: 13,
-      marginTop: 20,
+      fontSize: 15,
+      marginTop: 38,
       color: 'var(--ink-faint)'
     }
   },

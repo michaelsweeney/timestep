@@ -4,23 +4,23 @@ import SettingsMenu from './settingsmenu';
 import SplitButton from './splitbutton';
 import SessionSummary from './sessionsummary';
 import UnitToggle from './unittoggle';
-import IntervalSelect from './intervalselect';
 import { makeStyles } from '@material-ui/core/styles';
 
 // bnd-viz-style flat topbar driven by the CSS token set:
-//   TIME·STEP / ENERGYPLUS TIMESERIES | [Files (N)] [+ Split chart]
-//      …  ‹dataset·units·interval›  [⚙]
-// Wordmark mirrors bnd-viz's #wordmark: IBM Plex Sans 700, letter-spaced, the
-// separator dot in --accent, with a small subtitle.
+//   timestep | [Files (N)] [+ Split chart]   …   ‹dataset·units›  [⚙]
+// Wordmark: the original lowercase two-tone logo in Roboto (--sans) — the face
+// the first timestep shipped with — "timest" in --accent (Indigo) with the
+// trailing "ep" in --brand-red (Pink A400), the original Material palette.
+// Medium weight, not heavy.
 const useStyles = makeStyles(
   {
     root: {
       flex: 'none',
-      height: 52,
+      height: 72,
       display: 'flex',
       alignItems: 'center',
-      gap: 14,
-      padding: '0 16px',
+      gap: 28,
+      padding: '0 28px',
       boxSizing: 'border-box',
       borderBottom: '1px solid var(--hairline)',
       background: 'var(--panel)',
@@ -30,29 +30,18 @@ const useStyles = makeStyles(
     },
     wordmark: {
       fontFamily: 'var(--sans)',
-      fontWeight: 700,
-      fontSize: 18,
-      lineHeight: 1,
-      letterSpacing: '0.14em',
-      color: 'var(--ink)',
-      userSelect: 'none'
-    },
-    dot: { color: 'var(--accent)' },
-    sub: {
-      display: 'block',
-      marginTop: 3,
-      fontFamily: 'var(--sans)',
       fontWeight: 500,
-      fontSize: 9,
-      letterSpacing: '0.16em',
-      color: 'var(--ink-faint)'
+      fontSize: 34,
+      lineHeight: 1,
+      letterSpacing: 0,
+      color: 'var(--ink)',
+      userSelect: 'none',
+      // extra breathing room between the logo and the Files / Split cluster,
+      // on top of the row gap
+      marginRight: 32
     },
-    vdiv: {
-      width: 1,
-      height: 26,
-      background: 'var(--hairline-2)',
-      flex: 'none'
-    },
+    blue: { color: 'var(--accent)' },
+    red: { color: 'var(--brand-red)' },
     spacer: { flex: 1 }
   },
   { name: 'header' }
@@ -64,16 +53,14 @@ const Header = () => {
   return (
     <div className={classes.root}>
       <div className={classes.wordmark}>
-        TIME<span className={classes.dot}>·</span>STEP
-        <span className={classes.sub}>ENERGYPLUS TIMESERIES</span>
+        <span className={classes.blue}>timest</span>
+        <span className={classes.red}>ep</span>
       </div>
-      <div className={classes.vdiv} />
       <FileMenu />
       <SplitButton />
       <div className={classes.spacer} />
       <SessionSummary />
       <UnitToggle />
-      <IntervalSelect />
       <SettingsMenu />
     </div>
   );

@@ -11,6 +11,7 @@ import StatisticsControl from './chartcontrol/statisticscontrol';
 import { makeStyles } from '@material-ui/core/styles';
 import { LandingPage } from './landingpage';
 import PaneHeader from './paneheader';
+import { INTERVALS } from './intervals';
 import { getAllSeries, getSeriesLookupObj } from 'src/sql';
 
 const useStyles = makeStyles(
@@ -66,6 +67,15 @@ const ChartTypeControl = props => {
         timestepType: timestepType
       });
       props.actions.setSeriesOptions(parsed, viewID);
+
+      // Count series per reporting frequency so the interval pickers can
+      // advertise how much data backs each option ("Hourly [62]"). Reuses the
+      // dictionary already fetched here rather than re-querying.
+      const counts = Object.fromEntries(INTERVALS.map(i => [i, 0]));
+      ar.forEach(r => {
+        counts[r.ReportingFrequency] = (counts[r.ReportingFrequency] || 0) + 1;
+      });
+      props.actions.setIntervalCounts(counts);
     });
   }, [files, units, timestepType]);
 

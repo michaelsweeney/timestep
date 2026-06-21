@@ -11,7 +11,7 @@ const useStyles = makeStyles(
     root: {
       flex: 'none',
       fontFamily: 'var(--mono)',
-      fontSize: 11,
+      fontSize: 13,
       lineHeight: 1,
       color: 'var(--ink-dim)',
       overflow: 'hidden',

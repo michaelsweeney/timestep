@@ -22,8 +22,8 @@ const useStyles = makeStyles(
     gear: {
       appearance: 'none',
       cursor: 'pointer',
-      width: 36,
-      height: 36,
+      width: 40,
+      height: 40,
       borderRadius: '50%',
       display: 'inline-flex',
       alignItems: 'center',
@@ -71,7 +71,7 @@ const SettingsMenu = props => {
         aria-haspopup="true"
         onClick={e => setAnchorEl(e.currentTarget)}
       >
-        <SettingsIcon fontSize="small" />
+        <SettingsIcon style={{ fontSize: 22 }} />
       </button>
       <Menu
         id="settings-menu"

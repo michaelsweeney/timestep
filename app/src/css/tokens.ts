@@ -26,9 +26,11 @@ export interface Tokens {
 }
 
 export const MONO = "'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace";
-export const SANS = "'IBM Plex Sans', system-ui, -apple-system, sans-serif";
+export const SANS = "'Roboto', 'IBM Plex Sans', system-ui, -apple-system, sans-serif";
 
-// bnd-viz dark values as the base; accent swapped to timestep cool blue.
+// bnd-viz dark values as the base; accent = the original timestep indigo
+// (Indigo 400 on dark for contrast, Indigo 500 on light). Keep in sync with
+// app.global.css.
 export const DARK: Tokens = {
   bg: '#0b0e13',
   panel: '#10141b',
@@ -38,8 +40,8 @@ export const DARK: Tokens = {
   ink: '#c7d3e4',
   inkDim: '#7c8aa0',
   inkFaint: '#4d5a6e',
-  accent: '#5b9efc',
-  accentDim: '#3a6bb0',
+  accent: '#5c6bc0',
+  accentDim: '#3949ab',
   track: '#1c2430'
 };
 
@@ -52,8 +54,8 @@ export const LIGHT: Tokens = {
   ink: '#2a3442',
   inkDim: '#5d6b7e',
   inkFaint: '#97a3b4',
-  accent: '#2f6fd6',
-  accentDim: '#9cbdf0',
+  accent: '#3f51b5',
+  accentDim: '#9fa8da',
   track: '#d4dbe5'
 };
 

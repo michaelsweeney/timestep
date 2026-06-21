@@ -76,6 +76,15 @@ export function setGlobalInterval(interval) {
   };
 }
 
+// Map of reporting-frequency -> number of series available in the loaded
+// files, used to annotate the interval pickers ("Hourly [62]").
+export function setIntervalCounts(counts) {
+  return {
+    type: 'SET_INTERVAL_COUNTS',
+    payload: counts
+  };
+}
+
 export function setNotification(message) {
   return {
     type: 'SET_NOTIFICATION',
