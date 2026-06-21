@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" href="favicon.ico" />
-  <title>timestep</title>
+  <title>timestep — fast EnergyPlus timeseries viewer</title>
+  <meta name="description"
+    content="Timestep reads EnergyPlus SQLite and raw .eso output directly, loading and charting very large simulation files in seconds. Free, open-source, macOS / Windows / Linux." />
   <link rel="stylesheet" href="styles.css" />
-  <script src="https://use.fontawesome.com/0e25d0fbef.js"></script>
 
   <!-- Cloudflare Web Analytics — cookieless, no consent banner required -->
   <script defer src='https://static.cloudflareinsights.com/beacon.min.js'
@@ -14,178 +17,234 @@
 </head>
 
 <body>
-  <div class="logo-title">
-    <span class="title-left">timest</span><span class="title-right">ep</span>
-  </div>
-  <!-- <div class="section-break"></div> -->
-  <div class="section">
-    <div class="section-header">
-      EnergyPlus timeseries visualization software
-    </div>
-    <p>
-      EnergyPlus has rich support for hourly and sub-hourly reporting, but as
-      a model becomes larger and more complex, the simulation output size can
-      become unwieldy for many existing tools. This can result in
-      prohibitively long load-times just to view your simulation results.
-    </p>
-    <p>
-      Timestep attempts to be a better solution, offering a clean,
-      user-friendly and near-instanteous querying interface, as well as modern
-      data visualization capabilities. It accomplishes this by using the
-      EnergyPlus SQLite Output reporting, and can load and visualize very
-      large simulation output files in seconds, rather than minutes.
-    </p>
-    <div><u>Current Timestep features</u>:</div>
-    <ul>
-      <li>Native support and install packages for MacOS and Windows.</li>
-      <li>
-        Heatmap, Multi-Line, Scatter Plot, Histogram, and Statistical Summary
-        outputs
-      </li>
-      <li>CSV and clipboard export</li>
-      <li>Saved sessions and multiple views within a session</li>
-      <li>Support for multiple simulation files</li>
-      <li>
-        Auto-detection and parsing of BND files for more contextual IP units
-        conversion.
-      </li>
-    </ul>
-    <div><u>Planned Timestep features</u>:</div>
-    <ul>
-      <li>Support for platform-agnostic CSV files</li>
-      <li>Support for tabular data (similar to eplusout.html reports)</li>
-      <li>
-        Additional chart types like 2D hexbins, scatter matrices, and
-        box/violin distribution plots
-      </li>
-    </ul>
-  </div>
-  <div class="section-break"></div>
+  <main class="wrap">
 
-  <div class="section">
-    <div class="section-header">Install and Setup</div>
-    <ol>
-      <li>
-        Download the installer for your platform from the
-        <a id="download-link" href="https://github.com/michaelsweeney/timestep/releases/latest"
-          target="_blank">latest GitHub Release</a>
-        — macOS (.dmg), Windows (.exe or .msi), or Linux (.AppImage, .deb,
-        .rpm).
-      </li>
-      <li>Run the installer and launch "timestep".</li>
-      <li>
-        The app is not yet code-signed: on Windows, select "More Info" then
-        "Run Anyway" at the "Windows Protected Your PC" pop-up; on Mac, see
-        <a href="https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac"
-          target="_blank">opening apps from unidentified developers</a>
-        (right-click the app and choose Open).
-      </li>
-      <li>
-        Point it at an EnergyPlus run: either the eplusout.sql written with
-        "Output:SQLite, SimpleAndTabular" in the IDF, or the raw eplusout.eso
-        directly — no re-run needed.
-      </li>
-      <li>
-        Click the "Load Files" button, or drag .sql / .eso files (with their
-        sibling .bnd for cfm/gpm units) onto it.
-      </li>
-      <li>Start exploring your model results!</li>
-    </ol>
-  </div>
-  <div class="section-break"></div>
+    <!-- ===== Hero ===== -->
+    <header class="hero">
+      <div class="logo-title">
+        <span class="title-left">timest</span><span class="title-right">ep</span>
+      </div>
 
-  <div class="section">
-    <div class="section-header">Screenshots</div>
+      <p class="eyebrow">EnergyPlus timeseries viewer</p>
 
-    <div class="image-block">
-      <div class="image-container">
-        <img src="./screenshots/heatmap.png" alt="" />
-      </div>
-      <div class="image-subheader">
-        Heatmaps with Variable Color Domain
-      </div>
-    </div>
+      <h1 class="hero-headline">
+        See your simulation results in <em>seconds</em>, not minutes.
+      </h1>
 
-    <div class="image-block">
-      <div class="image-container">
-        <img src="./screenshots/scatter.png" alt="" />
-      </div>
-      <div class="image-subheader">
-        Scatter Plots with Color Dimensions
-      </div>
-    </div>
+      <p class="hero-sub">
+        Timestep reads EnergyPlus SQLite and raw <code>.eso</code> output
+        directly, loading and charting very large simulation files in seconds
+        rather than minutes — no model re-run, no waiting.
+      </p>
 
-    <div class="image-block">
-      <div class="image-container">
-        <img src="./screenshots/multiline.png" alt="" />
+      <div class="cta-row">
+        <a id="download-link" class="btn btn-primary"
+          href="https://github.com/michaelsweeney/timestep/releases/latest" target="_blank" rel="noopener">
+          Download the beta
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/michaelsweeney/timestep" target="_blank" rel="noopener">
+          View on GitHub
+        </a>
       </div>
-      <div class="image-subheader">
-        Interactive Line Plots with Multiple Axes
-      </div>
-    </div>
 
-    <div class="image-block">
-      <div class="image-container">
-        <img src="./screenshots/histogram.png" alt="" />
-      </div>
-      <div class="image-subheader">
-        Histograms with Variable Bin Settings
-      </div>
-    </div>
+      <p class="cta-meta">
+        <span class="badge"><span class="badge-dot"></span>v2.0.0 · beta</span>
+        <span class="cta-platforms">macOS · Windows · Linux — files never leave your machine</span>
+      </p>
+    </header>
 
-    <div class="image-block">
-      <div class="image-container">
-        <img src="./screenshots/statistics.png" alt="" />
-      </div>
-      <div class="image-subheader">
-        Statistical Summaries
-      </div>
-    </div>
+    <div class="tickrule" role="presentation"></div>
 
-    <div class="image-block">
-      <div class="image-container">
-        <img src="./screenshots/live_search.png" alt="" />
-      </div>
-      <div class="image-subheader">
-        Live-Searchable Reports
-      </div>
-    </div>
-    <div class="image-block">
-      <div class="image-container">
-        <img src="./screenshots/multiline_multiple_sims.png" alt="" />
-      </div>
-      <div class="image-subheader">
-        Support for Multiple Simulations (Line Plot)
-      </div>
-    </div>
-    <div class="image-block">
-      <div class="image-container">
-        <img src="./screenshots/scatter_multiple_sims.png" alt="" />
-      </div>
-      <div class="image-subheader">
-        Support for Multiple Simulations (Scatter)
-      </div>
-    </div>
-  </div>
-  <div class="section-break"></div>
+    <!-- ===== What it is ===== -->
+    <section class="section">
+      <p class="kicker">Why</p>
+      <h2 class="section-header">Built for output that other tools choke on</h2>
+      <p>
+        EnergyPlus has rich support for hourly and sub-hourly reporting, but as
+        a model grows larger and more complex, the simulation output gets
+        unwieldy for many existing tools — long enough load times that just
+        viewing your results becomes the bottleneck.
+      </p>
+      <p>
+        Timestep is a better answer: a clean, near-instantaneous querying
+        interface with modern data visualization. It reads the EnergyPlus
+        SQLite output directly, so very large files open and chart in seconds
+        rather than minutes.
+      </p>
+    </section>
 
-  <div class="section">
-    <div class="section-header">Contributing</div>
-    <div>
-      Timestep is an open-source project and welcomes contributions! It uses
-      the following frameworks / languages:
-      <ul>
+    <div class="tickrule" role="presentation"></div>
+
+    <!-- ===== Features ===== -->
+    <section class="section">
+      <p class="kicker">What's in the beta</p>
+      <h2 class="section-header">Features</h2>
+
+      <div class="feature-grid">
+        <div class="feature">
+          <p class="feature-label">.sql / .eso</p>
+          <p class="feature-text">
+            Loads EnergyPlus <code>.sql</code> and raw <code>.eso</code> output
+            directly. <code>.eso</code> is converted to SQLite on first open
+            and cached — no model re-run.
+          </p>
+        </div>
+        <div class="feature">
+          <p class="feature-label">charts</p>
+          <p class="feature-text">
+            Heatmap, multi-line, scatter, histogram, and statistical-summary
+            views over your timeseries.
+          </p>
+        </div>
+        <div class="feature">
+          <p class="feature-label">multi-run</p>
+          <p class="feature-text">
+            Load multiple simulation files at once and overlay the same
+            variable across runs to compare them directly.
+          </p>
+        </div>
+        <div class="feature">
+          <p class="feature-label">units</p>
+          <p class="feature-text">
+            SI/IP units with honest cfm/gpm labels resolved from the
+            <code>.bnd</code> node fluid type, plus load-time data-quality
+            warnings.
+          </p>
+        </div>
+        <div class="feature">
+          <p class="feature-label">theme</p>
+          <p class="feature-text">
+            Dark and light mode, so it fits whatever the rest of your screen is
+            doing.
+          </p>
+        </div>
+        <div class="feature">
+          <p class="feature-label">export</p>
+          <p class="feature-text">
+            CSV and clipboard export, saved sessions, and multiple views within
+            a single session.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="tickrule" role="presentation"></div>
+
+    <!-- ===== Install ===== -->
+    <section class="section">
+      <p class="kicker">Get started</p>
+      <h2 class="section-header">Install and setup</h2>
+      <p class="note">
+        Timestep is in <strong>beta</strong> (v2.0.0). It's stable enough for
+        daily use, but you may hit rough edges — please file what you find.
+      </p>
+      <ol class="steps">
+        <li>
+          Download the installer for your platform from the
+          <a href="https://github.com/michaelsweeney/timestep/releases/latest" target="_blank"
+            rel="noopener">latest GitHub Release</a>
+          (marked <em>beta</em>) — macOS (<code>.dmg</code>), Windows
+          (<code>.exe</code> or <code>.msi</code>), or Linux
+          (<code>.AppImage</code>, <code>.deb</code>, <code>.rpm</code>).
+        </li>
+        <li>Run the installer and launch <strong>timestep</strong>.</li>
+        <li>
+          The beta isn't code-signed yet, so your OS will warn you. On Windows,
+          choose <strong>More info → Run anyway</strong> at the "Windows
+          protected your PC" prompt. On macOS, right-click the app and choose
+          <strong>Open</strong> — see
+          <a href="https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac"
+            target="_blank" rel="noopener">opening apps from unidentified developers</a>.
+        </li>
+        <li>
+          Point it at an EnergyPlus run: either the <code>eplusout.sql</code>
+          written with <code>Output:SQLite, SimpleAndTabular</code> in the IDF,
+          or the raw <code>eplusout.eso</code> directly — no re-run needed.
+        </li>
+        <li>
+          Click <strong>Load Files</strong>, or drag <code>.sql</code> /
+          <code>.eso</code> files (with their sibling <code>.bnd</code> for
+          cfm/gpm units) onto the window.
+        </li>
+        <li>Start exploring your model results.</li>
+      </ol>
+    </section>
+
+    <div class="tickrule" role="presentation"></div>
+
+    <!-- ===== Screenshots ===== -->
+    <section class="section">
+      <p class="kicker">A look inside</p>
+      <h2 class="section-header">Screenshots</h2>
+
+      <div class="shots">
+        <figure class="shot">
+          <img src="./screenshots/heatmap.png" alt="Annual heatmap colored by a variable's value domain" loading="lazy" />
+          <figcaption>Heatmaps with a variable color domain</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./screenshots/scatter.png" alt="Scatter plot with a third variable mapped to color" loading="lazy" />
+          <figcaption>Scatter plots with color dimensions</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./screenshots/multiline.png" alt="Interactive line plot with multiple value axes" loading="lazy" />
+          <figcaption>Interactive line plots with multiple axes</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./screenshots/histogram.png" alt="Histogram with adjustable bin settings" loading="lazy" />
+          <figcaption>Histograms with variable bin settings</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./screenshots/statistics.png" alt="Statistical summary table for selected variables" loading="lazy" />
+          <figcaption>Statistical summaries</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./screenshots/live_search.png" alt="Live-searchable list of available report variables" loading="lazy" />
+          <figcaption>Live-searchable reports</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./screenshots/multiline_multiple_sims.png"
+            alt="Line plot overlaying the same variable across multiple simulations" loading="lazy" />
+          <figcaption>Multiple simulations, overlaid (line)</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="./screenshots/scatter_multiple_sims.png"
+            alt="Scatter plot comparing the same variable across multiple simulations" loading="lazy" />
+          <figcaption>Multiple simulations, compared (scatter)</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <div class="tickrule" role="presentation"></div>
+
+    <!-- ===== Contributing ===== -->
+    <section class="section">
+      <p class="kicker">Open source</p>
+      <h2 class="section-header">Contributing</h2>
+      <p>
+        Timestep is open-source and welcomes contributions. It's built with:
+      </p>
+      <ul class="stack">
         <li>Electron</li>
+        <li>React</li>
         <li>Redux</li>
         <li>D3</li>
-        <li>React</li>
-        <li>Material-UI</li>
-        <li>Typescript / Javascript</li>
+        <li>Material UI</li>
+        <li>TypeScript</li>
       </ul>
-      If you're interested in contributing, check out the main
-      <a id="github-repo-link" href="https://github.com/michaelsweeney/timestep" target="_blank">github repo</a>!
-    </div>
-  </div>
+      <p>
+        If you'd like to pitch in, head to the
+        <a id="github-repo-link" href="https://github.com/michaelsweeney/timestep" target="_blank"
+          rel="noopener">main GitHub repo</a>.
+      </p>
+    </section>
+
+    <footer class="footer">
+      <span class="footer-mark">timest<span class="title-right">ep</span></span>
+      <span class="footer-meta">EnergyPlus timeseries viewer · v2.0.0 beta</span>
+    </footer>
+
+  </main>
 </body>
 
 </html>
