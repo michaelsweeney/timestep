@@ -63,6 +63,42 @@
   <div class="section-break"></div>
 
   <div class="section">
+    <div class="section-header">New in version 2.0</div>
+    <ul>
+      <li>
+        Open EnergyPlus .eso files directly. ESO output is converted to SQLite
+        on first open and cached, so models run without "Output:SQLite" work
+        with no re-run. Meters are recovered too — both those embedded in the
+        .eso and meter-file-only ones from a sibling .mtr — and the Avg/Sum
+        variable type is restored from a sibling .rdd.
+      </li>
+      <li>
+        Runs in a browser. The same app also builds as a static site that runs
+        SQLite in the tab via WebAssembly (sql.js): drop a .sql or .eso on the
+        page, with nothing uploaded and no install.
+      </li>
+      <li>
+        IP/SI unit resolution from the .bnd file. m³/s flows resolve to cfm or
+        gpm by the node fluid type, with scfm for standard-density air flows;
+        units without a real IP conversion stay in SI rather than showing a
+        wrong label.
+      </li>
+      <li>
+        Data-quality warnings on load. The Loaded Files dialog flags fidelity
+        caveats — flows defaulted to cfm for lack of a .bnd, cfm/gpm guessed
+        from a variable name, or variables shown in SI because no IP
+        conversion exists.
+      </li>
+      <li>Dark and light theme.</li>
+      <li>
+        Linux install packages (.AppImage, .deb, .rpm), in addition to MacOS
+        and Windows.
+      </li>
+    </ul>
+  </div>
+  <div class="section-break"></div>
+
+  <div class="section">
     <div class="section-header">Install and Setup</div>
     <ol>
       <li>

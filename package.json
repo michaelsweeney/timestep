@@ -10,6 +10,7 @@
     "build-web": "rm -rf app/dist-web && cross-env NODE_ENV=production webpack --config ./configs/webpack.config.web.prod.js && cp app/web.html app/dist-web/index.html",
     "start-web": "python3 -m http.server 8080 --directory app/dist-web",
     "web": "yarn build-web && yarn start-web",
+    "preview-docs": "python3 -m http.server 8082 --directory docs",
     "smoke-web": "node scripts/web-smoke.mjs",
     "test-serve": "node --import tsx --test \"app/serve/**/*.test.ts\"",
     "ts-serve": "tsc -p tsconfig.serve.json",
