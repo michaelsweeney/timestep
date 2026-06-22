@@ -1,471 +1,77 @@
-/* ============================================================
-   timestep — landing page
-   Identity: Material indigo (#3f51b5) + pink (#f50057) wordmark,
-   carried over from the app. Cool paper ground, mono utility face
-   for timestep's own vocabulary (.sql / .eso / units / version),
-   and a time-axis tick motif as the recurring structural device.
-   ============================================================ */
-
-:root {
-  --indigo: #3f51b5;
-  --indigo-deep: #303f9f;
-  --pink: #f50057;
-
-  --ink: #15171c;
-  --slate: #5b6173;
-  --slate-soft: #868ca0;
-
-  --paper: #fbfbfc;
-  --surface: #ffffff;
-  --hairline: #e6e8ef;
-  --hairline-strong: #d3d7e3;
-
-  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  --font-mono: ui-monospace, 'JetBrains Mono', 'SFMono-Regular', 'Cascadia Code',
-    Menlo, Consolas, monospace;
-
-  --maxw: 940px;
-  --radius: 10px;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  -webkit-text-size-adjust: 100%;
-}
+/* COLORS
+#3f51b5
+#f50057
+*/
 
 body {
-  margin: 0;
-  padding: 0;
-  background-color: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-sans);
-  font-size: 17px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-.wrap {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: 0 24px 96px;
-}
-
-/* ---- links ---- */
-a {
-  color: var(--indigo);
-  text-decoration: none;
-  border-bottom: 1px solid color-mix(in srgb, var(--indigo) 30%, transparent);
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-a:hover {
-  color: var(--indigo-deep);
-  border-bottom-color: var(--indigo);
-}
-
-code {
-  font-family: var(--font-mono);
-  font-size: 0.86em;
-  background: color-mix(in srgb, var(--indigo) 7%, transparent);
-  color: var(--indigo-deep);
-  padding: 0.1em 0.4em;
-  border-radius: 5px;
-  white-space: nowrap;
-}
-
-/* ---- focus floor ---- */
-a:focus-visible,
-.btn:focus-visible {
-  outline: 2px solid var(--indigo);
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
-/* ============================================================
-   Time-axis tick motif — the signature divider.
-   A row of evenly spaced hairlines, like a heatmap column or a
-   simulation time axis, used wherever a plain rule would go.
-   ============================================================ */
-.tickrule {
-  height: 12px;
-  margin: 56px 0;
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--hairline-strong) 0,
-    var(--hairline-strong) 1px,
-    transparent 1px,
-    transparent 11px
-  );
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-}
-
-/* ============================================================
-   Hero
-   ============================================================ */
-.hero {
-  padding-top: 72px;
+  padding: 20px;
+  margin-left: 10%;
+  margin-right: 10%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: rgb(20, 20, 20);
+  background-color: rgba(0, 0, 0, 0.01);
 }
 
 .logo-title {
-  font-size: clamp(46px, 9vw, 68px);
+  text-align: left;
+  font-size: 64px;
   font-weight: 200;
-  letter-spacing: 0.5px;
-  line-height: 1;
-}
-.title-left {
-  color: var(--indigo);
+  letter-spacing: 1.5px;
 }
 .title-right {
-  color: var(--pink);
+  color: #f50057;
+}
+.title-left {
+  color: #3f51b5;
 }
 
-.eyebrow {
-  margin: 22px 0 0;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--slate);
-}
-
-.hero-headline {
-  margin: 14px 0 0;
-  font-size: clamp(30px, 5.4vw, 50px);
-  font-weight: 300;
-  line-height: 1.08;
-  letter-spacing: -0.02em;
-  max-width: 16ch;
-}
-.hero-headline em {
-  font-style: normal;
-  color: var(--indigo);
-}
-
-.hero-sub {
-  margin: 22px 0 0;
-  max-width: 56ch;
-  font-size: 18px;
-  color: var(--slate);
-}
-.hero-sub code {
-  white-space: nowrap;
-}
-
-/* ---- CTAs ---- */
-.cta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 30px;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-sans);
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  padding: 13px 24px;
-  border-radius: var(--radius);
-  border: 1px solid transparent;
-  cursor: pointer;
-  transition: transform 0.12s ease, background 0.15s ease, border-color 0.15s ease,
-    box-shadow 0.15s ease;
-}
-
-.btn-primary {
-  background: var(--indigo);
-  color: #fff;
-  box-shadow: 0 1px 2px rgba(63, 81, 181, 0.25), 0 8px 22px -10px rgba(63, 81, 181, 0.6);
-}
-.btn-primary:hover {
-  background: var(--indigo-deep);
-  color: #fff;
-  transform: translateY(-1px);
-}
-
-.btn-ghost {
-  background: var(--surface);
-  color: var(--ink);
-  border-color: var(--hairline-strong);
-}
-.btn-ghost:hover {
-  color: var(--indigo-deep);
-  border-color: var(--indigo);
-  transform: translateY(-1px);
-}
-
-.cta-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 16px;
-  margin-top: 22px;
-  font-size: 14px;
-  color: var(--slate-soft);
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: var(--slate);
-  background: color-mix(in srgb, var(--pink) 8%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--pink) 28%, transparent);
-  padding: 4px 11px;
-  border-radius: 999px;
-}
-.badge-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--pink);
-}
-
-.cta-platforms {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  letter-spacing: 0.02em;
-}
-
-/* ============================================================
-   Sections
-   ============================================================ */
-.section {
-  margin: 0;
-}
-
-.kicker {
-  margin: 0 0 10px;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--indigo);
+.section-break {
+  margin-top: 40px;
+  margin-bottom: 30px;
+  border-bottom: rgb(162, 162, 162) solid 1px;
 }
 
 .section-header {
-  margin: 0 0 18px;
-  font-size: clamp(24px, 3.4vw, 30px);
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  line-height: 1.15;
-}
-
-.section p {
-  max-width: 64ch;
-  color: var(--slate);
-  margin: 0 0 16px;
-}
-.section p:last-child {
-  margin-bottom: 0;
-}
-
-.note {
-  border-left: 2px solid var(--pink);
-  padding-left: 16px;
-}
-.note strong {
-  color: var(--ink);
-}
-
-/* ---- feature grid ---- */
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 2px;
-  background: var(--hairline);
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.feature {
-  background: var(--surface);
-  padding: 22px 24px;
-}
-.feature p {
-  max-width: none;
-  margin: 0;
-}
-.feature .feature-label {
-  margin-bottom: 8px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  color: var(--indigo);
-}
-.feature .feature-text {
-  font-size: 15.5px;
-  line-height: 1.55;
-  color: var(--slate);
-}
-
-/* ---- install steps ---- */
-.steps {
-  margin: 22px 0 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: step;
-}
-.steps li {
-  position: relative;
-  counter-increment: step;
-  padding: 0 0 18px 46px;
-  color: var(--slate);
-  max-width: 66ch;
-}
-.steps li:last-child {
-  padding-bottom: 0;
-}
-.steps li::before {
-  content: counter(step);
-  position: absolute;
-  left: 0;
-  top: -2px;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--indigo);
-  background: color-mix(in srgb, var(--indigo) 9%, transparent);
-  border-radius: 50%;
-}
-.steps strong {
-  color: var(--ink);
+  color: rgba(0, 0, 0, 1);
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 24px;
   font-weight: 600;
 }
 
-/* ---- screenshots ---- */
-.shots {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 28px;
-  margin-top: 6px;
+.section-subheader {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
 }
-.shot {
-  margin: 0;
+
+.section {
+  margin-top: 20px;
 }
-.shot img {
+.section li {
+  margin-top: 7.5px;
+}
+
+.image-block {
+  margin-top: 10px;
+  margin-bottom: 30px;
+  border-radius: 0px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.image-subheader {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 18px;
+  text-decoration: underline;
+}
+.image-container {
+  text-align: left;
+}
+.image-container img {
   width: 100%;
-  display: block;
-  border: 1px solid var(--hairline-strong);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-.shot figcaption {
-  margin-top: 12px;
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  letter-spacing: 0.02em;
-  color: var(--slate);
-}
-
-/* ---- contributing ---- */
-.stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 4px 0 20px;
-  padding: 0;
-  list-style: none;
-}
-.stack li {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--slate);
-  background: var(--surface);
-  border: 1px solid var(--hairline-strong);
-  padding: 5px 12px;
-  border-radius: 7px;
-}
-
-/* ---- footer ---- */
-.footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 72px;
-  padding-top: 26px;
-  border-top: 1px solid var(--hairline);
-}
-.footer-mark {
-  font-size: 22px;
-  font-weight: 200;
-  letter-spacing: 0.5px;
-  color: var(--indigo);
-}
-.footer-meta {
-  font-family: var(--font-mono);
-  font-size: 12.5px;
-  color: var(--slate-soft);
-}
-
-/* ============================================================
-   Responsive
-   ============================================================ */
-@media (max-width: 680px) {
-  body {
-    font-size: 16px;
-  }
-  .wrap {
-    padding: 0 18px 72px;
-  }
-  .hero {
-    padding-top: 48px;
-  }
-  .tickrule {
-    margin: 44px 0;
-  }
-  .feature-grid,
-  .shots {
-    grid-template-columns: 1fr;
-  }
-  .btn {
-    flex: 1 1 auto;
-  }
-}
-
-/* ============================================================
-   Motion — subtle hero entrance, disabled on request
-   ============================================================ */
-@media (prefers-reduced-motion: no-preference) {
-  .hero > * {
-    animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
-  }
-  .hero .eyebrow { animation-delay: 0.04s; }
-  .hero .hero-headline { animation-delay: 0.09s; }
-  .hero .hero-sub { animation-delay: 0.14s; }
-  .hero .cta-row { animation-delay: 0.19s; }
-  .hero .cta-meta { animation-delay: 0.24s; }
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  border: rgb(120, 120, 120) solid 1px;
+  /* box-shadow: 2px 2px 5px rgb(164, 164, 164); */
 }
