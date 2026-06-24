@@ -25,6 +25,13 @@ body {
 .title-left {
   color: #3f51b5;
 }
+.version-tag {
+  font-size: 22px;
+  font-weight: 400;
+  color: #f50057;
+  margin-left: 14px;
+  vertical-align: middle;
+}
 
 .section-break {
   margin-top: 40px;
