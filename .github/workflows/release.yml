@@ -20,7 +20,14 @@ jobs:
         # Visual Studio 18, which node-gyp 11.x doesn't yet recognize, breaking
         # the sqlite3 native rebuild. windows-2022 ships VS2022 that node-gyp
         # supports. Revisit once node-gyp gains VS18 support.
-        os: [ubuntu-latest, macos-latest, windows-2022]
+        #
+        # macos-latest is Apple Silicon (arm64); macos-13 is the Intel (x64)
+        # runner, kept so we ship a native x64 dmg/zip alongside arm64 — sqlite3
+        # is a native module, so each arch is built on its own runner rather than
+        # cross-compiled. macos-13 is GitHub's last Intel image and is on a
+        # deprecation path; when it's retired, switch the mac build to a single
+        # universal binary (build.mac.arch: ["universal"]) on macos-latest.
+        os: [ubuntu-latest, macos-latest, macos-13, windows-2022]
     runs-on: ${{ matrix.os }}
 
     env:
